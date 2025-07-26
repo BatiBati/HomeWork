@@ -18,9 +18,16 @@ const app = express();
 
 const port = 3001;
 
-
 app.use(express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://localhost:3000",
+      "https://food-web-sigma-six.vercel.app/",
+    ],
+    credentials: true,
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("Hello world!");
