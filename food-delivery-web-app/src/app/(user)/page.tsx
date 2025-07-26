@@ -9,7 +9,6 @@ export default function Home() {
     <div className="flex flex-col items-center">
       <TodayOfferFood />
       <CategoryNames />
-      
       <HomePageFoodMenu />
     </div>
   );
