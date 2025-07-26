@@ -69,7 +69,7 @@ export const Footer = () => {
                   <span>Contact us</span>
                   <span>Delivery zone</span>
                 </div>
-                <div className="w-fit gap-4 flex flex-col">
+                <div className="w-fit gap-4 flex flex-col ">
                   <span className="text-[#71717A]">Menu</span>
                   <div className="grid grid-cols-3 gap-4">
                     {categories.map((item, index) => {
