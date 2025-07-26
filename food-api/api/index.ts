@@ -23,7 +23,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://food-web-sigma-six.vercel.app/",
+      "https://food-web-sigma-six.vercel.app",
     ],
     credentials: true,
   })
