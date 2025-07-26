@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(
   cors({
     origin: [
-      "https://localhost:3000",
+      "http://localhost:3000",
       "https://food-web-sigma-six.vercel.app/",
     ],
     credentials: true,
