@@ -42,7 +42,7 @@ export const Header = () => {
               setDeliverAddress={setDeliverAddress}
             />
 
-            <FoodOrders deliverAddress={deliverAddress} />
+            <FoodOrders deliverAddress={deliverAddress} />s
 
             <div className="flex  flex-col  ">
               <Button

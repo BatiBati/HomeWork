@@ -19,7 +19,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Checkbox } from "@/components/ui/checkbox";
-import { LoadingSvg } from "@/app/_components/assets/LoadingSvg";
 
 const formSchema = z
   .object({
@@ -39,7 +38,6 @@ const formSchema = z
 
 export default function Home() {
   const [step, setStep] = useState(1);
-  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signUp } = useAuth();
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -168,7 +166,7 @@ export default function Home() {
             className="w-full justify-center"
             onClick={handleNext}
           >
-            {loading === true ? <LoadingSvg /> : "Lets Go"}
+            Lets Go
           </Button>
           <div className="flex gap-3 justify-center">
             <p> Already have an account?</p>

@@ -8,6 +8,7 @@ import {
 } from "react";
 import { toast } from "sonner";
 import { api, setAuthToken } from "../../../axios";
+import { AxiosError } from "axios";
 
 type User = {
   _id: string;
@@ -61,7 +62,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       localStorage.setItem("token", data.token);
       setUser(data.user);
       router.push("/AuthenticationPage/signIn");
-    } catch (error: any) {
+    } catch (err) {
+      const error = err as AxiosError;
       if (error.response?.status === 409) {
         toast.error("Oops. Email is already registered. Try again");
       } else {

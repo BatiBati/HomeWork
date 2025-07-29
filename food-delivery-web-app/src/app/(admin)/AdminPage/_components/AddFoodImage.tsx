@@ -4,7 +4,6 @@ import { AddPictureSvg } from "./assets/AddPictureSvg";
 import { ChangeEvent, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
-import Image from "next/image";
 
 const UPLOAD_KEY = "Food_images";
 const IMAGE_API_KEY = "dazhij9zy";

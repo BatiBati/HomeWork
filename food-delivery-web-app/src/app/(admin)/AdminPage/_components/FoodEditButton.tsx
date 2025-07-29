@@ -9,9 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-
 import { EditSvg } from "./assets/EditSvg";
-
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -142,8 +140,12 @@ export const FoodEditButton = ({
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <div className="flex gap-4">
-                      <FormLabel className="w-[40%]">Dish category</FormLabel>
+                    <div className="flex gap-4 ">
+                      <FormLabel className="w-[40%] flex">
+                        <div> Change </div>
+                        <div> {field.name}</div>
+                      </FormLabel>
+
                       <FormControl>
                         <UpdateFoodCategory
                           categoryId={categoryId}

@@ -21,7 +21,7 @@ type Food = {
 };
 
 type FoodItem = Food & { quantity: number } & { oneFoodTotalPrice: number } & {
-  totalPrice: number;
+  // totalPrice: number;
 };
 
 export const AddFoodToOrder = ({
@@ -34,7 +34,7 @@ export const AddFoodToOrder = ({
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const oneFoodTotalPrice = quantity * foodPrice;
-  const [totalPrice, setTotalPrice] = useState(0);
+  // const [totalPrice, setTotalPrice] = useState(0);
 
 
   const handleMinusFood = () => {
@@ -55,7 +55,7 @@ export const AddFoodToOrder = ({
       foodImage,
       quantity,
       oneFoodTotalPrice,
-      totalPrice,
+      // totalPrice,
     };
     if (quantity > 0) {
       try {

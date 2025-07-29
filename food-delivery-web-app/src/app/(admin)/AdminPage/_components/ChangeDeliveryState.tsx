@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { UpDownArrow } from "./assets/UpDownArrow";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "../../../../../axios";
 import { LoadingSvg } from "@/app/_components/assets/LoadingSvg";
 import { toast } from "sonner";
