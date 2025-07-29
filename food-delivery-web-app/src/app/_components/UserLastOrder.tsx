@@ -1,10 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
 import { TabsContent } from "@/components/ui/tabs";
 import { FoodOrdersCard } from "./FoodOrdersCard";
 import { ClockSvg } from "./assets/ClockSvg";
 import { DeliverySvg } from "./assets/DeliverySvg";
-
 type OrderDataType = {
   foodOrder: FoodsType[];
 };
@@ -43,16 +41,18 @@ export type OneFood = {
 
 export const UserLastOrder = ({ foodOrder }: OrderDataType) => {
   return (
-    <TabsContent value="order">
-      <Card>
+    <TabsContent value="order" className="flex flex-col flex-grow min-h-0">
+      <Card className="flex flex-col flex-grow min-h-0">
         <CardHeader>
           <CardTitle>Order history</CardTitle>
         </CardHeader>
-
-        <CardContent className="space-y-2 h-[950px] overflow-scroll">
+        <CardContent className="flex flex-col overflow-y-auto max-h-[650px] min-h-0 gap-3">
           {foodOrder.map((order) => {
             return (
-              <div className="space-y-1 " key={order._id}>
+              <div
+                className="space-y-1 border-dotted border-b-[1px] border-black p-3"
+                key={order._id}
+              >
                 <div className="w-full flex justify-between">
                   <div className="text-[16px] font-bold">
                     ${order.totalPrice + 0.99}

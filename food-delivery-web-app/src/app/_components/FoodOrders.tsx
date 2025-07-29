@@ -1,20 +1,9 @@
 "use client";
 import { Button } from "@/components/ui/button";
-
-import {
-  Sheet,
-
-  SheetContent,
-
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { ShoppingBox } from "./assets/ShoppingBox";
-
-
-
 import { useEffect, useState } from "react";
 import { Food, GetFoodOrderLocalStorage } from "./FoodOrderLocalStorage";
-
 type DeliveryAddressType = {
   deliverAddress: string;
 };
@@ -34,7 +23,7 @@ export const FoodOrders = ({ deliverAddress }: DeliveryAddressType) => {
     <Sheet>
       <SheetTrigger asChild>
         <Button
-          className="bg-white w-9 h-9 rounded-full relative"
+          className="bg-white w-9 h-9 rounded-full relative cursor-pointer"
           variant={"outline"}
         >
           <ShoppingBox width="100px" height="13px" stroke="#000" />
@@ -45,7 +34,7 @@ export const FoodOrders = ({ deliverAddress }: DeliveryAddressType) => {
           )}
         </Button>
       </SheetTrigger>
-      <SheetContent className="!w-[520px] !max-w-none p-3 bg-[#404040] rounded-tl-[30px] rounded-bl-[30px] border-0">
+      <SheetContent className="!w-[520px] !max-w-none bg-[#404040] rounded-tl-[30px] rounded-bl-[30px] border-0 p-5 ">
         <GetFoodOrderLocalStorage deliverAddress={deliverAddress} />
       </SheetContent>
     </Sheet>

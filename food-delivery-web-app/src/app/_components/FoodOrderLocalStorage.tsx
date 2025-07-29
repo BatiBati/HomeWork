@@ -63,7 +63,7 @@ type PropsType = {
 };
 
 export const GetFoodOrderLocalStorage = ({ deliverAddress }: PropsType) => {
-  const { user } = useAuth();
+  const { user, setOrderSuccess } = useAuth();
   const [selectedTab, setSelectedTab] = useState("cart");
   const [foodDataFromLocalStorage, setFoodDataFromLocalStorage] =
     useState<Food[]>();
@@ -153,22 +153,24 @@ export const GetFoodOrderLocalStorage = ({ deliverAddress }: PropsType) => {
   }, []);
 
   const putFoodsRequest = async () => {
-    if (deliverAddress === "") {
-      toast.error("Please enter deliver address.");
-    }
+    if (!deliverAddress || deliverAddress.trim() === "")
+      return toast.error("Please enter delivery address.");
+
     try {
-      const foodOrderOfUser = api.post(`/foodOrder/post`, {
+      setOrderSuccess(true);
+      const foodOrderOfUser = await api.post(`/foodOrder/post`, {
         user: user?._id,
         totalPrice: ITEMS_TOTAL,
         foodOrderItems: foodArray,
         status: "PENDING",
         deliveryAddress: deliverAddress,
       });
+      console.log(foodOrderOfUser.data);
+
       localStorage.removeItem("foodOrder");
       setFoodDataFromLocalStorage([]);
       setSelectedTab("order");
       handleOrderFoods();
-      console.log(foodOrderOfUser);
     } catch (error) {
       console.error("Error placing order:", error);
     }
@@ -182,12 +184,12 @@ export const GetFoodOrderLocalStorage = ({ deliverAddress }: PropsType) => {
           <p className="text-[20px] font-semibold text-white">Order detail</p>
         </div>
       </SheetTitle>
-      <div className="flex w-full h-fit">
+      <div className="flex flex-col flex-grow min-h-0">
         <Tabs
           defaultValue="cart"
           value={selectedTab}
           onValueChange={setSelectedTab}
-          className="w-full"
+          className="flex flex-col flex-grow min-h-0"
         >
           <TabsList className="grid grid-cols-2 rounded-full w-full">
             <TabsTrigger
@@ -197,7 +199,7 @@ export const GetFoodOrderLocalStorage = ({ deliverAddress }: PropsType) => {
                   ? { backgroundColor: "#EF4444", color: "white" }
                   : {}
               }
-              className="rounded-full"
+              className="rounded-full cursor-pointer"
             >
               Cart
             </TabsTrigger>
@@ -208,14 +210,14 @@ export const GetFoodOrderLocalStorage = ({ deliverAddress }: PropsType) => {
                   ? { backgroundColor: "#EF4444", color: "white" }
                   : {}
               }
-              className="rounded-full"
+              className="rounded-full cursor-pointer"
               onClick={() => handleOrderFoods()}
             >
               Order
             </TabsTrigger>
           </TabsList>
           <div>
-            <TabsContent value="cart" className="flex flex-col gap-6 w-full">
+            <TabsContent value="cart" className="flex flex-col gap-6 w-full ">
               <Card>
                 <CardHeader>
                   <CardTitle className="text-[20px] font-semibold">
@@ -334,7 +336,7 @@ export const GetFoodOrderLocalStorage = ({ deliverAddress }: PropsType) => {
                 <CardFooter>
                   <Button
                     className="w-full rounded-full border-[1px] bg-[#EF4444] hover:bg-[#EF4444] hover:text-white text-white cursor-pointer"
-                    onClick={() => putFoodsRequest()}
+                    onClick={putFoodsRequest}
                     disabled={foodDataFromLocalStorage?.length === 0}
                   >
                     Checkout

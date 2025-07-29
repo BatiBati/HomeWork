@@ -41,13 +41,11 @@ export const Header = () => {
               deliverAddress={deliverAddress}
               setDeliverAddress={setDeliverAddress}
             />
-
-            <FoodOrders deliverAddress={deliverAddress} />s
-
-            <div className="flex  flex-col  ">
+            <FoodOrders deliverAddress={deliverAddress} />
+            <div className="flex  flex-col  z-10 ">
               <Button
                 variant="outline"
-                className="bg-[#EF4444] hover:bg-[#EF4444] w-9 h-9 rounded-full "
+                className="bg-[#EF4444] hover:bg-[#EF4444] w-9 h-9 rounded-full cursor-pointer "
                 onClick={() => setIsUser(!isUser)}
               >
                 <Aman />

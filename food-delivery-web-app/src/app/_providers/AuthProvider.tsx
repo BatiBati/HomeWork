@@ -1,7 +1,9 @@
 import { useRouter } from "next/navigation";
 import {
   createContext,
+  Dispatch,
   PropsWithChildren,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -24,6 +26,8 @@ type AuthContextType = {
   signUp: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
+  orderSuccess: boolean;
+  setOrderSuccess: Dispatch<SetStateAction<boolean>>;
 };
 
 const AuthContext = createContext({} as AuthContextType);
@@ -31,6 +35,7 @@ const AuthContext = createContext({} as AuthContextType);
 export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | undefined>();
   const [loading, setLoading] = useState(false);
+  const [orderSuccess, setOrderSuccess] = useState(false);
   const router = useRouter();
 
   const signIn = async (email: string, password: string) => {
@@ -104,7 +109,17 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, setUser, signIn, signOut, signUp }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        setUser,
+        signIn,
+        signOut,
+        signUp,
+        orderSuccess,
+        setOrderSuccess,
+      }}
+    >
       {!loading && children}
     </AuthContext.Provider>
   );
