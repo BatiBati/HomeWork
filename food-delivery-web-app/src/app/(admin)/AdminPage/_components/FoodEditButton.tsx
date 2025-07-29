@@ -60,7 +60,6 @@ type DefaultValuesType = {
 
 export const FoodEditButton = ({
   categoryId,
-
   foodId,
   foodName,
   foodPrice,
@@ -106,14 +105,13 @@ export const FoodEditButton = ({
         setLoading(false);
       }
     };
-
     handleCreate();
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="rounded-full">
+        <Button variant="outline" className="rounded-full cursor-pointer">
           <EditSvg />
         </Button>
       </DialogTrigger>
@@ -151,7 +149,6 @@ export const FoodEditButton = ({
                           categoryId={categoryId}
                           setSelectedCategoryId={setSelectedCategoryId}
                         />
-                        {field.name}
                       </FormControl>
                     </div>
                     <FormMessage />

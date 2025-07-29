@@ -42,21 +42,10 @@ export default function Order() {
 
           <div className="flex gap-5 items-center">
             <DatePickerWithRange />
-
-            {/* <ChangeCheckedState
-              orderLength={orderLength}
-              setCheckTarget={setCheckTarget}
-              checkTarget={checkTarget}
-            /> */}
           </div>
         </div>
         <div>
-          <DataTable
-          // checkAll={checkAll}
-          // setCheckAllAction={setCheckAllAction}
-          // checkTarget={checkTarget}
-          // setCheckTarget={setCheckTarget}
-          />
+          <DataTable />
         </div>
       </div>
       <div className="w-full flex justify-end">

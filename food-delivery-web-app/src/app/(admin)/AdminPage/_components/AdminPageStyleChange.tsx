@@ -10,8 +10,15 @@ export const AdminPageStyleChange = () => {
   return (
     <div className="flex flex-col gap-10 h-full w-fit py-9 px-5">
       <div className="flex gap-2">
-        <div className="w-[40px] h-[40px]">
+        <div className="w-[40px] h-[40px] relative">
           <AdminPageLogo />
+          <Link
+            href="/"
+            aria-label="Home"
+            className="absolute inset-0 z-10 block cursor-pointer"
+          >
+            <span className="sr-only">Home</span>
+          </Link>
         </div>
         <div>
           <div className="text-[18px] font-semibold">NomNom</div>

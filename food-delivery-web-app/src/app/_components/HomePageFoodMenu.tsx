@@ -23,6 +23,7 @@ export const HomePageFoodMenu = () => {
       console.error("Error fetching categories:", error);
     }
   };
+  console.log(categories);
 
   useEffect(() => {
     getCategoryData();
@@ -38,7 +39,6 @@ export const HomePageFoodMenu = () => {
               className="text-[30px] font-semibold text-white flex flex-col gap-14 "
             >
               <div className="pt-14"> {category.categoryName}</div>
-
               <FoodCard id={category._id} />
             </div>
           );

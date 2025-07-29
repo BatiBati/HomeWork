@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { UpDownArrow } from "./assets/UpDownArrow";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../../../../axios";
+import { LoadingSvg } from "@/app/_components/assets/LoadingSvg";
+import { toast } from "sonner";
 
 type PropsType = {
   order: OrderType;
@@ -26,18 +28,23 @@ const changeStatus = ["DELIVERED", "CANCELLED", "PENDING"];
 export const ChangeDeliveryState = ({ order }: PropsType) => {
   const [selectedStatus, setSelectedStatus] = useState(order.status);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const updateDeliveryState = async () => {
     try {
+      setLoading(true);
       const url = `/foodOrder/${order._id}`;
       const data = { status: selectedStatus };
-
       const response = await api.put(url, data);
       console.log("Delivery state updated:", response.data);
+
+      toast.success("State successfully changed");
     } catch (error) {
       console.error("Error updating delivery state:", error);
+    } finally {
+      setLoading(false);
+      setOpen(false);
     }
-    setOpen(false);
   };
 
   return (
@@ -47,7 +54,7 @@ export const ChangeDeliveryState = ({ order }: PropsType) => {
           <div className="w-[120px]">
             <Button
               variant="outline"
-              className={`w-full rounded-full border-[1px] ${
+              className={`w-full rounded-full border-[1px] cursor-pointer ${
                 order.status === "PENDING" ? "border-red-500" : ""
               } ${order.status === "DELIVERED" ? "border-green-500" : ""} ${
                 order.status === "CANCELED" ? "border-gray-700" : ""
@@ -68,7 +75,11 @@ export const ChangeDeliveryState = ({ order }: PropsType) => {
             {changeStatus.map((stat, i) => {
               return (
                 <Button
-                  className="w-fit rounded-full bg-[#F4F4F5] text-black"
+                  className={`w-fit rounded-full border-[1px] cursor-pointer ${
+                    order.status === "PENDING" ? "border-red-500" : ""
+                  } ${order.status === "DELIVERED" ? "border-green-500" : ""} ${
+                    order.status === "CANCELED" ? "border-gray-700" : ""
+                  } flex gap-[10px]`}
                   style={{
                     background: stat === selectedStatus ? "red" : "",
                   }}
@@ -86,10 +97,10 @@ export const ChangeDeliveryState = ({ order }: PropsType) => {
         <DialogFooter>
           <Button
             type="submit"
-            className="w-full rounded-full"
+            className="w-full rounded-full cursor-pointer"
             onClick={updateDeliveryState}
           >
-            Save
+            {loading === false ? "Save" : <LoadingSvg />}
           </Button>
         </DialogFooter>
       </DialogContent>

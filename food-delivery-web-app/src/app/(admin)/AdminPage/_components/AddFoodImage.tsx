@@ -82,7 +82,7 @@ export const AddFoodImage = ({
 
       {deployedImageUrl && (
         <div className="relative">
-          <Image
+          <img
             src={`${deployedImageUrl}`}
             alt="DeployedImageUrl"
             className="w-full h-[138px] rounded-xl"

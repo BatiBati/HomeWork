@@ -6,6 +6,7 @@ import { FoodOrders } from "./FoodOrders";
 import { useAuth } from "../_providers/AuthProvider";
 import { useState } from "react";
 import { EnterDeliveryAddress } from "./EnterDeliveryAddress";
+import { SettingsSvg } from "./assets/Settings";
 
 export const Header = () => {
   const { user, signOut } = useAuth();
@@ -51,6 +52,7 @@ export const Header = () => {
               >
                 <Aman />
               </Button>
+
               {isUser && (
                 <div className="absolute -bottom-29 -right-15 w-fit h-[110px] rounded-xl p-4 bg-white flex flex-col justify-center gap-4">
                   <div>{user.email}</div>
@@ -64,6 +66,13 @@ export const Header = () => {
                 </div>
               )}
             </div>
+            {user.role === "ADMIN" && (
+              <div className="w-full h- full flex justify-center items-center text-white">
+                <Link href={"/AdminPage/foodMenu"}>
+                  <SettingsSvg />
+                </Link>
+              </div>
+            )}
           </div>
         )}
       </div>

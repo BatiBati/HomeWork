@@ -17,10 +17,9 @@ import { RightArrow } from "@/app/_components/assets/RightArrow";
 import { useAuth } from "@/app/_providers/AuthProvider";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 import Link from "next/link";
-
 import { Checkbox } from "@/components/ui/checkbox";
+import { LoadingSvg } from "@/app/_components/assets/LoadingSvg";
 
 const formSchema = z
   .object({
@@ -40,9 +39,10 @@ const formSchema = z
 
 export default function Home() {
   const [step, setStep] = useState(1);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { signUp } = useAuth();
-  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -58,8 +58,6 @@ export default function Home() {
     }
     if (step === 2) {
       signUp(values.email, values.password);
-      toast.success("Created user. Log in and HF :)")
-      router.push("/AuthenticationPage/signIn");
     }
   }
 
@@ -116,10 +114,10 @@ export default function Home() {
                     </FormDescription>
                     <FormControl>
                       {showPassword === true ? (
-                        <Input placeholder="Confirm"
-                          {...field}
-                        />) : (
-                        <Input placeholder="Confirm"
+                        <Input placeholder="Confirm" {...field} />
+                      ) : (
+                        <Input
+                          placeholder="Confirm"
                           {...field}
                           type="password"
                         />
@@ -136,10 +134,10 @@ export default function Home() {
                   <FormItem>
                     <FormControl>
                       {showPassword === true ? (
-                        <Input placeholder="Confirm"
-                          {...field}
-                        />) : (
-                        <Input placeholder="Confirm"
+                        <Input placeholder="Confirm" {...field} />
+                      ) : (
+                        <Input
+                          placeholder="Confirm"
                           {...field}
                           type="password"
                         />
@@ -150,8 +148,10 @@ export default function Home() {
                 )}
               />
               <div className="flex items-center gap-2 w-full ">
-
-                <Checkbox id="terms" onClick={() => setShowPassword(!showPassword)} />
+                <Checkbox
+                  id="terms"
+                  onClick={() => setShowPassword(!showPassword)}
+                />
                 <label
                   htmlFor="terms"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -168,7 +168,7 @@ export default function Home() {
             className="w-full justify-center"
             onClick={handleNext}
           >
-            Lets Go
+            {loading === true ? <LoadingSvg /> : "Lets Go"}
           </Button>
           <div className="flex gap-3 justify-center">
             <p> Already have an account?</p>

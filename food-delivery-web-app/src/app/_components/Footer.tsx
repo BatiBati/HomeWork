@@ -57,9 +57,9 @@ export const Footer = () => {
             </motion.div>
           </div>
 
-          <div className=" flex justify-center">
-            <div className="w-fit flex justify-center absolute top-[228px]">
-              <div className="w-[1264px] h-fit relative flex justify-center gap-28">
+          <div className="flex justify-center">
+            <div className="w-fit flex justify-center absolute top-[100px]">
+              <div className="w-[1264px] h-full relative flex justify-center gap-28 ">
                 <div className="absolute left-0 top-0">
                   <LogoCol />
                 </div>
@@ -69,7 +69,7 @@ export const Footer = () => {
                   <span>Contact us</span>
                   <span>Delivery zone</span>
                 </div>
-                <div className="w-fit gap-4 flex flex-col ">
+                <div className="w-fit h-fit gap-4 flex flex-col ">
                   <span className="text-[#71717A]">Menu</span>
                   <div className="grid grid-cols-3 gap-4">
                     {categories.map((item, index) => {

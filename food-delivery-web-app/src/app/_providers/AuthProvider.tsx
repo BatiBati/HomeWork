@@ -60,10 +60,13 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
       });
       localStorage.setItem("token", data.token);
       setUser(data.user);
-      console.log(data);
-    } catch (error) {
-      console.error("Failed to sign in", error);
-      toast.error("Failed to sign up");
+      router.push("/AuthenticationPage/signIn");
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        toast.error("Oops. Email is already registered. Try again");
+      } else {
+        toast.error("Failed to sign up");
+      }
     }
   };
 

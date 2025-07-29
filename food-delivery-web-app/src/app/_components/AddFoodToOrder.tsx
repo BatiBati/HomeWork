@@ -4,7 +4,6 @@ import { PlusSvg } from "./assets/PlusSvg";
 import {
   Dialog,
   DialogContent,
-
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -12,7 +11,6 @@ import {
 } from "@/components/ui/dialog";
 import { useState } from "react";
 import { toast } from "sonner";
-
 
 type Food = {
   foodId: number;
@@ -37,7 +35,7 @@ export const AddFoodToOrder = ({
   const [quantity, setQuantity] = useState(0);
   const oneFoodTotalPrice = quantity * foodPrice;
   const [totalPrice, setTotalPrice] = useState(0);
-  console.log(setTotalPrice);
+
 
   const handleMinusFood = () => {
     if (quantity === 0) {
@@ -101,7 +99,11 @@ export const AddFoodToOrder = ({
       <DialogContent className="sm:max-w-[826px] h-[412px]">
         <div className="flex gap-5 h-full">
           <div className="w-[50%] h-full">
-            <img src={`${foodImage}`} alt="FoodImage" className="h-full w-full rounded-xl" />
+            <img
+              src={`${foodImage}`}
+              alt="FoodImage"
+              className="h-full w-full rounded-xl"
+            />
           </div>
           <div className="w-[50%] h-full flex flex-col justify-between">
             <DialogHeader>

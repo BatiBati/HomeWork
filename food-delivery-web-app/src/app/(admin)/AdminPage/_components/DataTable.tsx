@@ -50,93 +50,73 @@ type FoodsTypes = {
   quantity: number;
 };
 
-// type PropsType = {
-// checkAll: boolean;
-// setCheckAllAction: React.Dispatch<React.SetStateAction<boolean>>;
-// checkTarget: string[];
-// setCheckTarget: React.Dispatch<React.SetStateAction<boolean>>;
-// };
-
-export const DataTable = (
-  {
-    // checkAll,
-    // setCheckAllAction,
-    // checkTarget,
-  }
-) =>
-  // : PropsType
-  {
-    const [foodOrder, setFoodOrder] = useState<FoodOrderType[]>([]);
-    const getFoodOrder = async () => {
-      try {
-        const response = await api.get<Response>(`/foodOrder`);
-        setFoodOrder(response.data.foodOrder);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-    useEffect(() => {
-      getFoodOrder();
-    }, []);
-
-    return (
-      <div>
-        <Table>
-          <TableHeader className="w-full text-[#71717a] ">
-            <TableRow>
-              <TableHead className="p-4 w-[30px]">
-                <Checkbox
-                // checked={checkAll}
-                // onCheckedChange={(value) => setCheckAllAction(!!value)}
-                />
-              </TableHead>
-              <TableHead className="p-4">№</TableHead>
-              <TableHead className="p-4">Customer</TableHead>
-              <TableHead className="p-4">Food</TableHead>
-              <TableHead className="p-4">
-                <div className="flex justify-between items-center">
-                  <div>Date</div>
-                  <Button className="w-[10px] h-[10px] rounded-full ">
-                    <UpDownArrow />
-                  </Button>
-                </div>
-              </TableHead>
-              <TableHead className="p-4">Total</TableHead>
-              <TableHead className="p-4 w-[300px]">Delivery address</TableHead>
-              <TableHead className="p-4">Delivery state</TableHead>
-            </TableRow>
-          </TableHeader>
-
-          <TableBody className="w-full text-[#71717a] h-fit overflow-scroll">
-            {foodOrder.map((order, index) => (
-              <TableRow key={order._id} className="w-full">
-                <TableCell className="p-4 w-[30px]">
-                  <Checkbox
-                  // checked={checkTarget.includes(order._id)}
-                  />
-                </TableCell>
-                <TableCell className="p-4 w-[30px] align-middle">
-                  {index + 1}
-                </TableCell>
-                <TableCell className="p-4">{order.user.email}</TableCell>
-                <TableCell className="p-4">
-                  <div className="w-full flex justify-between">
-                    <div>{order.foodOrderItems.length} foods</div>
-                    <div>
-                      <SelectArrow foodOrderItems={order.foodOrderItems} />
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="p-4">{order.createdAt}</TableCell>
-                <TableCell className="p-4 ">{order.totalPrice}₮</TableCell>
-                <TableCell className="p-4 ">{order.deliveryAddress}</TableCell>
-                <TableCell>
-                  <ChangeDeliveryState order={order} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-    );
+export const DataTable = () => {
+  const [foodOrder, setFoodOrder] = useState<FoodOrderType[]>([]);
+  const getFoodOrder = async () => {
+    try {
+      const response = await api.get<Response>(`/foodOrder`);
+      setFoodOrder(response.data.foodOrder);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
   };
+  useEffect(() => {
+    getFoodOrder();
+  }, []);
+
+  return (
+    <div>
+      <Table>
+        <TableHeader className="w-full text-[#71717a] ">
+          <TableRow>
+            <TableHead className="p-4 w-[30px]">
+              <Checkbox />
+            </TableHead>
+            <TableHead className="p-4">№</TableHead>
+            <TableHead className="p-4">Customer</TableHead>
+            <TableHead className="p-4">Food</TableHead>
+            <TableHead className="p-4">
+              <div className="flex justify-between items-center">
+                <div>Date</div>
+                <Button className="w-[10px] h-[10px] rounded-full ">
+                  <UpDownArrow />
+                </Button>
+              </div>
+            </TableHead>
+            <TableHead className="p-4">Total</TableHead>
+            <TableHead className="p-4 w-[300px]">Delivery address</TableHead>
+            <TableHead className="p-4">Delivery state</TableHead>
+          </TableRow>
+        </TableHeader>
+
+        <TableBody className="w-full text-[#71717a] h-fit overflow-scroll">
+          {foodOrder.map((order, index) => (
+            <TableRow key={order._id} className="w-full">
+              <TableCell className="p-4 w-[30px]">
+                <Checkbox />
+              </TableCell>
+              <TableCell className="p-4 w-[30px] align-middle">
+                {index + 1}
+              </TableCell>
+              <TableCell className="p-4">{order.user.email}</TableCell>
+              <TableCell className="p-4">
+                <div className="w-full flex justify-between">
+                  <div>{order.foodOrderItems.length} foods</div>
+                  <div>
+                    <SelectArrow foodOrderItems={order.foodOrderItems} />
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="p-4">{order.createdAt}</TableCell>
+              <TableCell className="p-4 ">{order.totalPrice}₮</TableCell>
+              <TableCell className="p-4 ">{order.deliveryAddress}</TableCell>
+              <TableCell>
+                <ChangeDeliveryState order={order} />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
+};
