@@ -9,7 +9,7 @@ type Response = {
   category: CategoryType[];
 };
 
-type CategoryType = {
+export type CategoryType = {
   categoryName: string;
   _id: string;
 };
@@ -19,6 +19,7 @@ type FoodsLengthType = {
 };
 export const CategoryCompTop = ({ foodsLength }: FoodsLengthType) => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
+  const [inputValue, setInputValue] = useState("");
 
   const getCategoryData = async () => {
     try {
@@ -62,7 +63,12 @@ export const CategoryCompTop = ({ foodsLength }: FoodsLengthType) => {
           </div>
         );
       })}
-      <AddCategory getCategoryData={getCategoryData} />
+      <AddCategory
+        getCategoryData={getCategoryData}
+        inputValue={inputValue}
+        setInputValue={setInputValue}
+        categories={categories}
+      />
     </div>
   );
 };

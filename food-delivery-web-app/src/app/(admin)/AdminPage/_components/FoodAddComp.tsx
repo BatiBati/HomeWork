@@ -1,7 +1,7 @@
 "use client";
 import { PlusSvg } from "@/app/_components/assets/PlusSvg";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,6 +27,8 @@ import { AddFoodImage } from "./AddFoodImage";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../../../../../axios";
+import { FoodsProps } from "./Foods";
+import { FoodType } from "./DataTable";
 
 const formSchema = z.object({
   foodName: z
@@ -46,16 +48,19 @@ type CategoryNameType = {
   categoryName: string;
   categoryId: string;
   getFood: () => Promise<void>;
+  foods: FoodType[];
 };
 
 export const FoodAddComp = ({
   categoryName,
   categoryId,
   getFood,
+  foods,
 }: CategoryNameType) => {
   const [deployedImageUrl, setDeployedImageUrl] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [existed, setExisted] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,6 +75,11 @@ export const FoodAddComp = ({
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const handleCreate = async () => {
+      const alreadyExist = existFoodName(values.foodName);
+      if (alreadyExist) {
+        toast.error("This food name already exists.");
+        return;
+      }
       setLoading(true);
       try {
         await api.post(`/food`, {
@@ -99,6 +109,11 @@ export const FoodAddComp = ({
 
     handleCreate();
   }
+  const existFoodName = (name: string) => {
+    return foods.some(
+      (food) => food.foodName.toLowerCase().trim() === name.toLowerCase().trim()
+    );
+  };
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

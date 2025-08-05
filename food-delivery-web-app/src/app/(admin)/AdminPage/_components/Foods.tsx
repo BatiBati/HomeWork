@@ -1,16 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { FoodResponse, FoodType } from "../foodMenu/page";
 import { FoodAddComp } from "./FoodAddComp";
 import { FoodEditButton } from "./FoodEditButton";
 import { api } from "../../../../../axios";
 
-type FoodsProps = {
+export type FoodsProps = {
   categoryId: string;
   categoryName: string;
+  setFoodNameInput: Dispatch<SetStateAction<string>>;
+  foodNameInput: string;
 };
 
-export const Foods = ({ categoryId, categoryName }: FoodsProps) => {
+export const Foods = ({
+  categoryId,
+  categoryName,
+  foodNameInput,
+  setFoodNameInput,
+}: FoodsProps) => {
   const [foods, setFoods] = useState<FoodType[]>([]);
 
   const getFood = async () => {
@@ -38,6 +45,7 @@ export const Foods = ({ categoryId, categoryName }: FoodsProps) => {
         categoryName={categoryName}
         categoryId={categoryId}
         getFood={getFood}
+        foods={foods}
       />
       {foods.map((food) => {
         return (
@@ -61,6 +69,8 @@ export const Foods = ({ categoryId, categoryName }: FoodsProps) => {
                   foodIngredients={food.ingredients}
                   foodImage={food.image}
                   getFood={getFood}
+                  foodNameInput={foodNameInput}
+                  setFoodNameInput={setFoodNameInput}
                 />
               </div>
             </div>

@@ -15,6 +15,7 @@ export const CategoryNames = () => {
   const getCategoryData = async () => {
     try {
       const response = await api.get<Response>(`/category`);
+
       setCategory(response.data.category);
     } catch (error) {
       console.error("Error fetching categories", error);

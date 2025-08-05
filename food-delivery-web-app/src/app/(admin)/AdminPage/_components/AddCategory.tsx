@@ -13,20 +13,33 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { Loader } from "lucide-react";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { toast } from "sonner";
 import { api } from "../../../../../axios";
+import { CategoryType } from "./CategoryCompTop";
 
 type GetCategoryDataType = {
   getCategoryData: () => Promise<void>;
+  inputValue: string;
+  setInputValue: Dispatch<SetStateAction<string>>;
+  categories: CategoryType[];
 };
 
-export const AddCategory = ({ getCategoryData }: GetCategoryDataType) => {
-  const [inputValue, setInputValue] = useState("");
+export const AddCategory = ({
+  getCategoryData,
+  inputValue,
+  setInputValue,
+  categories,
+}: GetCategoryDataType) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
-
+  const [existingCategoryName, setExistingCategoryName] = useState(false);
   const handleCreate = async () => {
+    if (existingCategoryName === true) {
+      toast.error("Name exists, change category name");
+      return;
+    }
+
     setLoading(true);
     try {
       await api.post(`/category`, {
@@ -43,10 +56,22 @@ export const AddCategory = ({ getCategoryData }: GetCategoryDataType) => {
     }
   };
 
+  const checkInputCategoryname = () => {
+    categories.map((name) => {
+      if (name.categoryName === inputValue) {
+        setExistingCategoryName(true);
+      }
+    });
+  };
+
+  useEffect(() => {
+    checkInputCategoryname();
+  }, [inputValue]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="rounded-full bg-red-500">
+        <Button className="rounded-full bg-red-500 cursor-pointer">
           <PlusSvg stroke="white " />
         </Button>
       </DialogTrigger>

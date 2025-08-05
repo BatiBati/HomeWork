@@ -3,6 +3,7 @@ import {
   createContext,
   Dispatch,
   PropsWithChildren,
+  ProviderProps,
   SetStateAction,
   useContext,
   useEffect,
@@ -11,6 +12,7 @@ import {
 import { toast } from "sonner";
 import { api, setAuthToken } from "../../../axios";
 import { AxiosError } from "axios";
+import { FoodType } from "../(admin)/AdminPage/_components/DataTable";
 
 type User = {
   _id: string;
@@ -19,7 +21,9 @@ type User = {
   address: string;
   role: string;
 };
-
+export type FoodArrayType = {
+  food: FoodType;
+};
 type AuthContextType = {
   user?: User;
   signIn: (email: string, password: string) => Promise<void>;
@@ -28,6 +32,7 @@ type AuthContextType = {
   setUser: React.Dispatch<React.SetStateAction<User | undefined>>;
   orderSuccess: boolean;
   setOrderSuccess: Dispatch<SetStateAction<boolean>>;
+  food: FoodType[] | undefined;
 };
 
 const AuthContext = createContext({} as AuthContextType);
@@ -36,6 +41,8 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
   const [user, setUser] = useState<User | undefined>();
   const [loading, setLoading] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
+  const [food, setFoods] = useState<FoodType[] | undefined>();
+
   const router = useRouter();
 
   const signIn = async (email: string, password: string) => {
@@ -101,11 +108,21 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  const getFood = async () => {
+    try {
+      const res = await api.get("/food");
+      setFoods(res.data.foods);
+    } catch (error) {
+      console.error("Error fetching category", error);
+    }
+  };
+
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
     setAuthToken(token);
     getUser();
+    getFood();
   }, []);
 
   return (
@@ -118,6 +135,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         signUp,
         orderSuccess,
         setOrderSuccess,
+        food,
       }}
     >
       {!loading && children}

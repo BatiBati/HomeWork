@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Foods } from "./Foods";
 import { api } from "../../../../../axios";
+import { useAuth } from "@/app/_providers/AuthProvider";
 
 type Response = {
   category: CategoryType[];
@@ -14,7 +15,8 @@ type CategoryType = {
 
 export const CategoryCompBot = () => {
   const [categories, setCategories] = useState<CategoryType[]>([]);
-
+  const { food } = useAuth();
+  const [foodNameInput, setFoodNameInput] = useState("");
   const getCategoryData = async () => {
     try {
       const response = await api.get<Response>(`/category`);
@@ -40,6 +42,8 @@ export const CategoryCompBot = () => {
               <Foods
                 categoryId={category._id}
                 categoryName={category.categoryName}
+                setFoodNameInput={setFoodNameInput}
+                foodNameInput={foodNameInput}
               />
             </div>
           </div>

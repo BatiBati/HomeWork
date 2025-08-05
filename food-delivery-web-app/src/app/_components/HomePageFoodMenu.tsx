@@ -17,13 +17,12 @@ export const HomePageFoodMenu = () => {
 
   const getCategoryData = async () => {
     try {
-      const response = await api.get<ResponseOfCategoryType>(`/category`);
+      const response = await api.get<ResponseOfCategoryType>(`/category`);      
       setCategories(response.data.category);
     } catch (error) {
       console.error("Error fetching categories:", error);
     }
   };
-  console.log(categories);
 
   useEffect(() => {
     getCategoryData();
