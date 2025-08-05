@@ -32,7 +32,7 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const existingUser = yield user_model_1.userModel.findOne({ email });
         if (existingUser) {
-            res.status(400).json({ message: "User already exists" });
+            res.status(409).json({ message: "User already exists" });
             return;
         }
         const hashedPassword = yield bcryptjs_1.default.hash(password, 10);

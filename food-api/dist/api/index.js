@@ -17,7 +17,13 @@ const dotenv_1 = require("dotenv");
 const app = (0, express_1.default)();
 const port = 3001;
 app.use(express_1.default.json());
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: [
+        "http://localhost:3000",
+        "https://food-web-sigma-six.vercel.app",
+    ],
+    credentials: true,
+}));
 app.get("/", (req, res) => {
     res.send("Hello world!");
 });
