@@ -1,7 +1,5 @@
 import express from "express";
-
 import { connectToDataBase } from "../src/database/connect-todb";
-
 import { foodRouter } from "../src/routers/food.route";
 import { categoryRouter } from "../src/routers/category.route";
 import { foodOrder } from "../src/routers/foodOrder.route";
@@ -21,10 +19,7 @@ const port = 3001;
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "https://food-web-sigma-six.vercel.app",
-    ],
+    origin: ["http://localhost:3000", "https://food-web-sigma-six.vercel.app"],
     credentials: true,
   })
 );
