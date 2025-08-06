@@ -13,7 +13,7 @@ import { EditSvg } from "./assets/EditSvg";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import {
   Form,
@@ -54,8 +54,6 @@ type DefaultValuesType = {
   foodIngredients: string;
   foodImage: string;
   getFood: () => Promise<void>;
-  setFoodNameInput: Dispatch<SetStateAction<string>>;
-  foodNameInput: string;
 };
 
 export const FoodEditButton = ({
@@ -66,8 +64,6 @@ export const FoodEditButton = ({
   foodIngredients,
   foodImage,
   getFood,
-  foodNameInput,
-  setFoodNameInput,
 }: DefaultValuesType) => {
   const [deployedImageUrl, setDeployedImageUrl] = useState(foodImage);
   const [open, setOpen] = useState(false);

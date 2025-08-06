@@ -20,7 +20,6 @@ export type FoodType = {
   updatedAt: string;
   category: CategoryType;
 };
-
 type CategoryType = {
   categoryName: string;
   _id: string;

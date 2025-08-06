@@ -1,7 +1,7 @@
 "use client";
 import { PlusSvg } from "@/app/_components/assets/PlusSvg";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -27,7 +27,6 @@ import { AddFoodImage } from "./AddFoodImage";
 import { Loader } from "lucide-react";
 import { toast } from "sonner";
 import { api } from "../../../../../axios";
-import { FoodsProps } from "./Foods";
 import { FoodType } from "./DataTable";
 
 const formSchema = z.object({
@@ -60,7 +59,6 @@ export const FoodAddComp = ({
   const [deployedImageUrl, setDeployedImageUrl] = useState("");
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [existed, setExisted] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),

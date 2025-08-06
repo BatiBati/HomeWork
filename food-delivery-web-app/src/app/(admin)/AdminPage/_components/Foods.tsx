@@ -12,12 +12,7 @@ export type FoodsProps = {
   foodNameInput: string;
 };
 
-export const Foods = ({
-  categoryId,
-  categoryName,
-  foodNameInput,
-  setFoodNameInput,
-}: FoodsProps) => {
+export const Foods = ({ categoryId, categoryName }: FoodsProps) => {
   const [foods, setFoods] = useState<FoodType[]>([]);
 
   const getFood = async () => {
@@ -25,13 +20,11 @@ export const Foods = ({
       const foodResponse = await api.get<FoodResponse>(
         `/food?categoryId=${categoryId}`
       );
-
       setFoods(foodResponse.data.foods);
     } catch (error) {
       console.error("Error fetching foods", error);
     }
   };
-
   useEffect(() => {
     getFood();
   }, []);
@@ -69,8 +62,6 @@ export const Foods = ({
                   foodIngredients={food.ingredients}
                   foodImage={food.image}
                   getFood={getFood}
-                  foodNameInput={foodNameInput}
-                  setFoodNameInput={setFoodNameInput}
                 />
               </div>
             </div>
@@ -82,7 +73,6 @@ export const Foods = ({
                   $ {food.price}
                 </p>
               </div>
-
               <p className="text-black text-[12px] font-normal">
                 {food.ingredients}
               </p>
