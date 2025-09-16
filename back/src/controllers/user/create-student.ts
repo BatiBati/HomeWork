@@ -1,48 +1,78 @@
-import { Request, Response } from "express";
+import { RequestHandler } from "express";
+import { studentModel } from "../../models/student.model";
 import { teacherModel } from "../../models/teacher.model";
-import { userModel } from "../../models/user.model"; // your Student model
+import jwt from "jsonwebtoken";
 
-export const createStudentForTeacher = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
-  const { teacherId, parentName, studentName } = req.body;
+export const loginOrRegisterStudentController: RequestHandler = async (
+  req,
+  res
+) => {
+  const { parentname, childname, teacherId } = req.body;
 
-  if (!teacherId || !parentName || !studentName) {
+  if (!parentname || !childname || !teacherId) {
     res
       .status(400)
-      .json({ error: "teacherId, parentName and studentName are required" });
+      .json({
+        message: "Parent name, child name, and teacher ID are required",
+      });
     return;
   }
 
   try {
-    // 1️⃣ Create the student
-    const student = await userModel.create({
-      parentName,
-      studentName,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    });
-
-    // 2️⃣ Add the student's ID to teacher's students array
-    const teacher = await teacherModel.findByIdAndUpdate(
-      teacherId,
-      { $push: { students: student._id }, updatedAt: new Date() },
-      { new: true } // return updated document
-    );
-
+    // 1. Check if teacher exists
+    const teacher = await teacherModel.findById(teacherId);
     if (!teacher) {
-      res.status(404).json({ error: "Teacher not found" });
+      res.status(404).json({ message: "Teacher not found" });
       return;
     }
 
-    res.status(201).json({
-      message: "Student created and added to teacher",
-      student,
-      teacher,
+    // 2. Check if student already exists
+    let student = await studentModel.findOne({ parentname, childname });
+
+    // 3. Create new student if not exists
+    if (!student) {
+      student = await studentModel.create({
+        parentname,
+        childname,
+        teacherId,
+        homeworks: [],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      });
+
+      // Add student to teacher
+      await teacherModel.findByIdAndUpdate(teacherId, {
+        $addToSet: { students: student._id },
+        updatedAt: new Date(),
+      });
+    }
+
+    // 4. Create JWT token with student info
+    const token = jwt.sign(
+      {
+        _id: student._id.toString(),
+        parentname: student.parentname,
+        childname: student.childname,
+      },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
+    );
+
+    // 5. Return token + student
+    res.status(200).json({
+      message:
+        student.createdAt === student.updatedAt
+          ? "Registered & logged in"
+          : "Logged in",
+      token,
+      student: {
+        _id: student._id,
+        parentname: student.parentname,
+        childname: student.childname,
+      },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Server error", details: error });
+    console.error("Login/Register error:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
