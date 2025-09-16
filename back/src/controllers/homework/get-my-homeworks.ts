@@ -1,5 +1,4 @@
 import { RequestHandler } from "express";
-import { homeworkModel } from "../../models/homework.models";
 import { studentModel } from "../../models/student.model";
 
 export const getMyHomeworksController: RequestHandler = async (req, res) => {
@@ -36,7 +35,7 @@ export const getMyHomeworksController: RequestHandler = async (req, res) => {
       message: "My homeworks fetched successfully", 
       student: {
         _id: req.student._id,
-        username: req.student.username,
+        parentname: req.student.parentname,
         childname: req.student.childname
       },
       homeworks,
