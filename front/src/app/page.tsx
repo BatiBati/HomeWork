@@ -1,83 +1,44 @@
 "use client";
-import { useState } from "react";
-import { api } from "../../axios";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const rounter = useRouter();
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await api.post("/teacher/login", { email, password });
-
-      // Save token to localStorage
-      localStorage.setItem("token", res.data.token);
-
-      alert("Logged in successfully!");
-      rounter.push("/teacher");
-    } catch (err: any) {
-      console.error(err);
-      alert(err.response?.data?.message || "Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  const router = useRouter();
   return (
-    <div className="flex h-screen bg-[#d2e3f6]">
-      <div className="flex flex-1 items-center justify-center">
-        <div className="w-[380px] bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[#c3ddfb] flex text-nowrap gap-1">
-              Welcome to
-              <span className="text-sky-600">Homework Hub</span>
-              📖
-            </p>
-            <p className="text-sm text-gray-500 mt-1">
-              Let’s get you signed in
-            </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-white px-6">
+      <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-4 text-center">
+        🏫 <span className="text-blue-500 mr-4">Homework Hub</span>
+        тавтай морил! ✨
+      </h1>
+
+      <p className="text-gray-500 mb-10">
+        Ямар хэрэглэгчээр нэвтрэхээ сонгоно уу.
+      </p>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl w-full mt-15">
+        <div
+          className="p-6 rounded-2xl hover:shadow-lg transition cursor-pointer bg-gradient-to-br from-yellow-50 to-orange-100"
+          onClick={() => router.push("/teacher-login")}
+        >
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            🍎 Багшаар нэвтрэх
+          </h2>
+          <div className="w-full h-60 bg-white rounded-xl flex items-center justify-center text-6xl ">
+            <img
+              src="https://res.cloudinary.com/dqd01lbfy/image/upload/v1758032813/teacher_lzeiwn.jpg"
+              className="w-full h-full rounded-xl "
+            ></img>
           </div>
+        </div>
 
-          <form className="flex flex-col gap-2" onSubmit={handleLogin}>
-            <div>
-              <label className="text-sm font-medium text-gray-700">Email</label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-sky-400 focus:outline-none"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-2.5 border border-gray-300 rounded-lg text-sm text-gray-700 focus:ring-2 focus:ring-sky-400 focus:outline-none"
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full py-2.5 bg-[#8ec5ff] text-white rounded-lg font-medium text-sm transition hover:bg-sky-600 active:scale-95"
-              disabled={loading}
-            >
-              {loading ? "Logging in..." : "Continue"}
-            </button>
-          </form>
+        <div className="p-6 rounded-2xl hover:shadow-lg transition cursor-pointer bg-gradient-to-br from-blue-50 to-green-100">
+          <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
+            🎒 Сурагчаар нэвтрэх
+          </h2>
+          <div className="w-full h-60 bg-white rounded-xl flex items-center justify-center text-6xl">
+            <img
+              src="https://res.cloudinary.com/dqd01lbfy/image/upload/v1758032870/student_aexihm.jpg"
+              className="w-full h-full rounded-xl "
+            ></img>
+          </div>
         </div>
       </div>
     </div>
