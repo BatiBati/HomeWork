@@ -1,4 +1,4 @@
 import { Router } from "express";
-import { createTeacher } from "../controllers/teacher";
+import { createTeacher} from "../controllers/teacher/create-teacher";
 
-export const teacherRouter = Router().post('/', createTeacher)
+export const teacherRouter = Router().post('/', createTeacher);
