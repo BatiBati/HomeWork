@@ -33,7 +33,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
         parentname,
         childname,
         teacherId,
-        homeworks: [],
+        homeworks: [], // This will hold the assigned tasks
         createdAt: new Date(),
         updatedAt: new Date(),
       });
@@ -45,7 +45,10 @@ export const loginOrRegisterStudentController: RequestHandler = async (
       });
     }
 
-    // 4. Create JWT token with student info
+    // 4. Optionally populate homeworks if you store them as references
+    await student.populate("homeworks"); // only needed if homeworks is an array of ObjectId referencing tasks
+
+    // 5. Create JWT token with student info
     const token = jwt.sign(
       {
         _id: student._id.toString(),
@@ -56,7 +59,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
     );
 
-    // 5. Return token + student
+    // 6. Return token + student + homeworks
     res.status(200).json({
       message:
         student.createdAt === student.updatedAt
@@ -67,6 +70,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
         _id: student._id,
         parentname: student.parentname,
         childname: student.childname,
+        homeworks: student.homeworks, // <-- include tasks here
       },
     });
   } catch (error) {

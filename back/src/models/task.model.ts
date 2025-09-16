@@ -9,23 +9,12 @@ const taskSchema = new Schema({
     type: String,
     required: false,
   },
-  homeWork: {
-    type: Schema.Types.ObjectId,
-    ref: "HomeWork",
-    required: true,
-  },
   taskEndSchedule: {
     type: Date,
     required: true,
   },
-  updatedAt: {
-    type: Date,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-  },
+  createdAt: { type: Date, default: Date.now },
+  updatedAt: { type: Date, default: Date.now },
 });
 
 export const taskModel = model("Task", taskSchema);
