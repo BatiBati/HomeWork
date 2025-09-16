@@ -14,7 +14,7 @@ export const refreshTokenController: RequestHandler = async (req, res) => {
       return;
     }
 
-    const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+    const JWT_SECRET = process.env.JWT_SECRET;
     
     const decoded = jwt.verify(token, JWT_SECRET) as { studentId: string; username: string };
     
@@ -31,7 +31,7 @@ export const refreshTokenController: RequestHandler = async (req, res) => {
     const newToken = jwt.sign(
       { 
         studentId: student._id, 
-        username: student.username 
+        parentname: student.parentname
       },
       JWT_SECRET,
       { expiresIn: "7d" }

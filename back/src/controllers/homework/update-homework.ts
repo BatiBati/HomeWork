@@ -15,7 +15,6 @@ export const updateHomeworkController: RequestHandler = async (req, res) => {
       return;
     }
 
-    // Update the homework
     const updatedHomework = await homeworkModel.findByIdAndUpdate(
       id,
       {

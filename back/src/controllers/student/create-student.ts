@@ -12,6 +12,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (req, res)
   }
 
   try {
+    
     // 1. Check if teacher exists
     const teacher = await teacherModel.findById(teacherId);
     if (!teacher) {

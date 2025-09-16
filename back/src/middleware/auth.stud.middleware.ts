@@ -71,7 +71,7 @@ export const optionalAuth = async (req: Request, res: Response, next: NextFuncti
       if (student) {
         req.student = {
           _id: student._id.toString(),
-          username: student.username,
+          parentname: student.parentname,
           childname: student.childname
         };
       }
