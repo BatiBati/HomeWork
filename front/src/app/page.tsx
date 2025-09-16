@@ -20,9 +20,9 @@ export default function Home() {
 
       alert("Logged in successfully!");
       rounter.push("/teacher");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Login failed");
+      alert("Login failed");
     } finally {
       setLoading(false);
     }

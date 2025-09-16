@@ -7,7 +7,7 @@ export type HomeworkType = {
   description: string;
   createdAt: Date;
   updatedAt: Date;
-  status: Boolean;
+  status: boolean;
 };
 export type TaskType = {
   lessonName: string;
@@ -75,7 +75,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setTeacher(res.data.teacher);
     } catch (err) {
       console.error("GetMe error:", err);
-      logout();
+      setTeacher(null);
+      setToken(null);
     }
   };
 
