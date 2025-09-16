@@ -1,13 +1,17 @@
 import { Router } from "express";
-import { 
-  createHomeworkController, 
-  getHomeworksController, 
+import {
+  createHomeworkController,
+  getHomeworksController,
   getMyHomeworksController,
-  updateHomeworkController, 
+  updateHomeworkController,
   getHomeworkByStudentIdController,
-  deleteHomeworkController 
+  deleteHomeworkController,
 } from "../controllers/homework";
-import { authenticateToken, optionalAuth } from "../middleware/auth.stud.middleware";
+import {
+  authenticateToken,
+  optionalAuth,
+} from "../middleware/auth.stud.middleware";
+import { updateHomeworkById } from "../controllers/homework/update-home-work";
 
 const router = Router();
 
@@ -18,6 +22,6 @@ router.get("/", optionalAuth, getHomeworksController);
 router.put("/:id", authenticateToken, updateHomeworkController);
 router.delete("/:id", authenticateToken, deleteHomeworkController);
 router.get("/:studentId", authenticateToken, getHomeworkByStudentIdController);
+router.put("/update/:id", updateHomeworkById);
 
 export { router as homeworkRouter };
-

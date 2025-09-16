@@ -11,8 +11,17 @@ export const getMe: RequestHandler = async (req, res): Promise<void> => {
 
     const teacher = await teacherModel
       .findById(teacherId)
-      .populate("tasks")
-      .populate("students");
+      .populate({
+        path: "tasks",
+        populate: {
+          path: "homeworks",
+          populate: {
+            path: "studentId", // populate student info inside homework
+            select: "childname parentname", // only select the fields you need
+          },
+        },
+      })
+      .populate("students"); // populate teacher's students
 
     if (!teacher) {
       res.status(404).json({ message: "Teacher not found" });

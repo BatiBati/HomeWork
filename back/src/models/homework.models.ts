@@ -7,6 +7,7 @@ const homeworkSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   status: { type: Boolean, default: false },
+  image: [{ type: String, require: true }],
 });
 
 export const homeworkModel = model("Homework", homeworkSchema);
