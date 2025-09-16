@@ -10,9 +10,11 @@ export const loginOrRegisterStudentController: RequestHandler = async (
   const { parentname, childname, teacherId } = req.body;
 
   if (!parentname || !childname || !teacherId) {
-    res.status(400).json({
-      message: "Parent name, child name, and teacher ID are required",
-    });
+    res
+      .status(400)
+      .json({
+        message: "Parent name, child name, and teacher ID are required",
+      });
     return;
   }
 

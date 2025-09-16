@@ -1,63 +1,53 @@
-import { RequestHandler } from "express";
+import { Request, Response } from "express";
 import { teacherModel } from "../../models/teacher.model";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const loginTeacherController: RequestHandler = async (req, res) => {
-  const { teacherName, password } = req.body;
+export const loginTeacher = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    res.status(400).json({ message: "Email and password are required" });
+    return;
+  }
 
   try {
-    // Find teacher by teacherName
-    const teacher = await teacherModel.findOne({ teacherName });
+    const teacher = await teacherModel.findOne({
+      email: email.trim().toLowerCase(),
+    });
     if (!teacher) {
-      res.status(401).json({ 
-        message: "Invalid teacher name or password" 
-      });
+      res.status(404).json({ message: "Teacher not found" });
       return;
     }
 
-    // Compare password manually since comparePassword is not available on the type
-    const bcrypt = require("bcryptjs");
-    const isPasswordValid = await bcrypt.compare(password, teacher.password);
-    if (!isPasswordValid) {
-      res.status(401).json({ 
-        message: "Invalid teacher name or password" 
-      });
+    const isMatch = await bcrypt.compare(password, teacher.password);
+    if (!isMatch) {
+      res.status(401).json({ message: "Invalid password or email" });
       return;
     }
 
-    // Generate JWT token
-    const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
     const token = jwt.sign(
-      { 
-        teacherId: teacher._id, 
-        teacherName: teacher.teacherName 
-      },
-      JWT_SECRET,
-      { expiresIn: "7d" } // Token expires in 7 days
+      { _id: teacher._id.toString(), email: teacher.email },
+      process.env.JWT_SECRET || "your-secret-key",
+      { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
     );
 
-    // Remove password from response for security
-    const teacherResponse = {
-      _id: teacher._id,
-      teacherName: teacher.teacherName,
-      school: teacher.school,
-      grade: teacher.grade,
-      students: teacher.students,
-      homeworks: teacher.homeworks,
-      createdAt: teacher.createdAt,
-      updatedAt: teacher.updatedAt,
-    };
-
-    res.status(200).json({ 
-      message: "Login successful", 
-      teacher: teacherResponse,
-      token: token
+    res.status(200).json({
+      message: "Logged in successfully",
+      token,
+      teacher: {
+        _id: teacher._id,
+        teacherName: teacher.teacherName,
+        email: teacher.email,
+        school: teacher.school,
+        grade: teacher.grade,
+      },
     });
-  } catch (error) {
-    console.error("Error during login:", error);
-    res.status(500).json({ 
-      error: "Server error", 
-      message: "Failed to login" 
-    });
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

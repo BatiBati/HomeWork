@@ -8,7 +8,10 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
+import { api } from "../../../axios";
+import { useAuth } from "@/provider/AuthProvider";
 
 export default function TeacherDashboard() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -17,6 +20,40 @@ export default function TeacherDashboard() {
     status: string;
     assignment: string;
   } | null>(null);
+  const { teacher } = useAuth();
+  // Dialog form state
+  const [parentname, setParentname] = useState("");
+  const [childname, setChildname] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const teacherId = "64ff2a1234abcd5678ef9012"; // Replace with actual teacher ID
+
+  const handleAddStudent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const res = await api.post("/student/login", {
+        parentname,
+        childname,
+        teacherId,
+      });
+
+      // Save JWT token in localStorage
+      localStorage.setItem("token", res.data.token);
+
+      alert(res.data.message);
+
+      // Reset form
+      setParentname("");
+      setChildname("");
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.message || "Error adding student");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const assignments = [
     {
@@ -26,16 +63,6 @@ export default function TeacherDashboard() {
       completion: 72,
       completed: "18/25",
       students: [
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
-
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
         { name: "Alice", status: "✅ Submitted" },
         { name: "Bob", status: "❌ Not Submitted" },
         { name: "Charlie", status: "✅ Submitted" },
@@ -51,16 +78,6 @@ export default function TeacherDashboard() {
         { name: "Alice", status: "✅ Submitted" },
         { name: "Bob", status: "❌ Not Submitted" },
         { name: "Charlie", status: "✅ Submitted" },
-
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
       ],
     },
     {
@@ -73,26 +90,16 @@ export default function TeacherDashboard() {
         { name: "Alice", status: "✅ Submitted" },
         { name: "Bob", status: "❌ Not Submitted" },
         { name: "Charlie", status: "✅ Submitted" },
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
-        { name: "Alice", status: "✅ Submitted" },
-        { name: "Bob", status: "❌ Not Submitted" },
-        { name: "Charlie", status: "✅ Submitted" },
       ],
     },
   ];
-
+  // if (!teacher) return;
   return (
-    <div className="min-h-screen  p-6">
+    <div className="min-h-screen p-6">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
-          🍎 Teaching Hub{" "}
-          <span className="text-gray-500 text-lg">Teacher Dashboard</span>
+          🍎 Teaching Hub
         </h1>
         <div className="flex items-center gap-4">
           <p className="text-gray-600">Welcome, Ms. Johnson! 🌞</p>
@@ -104,35 +111,88 @@ export default function TeacherDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
         <Card className="bg-blue-100">
           <CardContent className="p-4 text-center">
-            <p className="text-gray-700 font-semibold">👥 Total Students</p>
+            <p className="text-gray-700 font-semibold">👥 Нийт сурагчид</p>
             <p className="text-3xl font-bold">25</p>
-            <p className="text-gray-500">Amazing learners! ✨</p>
           </CardContent>
         </Card>
         <Card className="bg-green-100">
           <CardContent className="p-4 text-center">
-            <p className="text-gray-700 font-semibold">📚 Active Assignments</p>
+            <p className="text-gray-700 font-semibold">
+              📚 Идэвхитэй даалгаврууд
+            </p>
             <p className="text-3xl font-bold">3</p>
-            <p className="text-gray-500">Learning adventures! 🚀</p>
           </CardContent>
         </Card>
         <Card className="bg-pink-100">
           <CardContent className="p-4 text-center">
-            <p className="text-gray-700 font-semibold">📊 Completion Rate</p>
+            <p className="text-gray-700 font-semibold">📊 Даалгаварийн явц</p>
             <p className="text-3xl font-bold">76%</p>
-            <p className="text-gray-500">Great progress! 👏</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Assignments */}
+      {/* Assignments and Add Student */}
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-bold">📝 Class Assignments ✨</h2>
-        <Button className="bg-green-500 hover:bg-green-600">
-          + New Assignment
-        </Button>
+        <h2 className="text-xl font-bold">📝 гэрийн даалгаврууд ✨</h2>
+        <div className="flex gap-4">
+          {/* Add Student Dialog */}
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button className="bg-green-500 hover:bg-green-600">
+                + Сурагч нэмэх
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
+              </DialogHeader>
+              <form className="space-y-4" onSubmit={handleAddStudent}>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Сурагчийн овог
+                  </label>
+                  <input
+                    type="text"
+                    value={parentname}
+                    onChange={(e) => setParentname(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                    placeholder="Enter parent name"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Сурагчийн нэр
+                  </label>
+                  <input
+                    type="text"
+                    value={childname}
+                    onChange={(e) => setChildname(e.target.value)}
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+                    placeholder="Enter student name"
+                    required
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <Button
+                    type="submit"
+                    className="bg-green-500 hover:bg-green-600"
+                    disabled={loading}
+                  >
+                    {loading ? "Adding..." : "Add Student"}
+                  </Button>
+                </div>
+              </form>
+            </DialogContent>
+          </Dialog>
+
+          <Button className="bg-green-500 hover:bg-green-600">
+            + Даалгавар оруулах
+          </Button>
+        </div>
       </div>
 
+      {/* Assignment Cards */}
       <div className="space-y-4">
         {assignments.map((a, idx) => (
           <Card key={idx}>
@@ -169,7 +229,7 @@ export default function TeacherDashboard() {
                 </div>
               </div>
 
-              {/* Student List (Collapsible) */}
+              {/* Student List */}
               {openIndex === idx && (
                 <div className="mt-4 border-t pt-3 space-y-2 max-h-[300px] overflow-y-auto">
                   {a.students.map((s, i) => (
@@ -208,7 +268,6 @@ export default function TeacherDashboard() {
             <span className="font-semibold">{selectedStudent?.status}</span>
           </p>
           <div className="mt-4">
-            {/* Энд зураг эсвэл даалгаврын файл харуулах боломжтой */}
             <div className="h-48 bg-gray-200 rounded-lg flex items-center justify-center">
               🖼️ Assignment Preview Here
             </div>
