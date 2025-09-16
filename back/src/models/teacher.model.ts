@@ -1,6 +1,11 @@
 import { model, Schema } from "mongoose";
 
 const teacherSchema = new Schema({
+  email: {
+    type: String,
+    unique: true,
+    required: true,
+  },
   teacherName: {
     type: String,
     required: true,
@@ -17,16 +22,18 @@ const teacherSchema = new Schema({
     type: String,
     required: true,
   },
-  student: {
-    type: Schema.Types.ObjectId,
-    ref: "Student",
-    required: true,
-  },
-  task: {
-    type: Schema.Types.ObjectId,
-    ref: "Task",
-    required: true,
-  },
+  students: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Student",
+    },
+  ],
+  task: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Task",
+    },
+  ],
   updatedAt: {
     type: Date,
     required: true,

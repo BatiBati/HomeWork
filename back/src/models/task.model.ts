@@ -1,6 +1,11 @@
 import { model, Schema } from "mongoose";
 
 const taskSchema = new Schema({
+  TeacherId: {
+    type: Schema.Types.ObjectId,
+    ref: "Teacher",
+    required: true,
+  },
   lessonName: {
     type: String,
     required: true,
