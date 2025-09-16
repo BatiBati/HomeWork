@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { api } from "../../../axios";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function Home() {
   const [email, setEmail] = useState("");
@@ -17,11 +18,11 @@ export default function Home() {
 
       localStorage.setItem("token", res.data.token);
 
-      alert("Logged in successfully!");
+      toast.success("Logged in successfully!");
       rounter.push("/teacher");
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
-      alert(err.response?.data?.message || "Login failed");
+      toast.error("Login failed");
     } finally {
       setLoading(false);
     }
