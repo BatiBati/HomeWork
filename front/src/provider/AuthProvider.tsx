@@ -2,17 +2,20 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import { api } from "../../axios";
 
 export type HomeworkType = {
+  _id: string;
   taskId: string;
   studentId: string;
   description: string;
   createdAt: Date;
   updatedAt: Date;
   status: boolean;
+  image: string[];
 };
 export type TaskType = {
+  _id: string;
   lessonName: string;
   image: string;
-  homeWork: string;
+  homeworks: HomeworkType[];
   taskEndSchedule: Date;
   updatedAt: Date;
   createdAt: Date;
@@ -30,10 +33,11 @@ export type TeacherType = {
   updatedAt: Date;
 };
 export type StudentType = {
+  _id: string;
   parentname: string;
   teacherId: string;
   childname: string;
-  homeworks: HomeworkType;
+  homeworks: HomeworkType[];
   createdAt: Date;
   updatedAt: Date;
 };

@@ -2,6 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { api } from "../../../../axios";
+import { toast } from "sonner";
 
 interface AddStudentFormProps {
   parentname: string;
@@ -34,13 +35,13 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
       });
 
       localStorage.setItem("student-token", res.data.token);
-      alert(res.data.message);
+      toast.success(res.data.message);
 
       setParentname("");
       setChildname("");
     } catch (err) {
       console.error(err);
-      alert("Error adding student");
+      toast.error("Error adding student");
     } finally {
       setLoading(false);
     }
@@ -77,7 +78,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
       <div className="flex justify-end">
         <Button
           type="submit"
-          className="bg-green-500 hover:bg-green-600"
+          className="bg-white hover:bg-gray-300 border-3"
           disabled={loading}
         >
           {loading ? "Adding..." : "Add Student"}
