@@ -27,6 +27,7 @@ export default function TeacherDashboard() {
   const [loading, setLoading] = useState(false);
 
   const teacherId = "64ff2a1234abcd5678ef9012"; // Replace with actual teacher ID
+  console.log(teacher);
 
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,7 +97,6 @@ export default function TeacherDashboard() {
   // if (!teacher) return;
   return (
     <div className="min-h-screen p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2">
           🍎 Teaching Hub

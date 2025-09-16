@@ -7,7 +7,7 @@ export interface ITeacher extends Document {
   school: string;
   grade: string;
   students: string[];
-  homeworks: string[];
+  tasks: string[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,7 +19,7 @@ const teacherSchema = new Schema<ITeacher>({
   school: { type: String, required: true },
   grade: { type: String, required: true },
   students: [{ type: Schema.Types.ObjectId, ref: "Student" }],
-  homeworks: [{ type: Schema.Types.ObjectId, ref: "Homework" }],
+  tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
