@@ -13,14 +13,12 @@ const app = express();
 const port = 3001;
 
 app.use(express.json());
-app.use(
-  cors()
-);
+app.use(cors());
 
 app.get("/", (req, res) => {
   res.send("Back end");
 });
-app.use("/user", userRouter)
+app.use("/user", userRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port${port}`);
