@@ -139,8 +139,15 @@ export default function StudentPage() {
                   <div className="w-full">
                     <h3 className="font-bold text-lg">{task.lessonName}</h3>
                     <div className="flex flex-wrap gap-2">
-                      {task.image.map((image, index) => {
-                        return <img key={index} src={image} />;
+                      {task.image?.map((image, index) => {
+                        return (
+                          <img
+                            key={index}
+                            src={image}
+                            alt={`${task.lessonName} зураг ${index + 1}`}
+                            className="w-20 h-20 object-cover rounded"
+                          />
+                        );
                       })}
                     </div>
                   </div>
