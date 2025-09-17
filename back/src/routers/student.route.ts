@@ -4,8 +4,8 @@ import {
   logoutStudentController,
   loginOrRegisterStudentController,
   getStudentController,
+  getStudentByChildname,
 } from "../controllers/student";
-import { authenticateToken } from "../middleware/auth.stud.middleware";
 
 const router = Router();
 
@@ -14,5 +14,6 @@ router.get("/", getStudentController);
 router.post("/login", loginOrRegisterStudentController);
 router.post("/refresh-token", refreshTokenController);
 router.post("/logout", logoutStudentController);
+router.get("/:childname", getStudentByChildname);
 
 export { router as studentRouter };
