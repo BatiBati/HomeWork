@@ -10,7 +10,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { User, Calendar, Clock, ArrowLeft } from "lucide-react";
+import { User, Calendar, ArrowLeft } from "lucide-react";
 
 interface Student {
   id: string;
