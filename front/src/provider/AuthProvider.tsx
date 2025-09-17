@@ -12,6 +12,7 @@ export type HomeworkType = {
   updatedAt: Date;
   status: boolean;
   image: string[];
+  lessonName: string;
 };
 export type TaskType = {
   _id: string;

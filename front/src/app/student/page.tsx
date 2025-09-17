@@ -43,8 +43,9 @@ export default function StudentTaskView() {
     setSearchTerm(student.childname);
     setShowDropdown(false);
 
-    router.push(`/student/${student.childname}`);
+    router.push(`/student/${student._id}`);
   };
+  console.log(students);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-2 sm:p-4">
