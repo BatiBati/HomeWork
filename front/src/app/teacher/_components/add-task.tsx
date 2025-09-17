@@ -76,6 +76,7 @@ export function AddTaskForm({
           }),
         }
       );
+      console.log(res);
 
       toast.success("Task created successfully!");
 

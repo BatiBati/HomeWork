@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,6 +22,7 @@ export default function StudentTaskView() {
   const params = useParams();
   const router = useRouter();
   const taskId = params.id as string;
+  console.log(taskId);
 
   const [students, setStudents] = useState<Student[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
@@ -30,6 +30,8 @@ export default function StudentTaskView() {
   const [selectedStudentId, setSelectedStudentId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
+  console.log(loading);
+  console.log(selectedStudentId);
 
   useEffect(() => {
     const mockStudents: Student[] = [
