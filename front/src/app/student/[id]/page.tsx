@@ -7,13 +7,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { User, ArrowLeft } from "lucide-react";
 import { api } from "../../../../axios";
 import { StudentType } from "@/provider/AuthProvider";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 
 export default function StudentPage() {
   const router = useRouter();
   const params = useParams();
   const studentId = params.id;
   const [student, setStudent] = useState<StudentType>();
-
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<
     "all" | "submitted" | "not-submitted"
@@ -169,16 +170,15 @@ export default function StudentPage() {
                     <h3 className="font-bold text-lg">{homework.lessonName}</h3>
                     <p className="text-gray-600 mb-2">{homework.description}</p>
                     <div className="flex flex-wrap gap-2">
-                      {homework.image?.map((image, index) => {
-                        return (
-                          <img
-                            key={index}
-                            src={image}
-                            alt={`${homework.lessonName} зураг ${index + 1}`}
-                            className="w-20 h-20 object-cover rounded"
-                          />
-                        );
-                      })}
+                      {homework.image?.map((image, index) => (
+                        <img
+                          key={index}
+                          src={image}
+                          alt={`${homework.lessonName} зураг ${index + 1}`}
+                          className="w-20 h-20 object-cover rounded cursor-pointer"
+                          onClick={() => setSelectedImage(image)}
+                        />
+                      ))}
                     </div>
                     <div className="mt-2">
                       <span
@@ -198,6 +198,21 @@ export default function StudentPage() {
           );
         })}
       </div>
+      <Dialog
+        open={!!selectedImage}
+        onOpenChange={() => setSelectedImage(null)}
+      >
+        <DialogContent className="max-w-[1280px] w-full mx-auto p-0 bg-transparent flex justify-center border-0 shadow-none items-center h-fit">
+          {selectedImage && (
+            <img
+              src={selectedImage}
+              alt="Enlarged"
+              className="max-w-[95%] max-h-[90vh] object-contain rounded shadow-lg cursor-pointer"
+              onClick={() => setSelectedImage(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
