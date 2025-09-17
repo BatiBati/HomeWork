@@ -1,14 +1,12 @@
 "use client";
 import { useState } from "react";
 import { api } from "../../../axios";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const rounter = useRouter();
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -16,10 +14,11 @@ export default function Home() {
     try {
       const res = await api.post("/teacher/login", { email, password });
 
+      // Save token to localStorage
       localStorage.setItem("token", res.data.token);
 
       toast.success("Logged in successfully!");
-      rounter.push("/teacher");
+      // Optionally redirect or fetch teacher info here
     } catch (err) {
       console.error(err);
       toast.error("Login failed");
