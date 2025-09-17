@@ -10,10 +10,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useAuth } from "@/provider/AuthProvider";
+import { HomeworkType, useAuth } from "@/provider/AuthProvider";
 import { AddStudentForm } from "./_components/add-student";
-import { useRouter } from "next/navigation";
 import { AddTaskForm } from "./_components/add-task";
+import { useRouter } from "next/navigation";
 
 export default function TeacherDashboard() {
   const [parentname, setParentname] = useState("");
@@ -23,17 +23,19 @@ export default function TeacherDashboard() {
   const router = useRouter();
   console.log(teacher);
 
-  if (loading) return <div> loading</div>;
-  const totalHomeworksApproved =
-    teacher?.tasks.reduce((acc, task) => {
-      const completed =
-        task.homeworks?.filter((hw) => hw.status === true).length || 0;
-      return acc + completed;
-    }, 0) || 0;
+  if (!teacher) return <div>Loading...</div>;
 
-  const totalStudents =
-    (teacher?.students?.length || 0) * (teacher?.tasks.length || 1);
+  const tasks = teacher.tasks ?? [];
+  const students = teacher.students ?? [];
 
+  const totalHomeworksApproved = tasks.reduce((acc, task) => {
+    const completed =
+      task.homeworks?.filter((hw: HomeworkType) => hw.status === true).length ||
+      0;
+    return acc + completed;
+  }, 0);
+
+  const totalStudents = students.length * (tasks.length || 1);
   const progress =
     totalStudents > 0
       ? Math.round((totalHomeworksApproved / totalStudents) * 100)
@@ -47,18 +49,18 @@ export default function TeacherDashboard() {
             🍎 Teaching Hub
           </h1>
           <div className="flex items-center gap-4">
-            <p className="text-gray-600">Welcome, {teacher?.teacherName}! 🌞</p>
+            <p className="text-gray-600">Welcome, {teacher.teacherName}! 🌞</p>
             <Button onClick={logout} variant="outline">
               Sign Out
             </Button>
           </div>
         </div>
-        {/* Stats */}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <Card className="bg-blue-100">
             <CardContent className="p-4 text-center">
               <p className="text-gray-700 font-semibold">👥 Нийт сурагчид</p>
-              <p className="text-3xl font-bold">{teacher?.students.length}</p>
+              <p className="text-3xl font-bold">{students.length}</p>
             </CardContent>
           </Card>
           <Card className="bg-blue-100">
@@ -66,7 +68,7 @@ export default function TeacherDashboard() {
               <p className="text-gray-700 font-semibold">
                 📚 Идэвхитэй даалгаврууд
               </p>
-              <p className="text-3xl font-bold">{teacher?.tasks.length}</p>
+              <p className="text-3xl font-bold">{tasks.length}</p>
             </CardContent>
           </Card>
           <Card className="bg-blue-100">
@@ -76,7 +78,8 @@ export default function TeacherDashboard() {
             </CardContent>
           </Card>
         </div>
-        {/* Assignments and Add Student */}
+
+        {/* Add Student / Add Task */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">📝 гэрийн даалгаврууд ✨</h2>
           <div className="flex gap-4">
@@ -95,7 +98,7 @@ export default function TeacherDashboard() {
                   setParentname={setParentname}
                   childname={childname}
                   setChildname={setChildname}
-                  teacherId={teacher?._id || ""}
+                  teacherId={teacher._id}
                   loading={loading}
                   setLoading={setLoading}
                 />
@@ -113,7 +116,7 @@ export default function TeacherDashboard() {
                   <DialogTitle>➕ Даалгавар нэмэх</DialogTitle>
                 </DialogHeader>
                 <AddTaskForm
-                  teacherId={teacher?._id || ""}
+                  teacherId={teacher._id}
                   token={token || ""}
                   onCreated={() => router.refresh()}
                 />
@@ -121,18 +124,18 @@ export default function TeacherDashboard() {
             </Dialog>
           </div>
         </div>
-        {teacher?.tasks.map((task, idx) => {
-          const totalStudents = teacher.students.length;
-          const completedCount =
-            task.homeworks?.filter((hw) => hw.status === true).length || 0;
-          console.log("count", completedCount);
 
-          const progress =
-            totalStudents > 0 ? (completedCount / totalStudents) * 100 : 0;
+        {/* Tasks List */}
+        {tasks.map((task) => {
+          const completedCount =
+            task.homeworks?.filter((hw: HomeworkType) => hw.status === true)
+              .length || 0;
+          const taskProgress =
+            students.length > 0 ? (completedCount / students.length) * 100 : 0;
 
           return (
             <Card
-              key={idx}
+              key={task._id}
               className="w-full cursor-pointer hover:shadow-md transition"
               onClick={() => router.push(`/task/${task._id}`)}
             >
@@ -144,9 +147,9 @@ export default function TeacherDashboard() {
                       📚 Subject: {task.lessonName || "-"} • 📅 Due:{" "}
                       {new Date(task.taskEndSchedule).toLocaleDateString()}
                     </p>
-                    <Progress value={progress} className="h-3 my-3" />
+                    <Progress value={taskProgress} className="h-3 my-3" />
                     <p className="text-gray-500">
-                      Хичээлийн явц: {completedCount}/{totalStudents}
+                      Хичээлийн явц: {completedCount}/{students.length}
                     </p>
                   </div>
                 </div>
