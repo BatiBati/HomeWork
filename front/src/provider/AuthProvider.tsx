@@ -1,3 +1,4 @@
+"use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { api } from "../../axios";
 
@@ -52,9 +53,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [teacher, setTeacher] = useState<TeacherType | null>(null);
-  const [token, setToken] = useState<string | null>(
-    localStorage.getItem("token")
-  );
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const savedToken = localStorage.getItem("token");
+      if (savedToken) setToken(savedToken);
+    }
+  }, []);
 
   const login = async (email: string, password: string) => {
     const res = await api.post("/teacher/login", { email, password });
