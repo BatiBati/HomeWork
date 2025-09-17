@@ -4,7 +4,7 @@ import {
   logoutStudentController,
   loginOrRegisterStudentController,
   getStudentController,
-  getStudentByChildname,
+  getStudentById,
 } from "../controllers/student";
 
 const router = Router();
@@ -14,6 +14,6 @@ router.get("/", getStudentController);
 router.post("/login", loginOrRegisterStudentController);
 router.post("/refresh-token", refreshTokenController);
 router.post("/logout", logoutStudentController);
-router.get("/:childname", getStudentByChildname);
+router.get("/:id", getStudentById);
 
 export { router as studentRouter };
