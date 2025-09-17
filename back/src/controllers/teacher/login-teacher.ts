@@ -15,9 +15,12 @@ export const loginTeacher = async (
   }
 
   try {
-    const teacher = await teacherModel.findOne({
-      email: email.trim().toLowerCase(),
-    });
+    const teacher = await teacherModel
+      .findOne({
+        email: email.trim().toLowerCase(),
+      })
+      .populate("students")
+      .populate("tasks");
     if (!teacher) {
       res.status(404).json({ message: "Teacher not found" });
       return;
@@ -44,6 +47,8 @@ export const loginTeacher = async (
         email: teacher.email,
         school: teacher.school,
         grade: teacher.grade,
+        students: teacher.students,
+        tasks: teacher.tasks,
       },
     });
   } catch (err) {
