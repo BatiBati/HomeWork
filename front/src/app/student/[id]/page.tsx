@@ -3,18 +3,17 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, Calendar, ArrowLeft } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { User, ArrowLeft } from "lucide-react";
 import { api } from "../../../../axios";
-import { Progress } from "@radix-ui/react-progress";
-import { StudentType, TaskType } from "@/provider/AuthProvider";
+import { StudentType } from "@/provider/AuthProvider";
 
 export default function StudentPage() {
   const router = useRouter();
   const params = useParams();
   const studentId = params.id;
   const [student, setStudent] = useState<StudentType>();
-  const [tasks, setTasks] = useState<TaskType[]>([]);
+
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<
     "all" | "submitted" | "not-submitted"
@@ -68,17 +67,18 @@ export default function StudentPage() {
   }
 
   // Stats тооцоолох
-  const submittedCount = tasks.filter(
-    (task) => task.homeworks?.[0]?.status
-  ).length;
-  const notSubmittedCount = tasks.length - submittedCount;
+  // const submittedCount = tasks.filter(
+  //   (task) => task.homeworks?.[0]?.status
+  // ).length;
+  // const notSubmittedCount = tasks.length - submittedCount;
 
-  // Даалгавруудыг filter хийх
-  const filteredTasks = tasks.filter((task) => {
-    if (activeFilter === "all") return true;
-    const isSubmitted = task.homeworks?.[0]?.status;
-    return activeFilter === "submitted" ? isSubmitted : !isSubmitted;
-  });
+  // // Даалгавруудыг filter хийх
+  // const filteredTasks = tasks.filter((task) => {
+  //   if (activeFilter === "all") return true;
+  //   const isSubmitted = task.homeworks?.[0]?.status;
+  //   return activeFilter === "submitted" ? isSubmitted : !isSubmitted;
+  // });
+  console.log(student.homeworks, "student.homeworks");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-4">
@@ -111,21 +111,6 @@ export default function StudentPage() {
         <div className="flex gap-4 justify-center">
           <Card
             className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
-              activeFilter === "all"
-                ? "bg-blue-100 border-2 border-blue-300"
-                : "bg-white/95"
-            }`}
-            onClick={() => setActiveFilter("all")}
-          >
-            <CardContent className="p-2">
-              <div className="text-2xl mb-1">📚</div>
-              <div className="text-xl font-bold">{tasks.length}</div>
-              <div className="text-sm text-gray-600">Нийт</div>
-            </CardContent>
-          </Card>
-
-          <Card
-            className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
               activeFilter === "submitted"
                 ? "bg-blue-100 border-2 border-blue-300"
                 : "bg-white/95"
@@ -134,52 +119,30 @@ export default function StudentPage() {
           >
             <CardContent className="p-2">
               <div className="text-2xl mb-1">📤</div>
-              <div className="text-xl font-bold">{submittedCount}</div>
+              <div className="text-xl font-bold">
+                {student.homeworks.length}
+              </div>
               <div className="text-sm text-gray-600">Илгээгдсэн</div>
-            </CardContent>
-          </Card>
-
-          <Card
-            className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
-              activeFilter === "not-submitted"
-                ? "bg-orange-100 border-2 border-orange-300"
-                : "bg-white/95"
-            }`}
-            onClick={() => setActiveFilter("not-submitted")}
-          >
-            <CardContent className="p-2">
-              <div className="text-2xl mb-1">⏰</div>
-              <div className="text-xl font-bold">{notSubmittedCount}</div>
-              <div className="text-sm text-gray-600">Илгээгдээгүй</div>
             </CardContent>
           </Card>
         </div>
 
         {/* Tasks List */}
-        {filteredTasks.map((task) => {
-          const completedCount =
-            task.homeworks?.filter((hw) => hw.status).length || 0;
-          const total = task.homeworks?.length || 1;
-          const progress = (completedCount / total) * 100;
-
+        {student.homeworks.map((task) => {
           return (
             <Card
               key={task._id}
               className="w-full cursor-pointer hover:shadow-md transition"
-              onClick={() => router.push(`/task/${task._id}`)}
             >
               <CardContent className="p-4 w-full">
                 <div className="flex justify-between items-start">
                   <div className="w-full">
                     <h3 className="font-bold text-lg">{task.lessonName}</h3>
-                    <p className="text-gray-600">
-                      📚 Subject: {task.lessonName || "-"} • 📅 Due:{" "}
-                      {new Date(task.taskEndSchedule).toLocaleDateString()}
-                    </p>
-                    <Progress value={progress} className="h-3 my-3" />
-                    <p className="text-gray-500">
-                      Хичээлийн явц: {completedCount}/{total}
-                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {task.image.map((image, index) => {
+                        return <img key={index} src={image} />;
+                      })}
+                    </div>
                   </div>
                 </div>
               </CardContent>
