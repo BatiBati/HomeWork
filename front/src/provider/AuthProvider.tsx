@@ -1,5 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "../../axios";
 
 export type HomeworkType = {
@@ -45,54 +46,52 @@ export type StudentType = {
 interface AuthContextType {
   teacher: TeacherType | null;
   token: string | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: () => Promise<void>;
   logout: () => void;
 }
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const router = useRouter();
   const [teacher, setTeacher] = useState<TeacherType | null>(null);
   const [token, setToken] = useState<string | null>(null);
+  console.log("Auth recher", teacher?.tasks);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const savedToken = localStorage.getItem("token");
-      if (savedToken) setToken(savedToken);
-    }
+    const savedToken = localStorage.getItem("token");
+    const savedTeacher = localStorage.getItem("teacher");
+    if (savedToken) setToken(savedToken);
+    if (savedTeacher) setTeacher(JSON.parse(savedTeacher));
   }, []);
 
-  const login = async (email: string, password: string) => {
-    const res = await api.post("/teacher/login", { email, password });
-    const token = res.data.token;
-    setToken(token);
-    localStorage.setItem("token", token);
-    setTeacher(res.data.teacher);
+  const login = async () => {
+    try {
+      const res = await api.post("/teacher/login", {
+        email: "test@gmail.com", // хатуу email
+        password: "teacher123", // хатуу password
+      });
+
+      const token = res.data.token;
+      setToken(token);
+      setTeacher(res.data.teacher);
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("teacher", JSON.stringify(res.data.teacher));
+
+      router.push("/teacher"); // dashboard руу чиглүүлэх
+    } catch (err) {
+      console.error("Login failed", err);
+      alert("Нэвтрэхэд алдаа гарлаа");
+    }
   };
 
   const logout = () => {
     setTeacher(null);
     setToken(null);
     localStorage.removeItem("token");
+    localStorage.removeItem("teacher");
+    router.push("/");
   };
-
-  const getMe = async () => {
-    if (!token) return;
-    try {
-      const res = await api.get("/teacher/getme", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTeacher(res.data.teacher);
-    } catch (err) {
-      console.error("GetMe error:", err);
-      setTeacher(null);
-      setToken(null);
-    }
-  };
-
-  useEffect(() => {
-    getMe();
-  }, [token]);
 
   return (
     <AuthContext.Provider value={{ teacher, token, login, logout }}>
