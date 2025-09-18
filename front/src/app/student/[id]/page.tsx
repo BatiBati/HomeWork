@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
-import { User, ArrowLeft } from "lucide-react";
 import { api } from "../../../../axios";
 import { StudentType } from "@/provider/AuthProvider";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { StudentHeader } from "@/components/student/studentHeader";
 
 export default function StudentPage() {
-  const router = useRouter();
   const params = useParams();
   const studentId = params.id;
   const [student, setStudent] = useState<StudentType>();
@@ -20,15 +18,12 @@ export default function StudentPage() {
     "all" | "submitted" | "not-submitted"
   >("all");
 
-  // Backend-ээс мэдээлэл авах
   useEffect(() => {
     const fetchStudent = async () => {
       try {
         const res = await api.get(`/student/${studentId}`);
 
         setStudent(res.data);
-
-        // setTasks();
       } catch (error) {
         console.error(error);
         setStudent(undefined);
@@ -67,13 +62,11 @@ export default function StudentPage() {
     );
   }
 
-  // Stats тооцоолох
   const submittedCount =
     student.homeworks?.filter((hw) => hw.status).length || 0;
   const totalCount = student.homeworks?.length || 0;
   const notSubmittedCount = totalCount - submittedCount;
 
-  // Даалгавруудыг filter хийх
   const filteredHomeworks =
     student.homeworks?.filter((homework) => {
       if (activeFilter === "all") return true;
@@ -85,31 +78,7 @@ export default function StudentPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="text-center bg-white/95 backdrop-blur rounded-xl p-6 shadow-lg">
-          <div className="flex items-center justify-between mb-2">
-            <Button
-              onClick={() => router.back()}
-              className="flex items-center gap-2 px-4 py-2 border-0"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Буцах
-            </Button>
-            <div className="flex items-center gap-3">
-              <User className="w-6 h-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-800">
-                {student.parentname.charAt(0)}.{student.childname}
-              </span>
-            </div>
-            <div className="w-12"></div>
-          </div>
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">
-            Миний даалгаврууд
-          </h1>
-          <p className="text-lg text-gray-600">Бүх даалгавруудын жагсаалт</p>
-        </div>
-
-        {/* Stats Cards */}
+        <StudentHeader student={student} />
         <div className="flex gap-4 justify-center">
           <Card
             className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
@@ -157,7 +126,6 @@ export default function StudentPage() {
           </Card>
         </div>
 
-        {/* Tasks List */}
         {filteredHomeworks.map((homework) => {
           return (
             <Card

@@ -50,7 +50,6 @@ export default function StudentTaskView() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-2 sm:p-4">
       <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
-        {/* Header */}
         <div className="text-center bg-white/95 backdrop-blur rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-lg">
           <div className="mx-auto w-12 h-12 sm:w-16 sm:h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-2xl sm:text-3xl mb-3 sm:mb-4">
             📝
@@ -61,14 +60,13 @@ export default function StudentTaskView() {
           <p className="text-base sm:text-lg text-gray-600">Сурагчийн хуудас</p>
         </div>
 
-        {/* Student Selection */}
         <Card className="shadow-xl border-0 bg-white/95 backdrop-blur">
           <CardHeader className="p-4 sm:p-6">
             <CardTitle className="text-lg sm:text-xl text-center">
-              Өөрийн нэрээ сонгоно уу
+              Хүүхдийн нэрийг сонгоно уу
             </CardTitle>
             <CardDescription className="text-center text-sm sm:text-base">
-              Жагсаалтаас өөрийн нэрийг олж сонгоно уу
+              Жагсаалтаас хүүхдийн нэрийг олж сонгоно уу
             </CardDescription>
           </CardHeader>
           <CardContent className="p-4 sm:p-6">
@@ -82,7 +80,6 @@ export default function StudentTaskView() {
                 onFocus={() => setShowDropdown(true)}
               />
 
-              {/* Dropdown */}
               {showDropdown && (
                 <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg sm:rounded-xl shadow-lg z-10 max-h-48 sm:max-h-60 overflow-y-auto">
                   {filteredStudents.length > 0 ? (

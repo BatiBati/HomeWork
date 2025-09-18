@@ -45,7 +45,7 @@ export default function Home() {
           onClick={() => router.push("/student")}
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-            🎒 Сурагчаар нэвтрэх
+            🎒 Эцэг/Эхээр нэвтрэх
           </h2>
           <div className="w-full h-60 bg-white rounded-xl flex items-center justify-center text-6xl">
             <Image
