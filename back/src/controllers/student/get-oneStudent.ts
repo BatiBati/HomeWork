@@ -9,9 +9,20 @@ export const getStudentById = async (req, res) => {
 
     const student = await studentModel
       .findById(id)
-      .populate("homeworks") // Homework-уудыг populate хийх
-      .populate("teacherId"); // Teacher-ийн мэдээллийг populate хийх
-
+      .populate({
+        path: "homeworks", // Homework-уудыг populate хийх
+        populate: {
+          path: "taskId", // Homework доторх taskId-г populate
+          model: "Task",
+        },
+      })
+      .populate({
+        path: "teacherId",
+        populate: {
+          path: "tasks",
+          model: "Task",
+        },
+      });
     if (!student) {
       return res.status(404).json({ message: "Сурагч олдсонгүй" });
     }

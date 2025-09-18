@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  createHomeworkController,
+  submitHomework,
   getHomeworksController,
   getMyHomeworksController,
   updateHomeworkController,
@@ -16,7 +16,7 @@ import { updateHomeworkById } from "../controllers/homework/update-home-work";
 const router = Router();
 
 // Protected routes (authentication required)
-router.post("/", authenticateToken, createHomeworkController);
+router.post("/", submitHomework);
 router.get("/my", authenticateToken, getMyHomeworksController);
 router.get("/", optionalAuth, getHomeworksController);
 router.put("/:id", authenticateToken, updateHomeworkController);

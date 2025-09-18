@@ -1,48 +1,55 @@
-import { RequestHandler } from "express";
+// controllers/homeworkController.ts
+
 import { homeworkModel } from "../../models/homework.models";
 import { studentModel } from "../../models/student.model";
-import { Request, Response, NextFunction } from "express";
+import { taskModel } from "../../models/task.model";
+import { teacherModel } from "../../models/teacher.model";
 
-export const createHomeworkController = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  const { taskId, description } = req.body;
-
+export const submitHomework = async (req, res) => {
   try {
-    if (!req.student) {
-      res.status(401).json({ message: "Authentication required" });
-    }
+    const { studentId, taskId, description, image } = req.body;
 
-    if (!taskId || !description) {
-    res.status(400).json({ message: "taskId and description are required" });
-    }
-
-    const studentId = req.student._id;
-
+    // 1. Homework үүсгэнэ
     const homework = await homeworkModel.create({
-      taskId,
       studentId,
+      taskId,
       description,
+      image,
     });
 
-    await studentModel.findByIdAndUpdate(
-      studentId,
-      {
-        $addToSet: { homeworks: homework._id },
-        updatedAt: new Date(),
-      }
-    );
+    // 2. Сурагчийн homeworks-д нэмнэ
+    await studentModel.findByIdAndUpdate(studentId, {
+      $push: { homeworks: homework._id },
+    });
 
-    const updatedStudent = await studentModel.findById(studentId).select("username childname");
+    // 3. Task.homeworks-д нэмнэ
+    const task = await taskModel
+      .findByIdAndUpdate(
+        taskId,
+        { $push: { homeworks: homework._id } },
+        { new: true }
+      )
+      .populate({
+        path: "homeworks",
+        populate: { path: "studentId", select: "childname parentname" },
+      });
+
+    if (!task) {
+      return res.status(404).json({ message: "Task олдсонгүй" });
+    }
+
+    // 4. Багшийн tasks баталгаажуулна
+    await teacherModel.findByIdAndUpdate(task.teacherId, {
+      $addToSet: { tasks: task._id },
+    });
 
     res.status(201).json({
-      message: "Homework created successfully",
+      message: "Даалгавар амжилттай илгээгдлээ",
       homework,
-      student: updatedStudent,
+      task,
     });
   } catch (error) {
-    console.error("Error processing homework:", error);
-    res.status(500).json({
-      error: "Server error",
-      message: "Failed to process homework",
-    });
+    console.error("Error submitting homework:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };
