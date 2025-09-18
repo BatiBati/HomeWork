@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import axios from "axios";
 import { api } from "../../../../axios";
+import { AxiosError } from "axios";
 
 export function AddTaskForm({
   teacherId,
@@ -89,12 +89,13 @@ export function AddTaskForm({
       setPreviewUrls([]);
 
       onCreated?.();
-    } catch (err: any) {
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
       console.error(
         "❌ Error creating task:",
-        err.response?.data || err.message
+        error.response?.data || error.message
       );
-      toast.error(err.response?.data?.message || "Error creating task");
+      toast.error(error.response?.data?.message || "Error creating task");
     } finally {
       setLoading(false);
     }
