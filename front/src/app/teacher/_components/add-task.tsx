@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import axios from "axios";
+import { api } from "../../../../axios";
 
 export function AddTaskForm({
   teacherId,
@@ -56,28 +58,27 @@ export function AddTaskForm({
 
     setLoading(true);
     try {
-      // Upload images only on submit
+      // Upload images
       const uploadedUrls = await uploadImagesToCloudinary();
 
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/task/create`,
+      const res = await api.post(
+        `task/create`,
         {
-          method: "POST",
+          lessonName,
+          image: uploadedUrls,
+          homeWork,
+          taskEndSchedule,
+          teacherId, // login-оос ирсэн _id
+        },
+        {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // 🔑 энд JWT заавал дамжуулна
           },
-          body: JSON.stringify({
-            lessonName,
-            image: uploadedUrls,
-            homeWork,
-            taskEndSchedule,
-            teacherId,
-          }),
         }
       );
-      console.log(res);
 
+      console.log("✅ API Response:", res.data);
       toast.success("Task created successfully!");
 
       // Reset form
@@ -88,9 +89,12 @@ export function AddTaskForm({
       setPreviewUrls([]);
 
       onCreated?.();
-    } catch (err) {
-      console.error(err);
-      toast.error("Error creating task");
+    } catch (err: any) {
+      console.error(
+        "❌ Error creating task:",
+        err.response?.data || err.message
+      );
+      toast.error(err.response?.data?.message || "Error creating task");
     } finally {
       setLoading(false);
     }
@@ -99,18 +103,26 @@ export function AddTaskForm({
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
-        <label>Lesson Name</label>
-        <input
-          type="text"
+        <label className="block mb-1">Хичээлийн нэр</label>
+        <select
           value={lessonName}
           onChange={(e) => setLessonName(e.target.value)}
           required
-          className="w-full border rounded p-1"
-        />
+          className="w-full border rounded p-2"
+        >
+          <option value="" className="text-gray-500">
+            -Хичээл сонгох-
+          </option>
+          <option value="Математик">Математик</option>
+          <option value="Англи хэл">Англи хэл</option>
+          <option value="Монгол хэл">Монгол хэл</option>
+          <option value="Байгалийн ухаан">Байгалийн ухаан</option>
+          <option value="Нийгмийн ухаан">Нийгмийн ухаан</option>
+        </select>
       </div>
 
       <div>
-        <label>Homework Description</label>
+        <label>Даалгаварийн дэлгэрэнгүй</label>
         <textarea
           value={homeWork}
           onChange={(e) => setHomeWork(e.target.value)}
@@ -120,7 +132,7 @@ export function AddTaskForm({
       </div>
 
       <div>
-        <label>Task End Date</label>
+        <label>Даалгавар дуусах хугацаа</label>
         <input
           type="datetime-local"
           value={taskEndSchedule}
@@ -131,12 +143,14 @@ export function AddTaskForm({
       </div>
 
       <div>
-        <label>Upload Images</label>
+        <label>Зураг оруулах</label>
+        <br />
         <input
           type="file"
           multiple
           accept="image/*"
           onChange={handleImageChange}
+          className="cursor-pointer"
         />
       </div>
 
@@ -155,7 +169,7 @@ export function AddTaskForm({
 
       <div className="flex justify-end">
         <Button type="submit" disabled={loading}>
-          {loading ? "Creating..." : "Create Task"}
+          {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
         </Button>
       </div>
     </form>
