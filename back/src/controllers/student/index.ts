@@ -3,3 +3,4 @@ export * from "./refresh-token";
 export * from "./logout-student";
 export * from "./get-student";
 export * from "./get-oneStudent";
+export * from "./update-student";

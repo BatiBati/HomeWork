@@ -7,7 +7,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
   req,
   res
 ) => {
-  const { parentname, childname, teacherId } = req.body;
+  const { parentname, childname, teacherId, parentEmail } = req.body;
 
   if (!parentname || !childname || !teacherId) {
     res.status(400).json({
@@ -29,14 +29,20 @@ export const loginOrRegisterStudentController: RequestHandler = async (
 
     // 3. Create new student if not exists
     if (!student) {
-      student = await studentModel.create({
+      const studentData: any = {
         parentname,
         childname,
         teacherId,
         homeworks: [], // This will hold the assigned tasks
         createdAt: new Date(),
         updatedAt: new Date(),
-      });
+      };
+
+      if (parentEmail) {
+        studentData.parentEmail = parentEmail;
+      }
+
+      student = await studentModel.create(studentData);
 
       // Add student to teacher
       await teacherModel.findByIdAndUpdate(teacherId, {
@@ -54,6 +60,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
         _id: student._id.toString(),
         parentname: student.parentname,
         childname: student.childname,
+        parentEmail: student.parentEmail,
       },
       process.env.JWT_SECRET || "your-secret-key",
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
@@ -70,6 +77,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
         _id: student._id,
         parentname: student.parentname,
         childname: student.childname,
+        parentEmail: student.parentEmail,
         homeworks: student.homeworks, // <-- include tasks here
       },
     });
