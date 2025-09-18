@@ -1,5 +1,4 @@
 import { model, Schema } from "mongoose";
-import { homeworkModel } from "./homework.models";
 
 const taskSchema = new Schema({
   lessonName: {
@@ -22,7 +21,10 @@ const taskSchema = new Schema({
       ref: "Homework",
     },
   ],
-
+  teacherId: {
+    type: Schema.Types.ObjectId,
+    ref: "Teacher",
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

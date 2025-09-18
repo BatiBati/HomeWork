@@ -5,8 +5,10 @@ import { useParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { api } from "../../../../axios";
 import { StudentType } from "@/provider/AuthProvider";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { StudentHeader } from "@/components/student/studentHeader";
+
+import { StudentBody } from "@/components/student/studentBody";
 
 export default function StudentPage() {
   const params = useParams();
@@ -14,9 +16,6 @@ export default function StudentPage() {
   const [student, setStudent] = useState<StudentType>();
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [activeFilter, setActiveFilter] = useState<
-    "all" | "submitted" | "not-submitted"
-  >("all");
 
   useEffect(() => {
     const fetchStudent = async () => {
@@ -62,114 +61,18 @@ export default function StudentPage() {
     );
   }
 
-  const submittedCount =
-    student.homeworks?.filter((hw) => hw.status).length || 0;
-  const totalCount = student.homeworks?.length || 0;
-  const notSubmittedCount = totalCount - submittedCount;
-
-  const filteredHomeworks =
-    student.homeworks?.filter((homework) => {
-      if (activeFilter === "all") return true;
-      return activeFilter === "submitted" ? homework.status : !homework.status;
-    }) || [];
-
-  console.log(student.homeworks, "student.homeworks");
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <StudentHeader student={student} />
-        <div className="flex gap-4 justify-center">
-          <Card
-            className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
-              activeFilter === "all"
-                ? "bg-blue-100 border-2 border-blue-300"
-                : "bg-white/95"
-            }`}
-            onClick={() => setActiveFilter("all")}
-          >
-            <CardContent className="p-2">
-              <div className="text-2xl mb-1">📚</div>
-              <div className="text-xl font-bold">{totalCount}</div>
-              <div className="text-sm text-gray-600">Нийт</div>
-            </CardContent>
-          </Card>
 
-          <Card
-            className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
-              activeFilter === "submitted"
-                ? "bg-blue-100 border-2 border-blue-300"
-                : "bg-white/95"
-            }`}
-            onClick={() => setActiveFilter("submitted")}
-          >
-            <CardContent className="p-2">
-              <div className="text-2xl mb-1">📤</div>
-              <div className="text-xl font-bold">{submittedCount}</div>
-              <div className="text-sm text-gray-600">Илгээгдсэн</div>
-            </CardContent>
-          </Card>
-
-          <Card
-            className={`flex-1 text-center cursor-pointer transition-all hover:scale-105 ${
-              activeFilter === "not-submitted"
-                ? "bg-orange-100 border-2 border-orange-300"
-                : "bg-white/95"
-            }`}
-            onClick={() => setActiveFilter("not-submitted")}
-          >
-            <CardContent className="p-2">
-              <div className="text-2xl mb-1">⏰</div>
-              <div className="text-xl font-bold">{notSubmittedCount}</div>
-              <div className="text-sm text-gray-600">Илгээгдээгүй</div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {filteredHomeworks.map((homework) => {
-          return (
-            <Card
-              key={homework._id}
-              className="w-full cursor-pointer hover:shadow-md transition"
-            >
-              <CardContent className="p-4 w-full">
-                <div className="flex justify-between items-start">
-                  <div className="w-full">
-                    <h3 className="font-bold text-lg">{homework.lessonName}</h3>
-                    <p className="text-gray-600 mb-2">{homework.description}</p>
-                    <div className="flex flex-wrap gap-2">
-                      {homework.image?.map((image, index) => (
-                        <img
-                          key={index}
-                          src={image}
-                          alt={`${homework.lessonName} зураг ${index + 1}`}
-                          className="w-20 h-20 object-cover rounded cursor-pointer"
-                          onClick={() => setSelectedImage(image)}
-                        />
-                      ))}
-                    </div>
-                    <div className="mt-2">
-                      <span
-                        className={`px-2 py-1 rounded text-sm ${
-                          homework.status
-                            ? "bg-green-100 text-green-800"
-                            : "bg-orange-100 text-orange-800"
-                        }`}
-                      >
-                        {homework.status ? "Илгээгдсэн" : "Илгээгдээгүй"}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+        <StudentBody homeworks={student.homeworks} />
       </div>
       <Dialog
         open={!!selectedImage}
         onOpenChange={() => setSelectedImage(null)}
       >
+        <DialogTitle>Зураг</DialogTitle>
         <DialogContent className="max-w-[1280px] w-full mx-auto p-0 bg-transparent flex justify-center border-0 shadow-none items-center h-fit">
           {selectedImage && (
             <img

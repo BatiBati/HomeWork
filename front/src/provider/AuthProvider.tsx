@@ -38,7 +38,7 @@ export type TeacherType = {
 export type StudentType = {
   _id: string;
   parentname: string;
-  teacherId: string;
+  teacherId: TeacherType;
   childname: string;
   homeworks: HomeworkType[];
   createdAt: Date;

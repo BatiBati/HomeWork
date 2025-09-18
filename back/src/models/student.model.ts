@@ -8,6 +8,7 @@ const studentSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
   parentEmail: { type: String, required: false },
+  tasks: [{ type: Schema.Types.ObjectId, ref: "Task" }],
 });
 
 export const studentModel = model("Student", studentSchema);
