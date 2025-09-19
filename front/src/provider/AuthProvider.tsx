@@ -44,6 +44,7 @@ export type StudentType = {
   homeworks: HomeworkType[];
   createdAt: Date;
   updatedAt: Date;
+  parentEmail?: string;
 };
 interface AuthContextType {
   teacher: TeacherType | null;
