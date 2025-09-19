@@ -10,7 +10,7 @@ const router = Router();
 
 router.post("/create", createTeacher);
 router.post("/login", loginTeacher);
-router.get("/getme", authMiddleware, getMe);
+router.get("/me", authMiddleware, getMe);
 router.get("/:id", getTeacherById);
 router.put("/:id", updateTeacher);
 export { router as teacherRouter };

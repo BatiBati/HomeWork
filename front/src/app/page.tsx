@@ -1,11 +1,10 @@
 "use client";
 import React from "react";
-import { useAuth } from "@/provider/AuthProvider";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
-  const { login } = useAuth();
   const router = useRouter();
 
   return (
@@ -21,9 +20,9 @@ export default function Home() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-5xl w-full mt-15">
         {/* Teacher Login */}
-        <div
+        <Link
+          href={"/teacher-login"}
           className="p-6 rounded-2xl hover:shadow-lg transition cursor-pointer bg-gradient-to-br from-yellow-50 to-orange-100"
-          onClick={() => login()} // ✅ шууд login function дуудна
         >
           <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
             🍎 Багшаар нэвтрэх
@@ -37,7 +36,7 @@ export default function Home() {
               className="w-full h-full rounded-xl"
             />
           </div>
-        </div>
+        </Link>
 
         {/* Student Login */}
         <div

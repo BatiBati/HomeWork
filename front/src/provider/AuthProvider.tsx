@@ -6,7 +6,7 @@ import { api } from "../../axios";
 export type HomeworkType = {
   _id: string;
   taskId: string;
-  studentId: string;
+  studentId: any;
   description: string;
   createdAt: Date;
   updatedAt: Date;
@@ -17,7 +17,7 @@ export type HomeworkType = {
 export type TaskType = {
   _id: string;
   lessonName: string;
-  image: string;
+  image: string[];
   homeworks: HomeworkType[];
   taskEndSchedule: Date;
   updatedAt: Date;
@@ -44,69 +44,57 @@ export type StudentType = {
   homeworks: HomeworkType[];
   createdAt: Date;
   updatedAt: Date;
-  parentEmail?: string;
 };
+
 interface AuthContextType {
   teacher: TeacherType | null;
   token: string | null;
-  login: () => Promise<void>;
   logout: () => void;
-  updateTeacher: (teacherId: string) => Promise<void>;
+  getMe: (tokenParam?: string) => Promise<void>;
+  setTeacher: React.Dispatch<React.SetStateAction<TeacherType | null>>;
+  setToken: React.Dispatch<React.SetStateAction<string | null>>;
 }
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const [teacher, setTeacher] = useState<TeacherType | null>(null);
   const [token, setToken] = useState<string | null>(null);
-  console.log("Auth recher", teacher?.tasks);
 
-  useEffect(() => {
-    const savedToken = localStorage.getItem("token");
-    const savedTeacher = localStorage.getItem("teacher");
-    if (savedToken) setToken(savedToken);
-    if (savedTeacher) setTeacher(JSON.parse(savedTeacher));
-  }, []);
+  const getMe = async (tokenParam?: string) => {
+    const authToken = tokenParam || token;
+    if (!authToken) return;
 
-  const login = async () => {
     try {
-      const res = await api.post("/teacher/login", {
-        email: "test@gmail.com", // хатуу email
-        password: "teacher123", // хатуу password
+      const res = await api.get("/teacher/me", {
+        headers: { Authorization: `Bearer ${authToken}` },
       });
-
-      const token = res.data.token;
-      setToken(token);
       setTeacher(res.data.teacher);
-
-      localStorage.setItem("token", token);
-      localStorage.setItem("teacher", JSON.stringify(res.data.teacher));
-
-      router.push("/teacher"); // dashboard руу чиглүүлэх
     } catch (err) {
-      console.error("Login failed", err);
-      alert("Нэвтрэхэд алдаа гарлаа");
+      console.error("Failed to fetch teacher:", err);
+      setTeacher(null);
     }
   };
 
-  const logout = () => {
-    setTeacher(null);
-    setToken(null);
-    localStorage.removeItem("token");
-    localStorage.removeItem("teacher");
-    router.push("/");
-  };
+  useEffect(() => {
+    const savedToken = localStorage.getItem("token");
+    if (savedToken) {
+      setToken(savedToken);
+      getMe(savedToken); // <-- pass token manually
+    }
+  }, []);
 
-  const updateTeacher = async (teacherId: string) => {
-    const res = await api.put(`/teacher/${teacherId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    setTeacher(res.data);
+  const logout = () => {
+    setToken(null);
+    setTeacher(null);
+    localStorage.removeItem("token");
+    router.push("/");
   };
 
   return (
     <AuthContext.Provider
-      value={{ teacher, token, login, logout, updateTeacher }}
+      value={{ teacher, token, setTeacher, setToken, logout, getMe }}
     >
       {children}
     </AuthContext.Provider>

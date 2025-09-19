@@ -2,10 +2,15 @@
 import { useState } from "react";
 import { api } from "../../../axios";
 import { toast } from "sonner";
+import { useAuth } from "@/provider/AuthProvider";
+import { useRouter } from "next/navigation";
+
 export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { getMe, setToken } = useAuth();
+  const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -13,12 +18,13 @@ export default function Home() {
 
     try {
       const res = await api.post("/teacher/login", { email, password });
+      const token = res.data.token;
+      setToken(token);
+      localStorage.setItem("token", token);
 
-      // Save token to localStorage
-      localStorage.setItem("token", res.data.token);
-
+      await getMe(token);
       toast.success("Logged in successfully!");
-      // Optionally redirect or fetch teacher info here
+      router.push("/teacher");
     } catch (err) {
       console.error(err);
       toast.error("Login failed");
@@ -32,10 +38,8 @@ export default function Home() {
       <div className="flex flex-1 items-center justify-center">
         <div className="w-[380px] bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6">
           <div className="text-center">
-            <p className="text-2xl font-bold text-[#c3ddfb] flex text-nowrap gap-1">
-              Welcome to
-              <span className="text-sky-600">Homework Hub</span>
-              📖
+            <p className="text-2xl font-bold text-[#c3ddfb] flex gap-1">
+              Welcome to <span className="text-sky-600">Homework Hub</span> 📖
             </p>
             <p className="text-sm text-gray-500 mt-1">
               Let’s get you signed in
