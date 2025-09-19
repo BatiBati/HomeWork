@@ -136,7 +136,7 @@ export default function TeacherDashboard() {
           return (
             <Card
               key={task._id}
-              className="w-full cursor-pointer hover:shadow-md transition"
+              className="w-full cursor-pointer hover:shadow-md transition mt-5"
               onClick={() => router.push(`/task/${task._id}`)}
             >
               <CardContent className="p-4 w-full">

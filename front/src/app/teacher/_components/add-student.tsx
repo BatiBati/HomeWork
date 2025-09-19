@@ -12,6 +12,7 @@ interface AddStudentFormProps {
   teacherId: string;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
   loading: boolean;
+  onCreated?: () => void;
 }
 
 export const AddStudentForm: React.FC<AddStudentFormProps> = ({
@@ -22,6 +23,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
   teacherId,
   loading,
   setLoading,
+  onCreated,
 }) => {
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,6 +41,8 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
 
       setParentname("");
       setChildname("");
+
+      onCreated?.(); // Call the callback after successful creation
     } catch (err) {
       console.error(err);
       toast.error("Error adding student");
