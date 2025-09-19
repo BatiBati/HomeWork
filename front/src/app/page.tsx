@@ -49,7 +49,7 @@ export default function Home() {
           </h2>
           <div className="w-full h-60 bg-white rounded-xl flex items-center justify-center text-6xl">
             <Image
-              src="https://res.cloudinary.com/dqd01lbfy/image/upload/v1758032870/student_aexihm.jpg"
+              src="https://res.cloudinary.com/dqd01lbfy/image/upload/v1758268513/Family_warm_child_hand_painted_illustration_image_q1qqdb.jpg"
               alt=""
               width={600}
               height={400}
