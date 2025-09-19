@@ -13,20 +13,18 @@ export default function StudentPage() {
   const [student, setStudent] = useState<StudentType>();
   const [loading, setLoading] = useState(true);
 
+  const fetchStudent = async () => {
+    try {
+      const res = await api.get(`/student/${studentId}`);
+      setStudent(res.data);
+    } catch (error) {
+      console.error(error);
+      setStudent(undefined);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchStudent = async () => {
-      try {
-        const res = await api.get(`/student/${studentId}`);
-
-        setStudent(res.data);
-      } catch (error) {
-        console.error(error);
-        setStudent(undefined);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStudent();
   }, []);
 
@@ -61,7 +59,11 @@ export default function StudentPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <StudentHeader student={student} />
-        <StudentBody teacherId={student.teacherId._id} />
+        <StudentBody
+          fetchStudent={fetchStudent}
+          studentId={student._id}
+          teacherId={student.teacherId._id}
+        />
       </div>
     </div>
   );
