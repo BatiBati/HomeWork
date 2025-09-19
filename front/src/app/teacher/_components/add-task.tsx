@@ -8,7 +8,6 @@ import { AxiosError } from "axios";
 export function AddTaskForm({
   teacherId,
   token,
-  onCreated,
 }: {
   teacherId: string;
   token: string;
@@ -87,8 +86,6 @@ export function AddTaskForm({
       setTaskEndSchedule("");
       setImages([]);
       setPreviewUrls([]);
-
-      onCreated?.();
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
       console.error(

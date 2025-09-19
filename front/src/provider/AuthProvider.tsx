@@ -50,6 +50,7 @@ interface AuthContextType {
   token: string | null;
   login: () => Promise<void>;
   logout: () => void;
+  updateTeacher: (teacherId: string) => Promise<void>;
 }
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -95,8 +96,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     router.push("/");
   };
 
+  const updateTeacher = async (teacherId: string) => {
+    const res = await api.put(`/teacher/${teacherId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    setTeacher(res.data);
+  };
+
   return (
-    <AuthContext.Provider value={{ teacher, token, login, logout }}>
+    <AuthContext.Provider
+      value={{ teacher, token, login, logout, updateTeacher }}
+    >
       {children}
     </AuthContext.Provider>
   );

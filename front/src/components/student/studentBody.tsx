@@ -1,6 +1,6 @@
 "use client";
 
-import { HomeworkType, TaskType } from "@/provider/AuthProvider";
+import { TaskType } from "@/provider/AuthProvider";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import { useEffect, useState } from "react";
