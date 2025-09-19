@@ -22,6 +22,7 @@ export type TaskType = {
   taskEndSchedule: Date;
   updatedAt: Date;
   createdAt: Date;
+  teacherId: string;
 };
 export type TeacherType = {
   _id: string;

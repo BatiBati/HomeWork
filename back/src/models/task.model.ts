@@ -25,6 +25,10 @@ const taskSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: "Teacher",
   },
+  description: {
+    type: String,
+    required: false,
+  },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });

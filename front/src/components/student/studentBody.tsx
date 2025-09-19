@@ -1,55 +1,32 @@
 "use client";
 
-import { HomeworkType } from "@/provider/AuthProvider";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HomeworkType, TaskType } from "@/provider/AuthProvider";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-import Image from "next/image";
-import { format } from "date-fns";
+import { useEffect, useState } from "react";
+import { api } from "../../../axios";
 
-export const StudentBody = ({ homeworks }: { homeworks: HomeworkType[] }) => {
+export const StudentBody = ({ teacherId }: { teacherId: string }) => {
+  const [data, setData] = useState<TaskType[]>([]);
+  const getTask = async () => {
+    const response = await api.get(`/task/teacher/${teacherId}`);
+    setData(response.data);
+  };
+  useEffect(() => {
+    getTask();
+  }, []);
+  console.log(data, "data");
+
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {homeworks.map((homework) => {
-        const createdAt = homework.createdAt
-          ? format(new Date(homework.createdAt), "yyyy.MM.dd HH:mm")
-          : "";
-
-        return (
-          <Card
-            key={homework._id}
-            className="rounded-2xl shadow-md hover:shadow-lg transition"
-          >
-            <CardHeader className="flex flex-wrap">
-              <CardTitle className="flex">
-                <span className="">{homework.description}</span>
-                {/* {homework.status ? (
-                  <Badge className="bg-green-500 flex items-center justify-center gap-1 ">
-                    <CheckCircle size={14} /> Дууссан
-                  </Badge>
-                ) : (
-                  <Badge className="bg-yellow-500 flex items-center justify-center gap-1 ">
-                    <Clock size={14} /> Хийгдээгүй
-                  </Badge>
-                )} */}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col gap-3">
-              {homework.image && homework.image.length > 0 && (
-                <div className="relative w-full h-40 rounded-xl overflow-hidden">
-                  <Image
-                    src={homework.image[0]}
-                    alt="Homework"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-
-              <p className="text-sm text-gray-600">Оруулсан: {createdAt}</p>
-            </CardContent>
-          </Card>
-        );
-      })}
+      {data.map((task) => (
+        <Card key={task._id}>
+          <CardHeader>{task.lessonName}</CardHeader>
+          <CardContent>
+            <p>{task.taskEndSchedule.toString()} end</p>
+          </CardContent>
+        </Card>
+      ))}
     </div>
   );
 };

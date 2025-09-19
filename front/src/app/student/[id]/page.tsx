@@ -61,7 +61,7 @@ export default function StudentPage() {
     <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <StudentHeader student={student} />
-        <StudentBody homeworks={student.homeworks} />
+        <StudentBody teacherId={student.teacherId._id} />
       </div>
     </div>
   );
