@@ -78,13 +78,13 @@ export const StudentHeader = ({ student }: { student: StudentType }) => {
         {!showEmailInput ? (
           <Button
             onClick={() => setShowEmailInput(true)}
-            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm flex items-center gap-2"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm flex items-center gap-2 transition-all duration-200 hover:scale-105 hover:shadow-lg"
           >
-            <User className="w-4 h-4" />
+            <User className="w-4 h-4 transition-transform duration-200" />
             {student.parentEmail ? "Имэйл засах" : "Имэйл нэмэх"}
           </Button>
         ) : (
-          <div className="bg-white/95 backdrop-blur rounded-xl p-4 shadow-lg">
+          <div className="bg-white/95 backdrop-blur rounded-xl p-4 shadow-lg animate-in slide-in-from-right-5 fade-in duration-300 ease-out">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Эцэг эхийн имэйл хаяг
             </label>
@@ -94,13 +94,13 @@ export const StudentHeader = ({ student }: { student: StudentType }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@gmail.com"
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm w-48"
+                className="px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm w-48 transition-all duration-200"
                 autoFocus
               />
               <Button
                 onClick={handleSaveEmail}
                 disabled={loading}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm disabled:opacity-50"
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-sm disabled:opacity-50 transition-all duration-200 hover:scale-105"
               >
                 {loading ? "Хадгалаж байна..." : "Хадгалах"}
               </Button>
@@ -109,12 +109,12 @@ export const StudentHeader = ({ student }: { student: StudentType }) => {
                   setShowEmailInput(false);
                   setEmail(student.parentEmail || "");
                 }}
-                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 text-sm"
+                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 text-sm transition-all duration-200 hover:scale-105"
               >
                 Цуцлах
               </Button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 mt-1 animate-in fade-in duration-500 delay-100">
               Шинэ даалгавар ирэхэд мэдэгдэл хүлээн авах
             </p>
           </div>
