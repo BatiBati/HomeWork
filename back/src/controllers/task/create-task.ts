@@ -21,6 +21,7 @@ export const createTaskController = async (
       image,
       homeWork,
       taskEndSchedule,
+      teacherId,
     });
 
     const teacher = await teacherModel.findByIdAndUpdate(
@@ -77,7 +78,7 @@ export const createTaskController = async (
     res.status(200).json({
       message: "Task created and added to teacher",
       task,
-      teacher,
+      teacherId,
     });
   } catch (error) {
     console.error(error);
