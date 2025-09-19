@@ -6,7 +6,7 @@ import { api } from "../../axios";
 export type HomeworkType = {
   _id: string;
   taskId: string;
-  studentId: any;
+  studentId: string;
   description: string;
   createdAt: Date;
   updatedAt: Date;
@@ -42,6 +42,7 @@ export type StudentType = {
   teacherId: TeacherType;
   childname: string;
   homeworks: HomeworkType[];
+  parentEmail: string;
   createdAt: Date;
   updatedAt: Date;
 };
