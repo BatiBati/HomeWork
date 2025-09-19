@@ -18,7 +18,7 @@ export const StudentBody = ({ teacherId }: { teacherId: string }) => {
   console.log(data, "data");
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid reverse gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {data.map((task) => (
         <Card key={task._id}>
           <CardHeader>{task.lessonName}</CardHeader>
