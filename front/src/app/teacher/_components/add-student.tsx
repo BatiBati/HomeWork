@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import { api } from "../../../../axios";
 import { toast } from "sonner";
+import { useAuth } from "@/provider/AuthProvider";
 
 interface AddStudentFormProps {
   parentname: string;
@@ -25,6 +26,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
   setLoading,
   onCreated,
 }) => {
+  const { getMe } = useAuth();
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -48,6 +50,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
       toast.error("Error adding student");
     } finally {
       setLoading(false);
+      getMe();
     }
   };
 

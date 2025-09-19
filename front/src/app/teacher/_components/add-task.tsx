@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { api } from "../../../../axios";
 import { AxiosError } from "axios";
+import { useAuth } from "@/provider/AuthProvider";
 
 export function AddTaskForm({
   teacherId,
@@ -19,7 +20,7 @@ export function AddTaskForm({
   const [homeWork, setHomeWork] = useState("");
   const [taskEndSchedule, setTaskEndSchedule] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const { getMe } = useAuth();
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
@@ -95,6 +96,7 @@ export function AddTaskForm({
       toast.error(error.response?.data?.message || "Error creating task");
     } finally {
       setLoading(false);
+      getMe();
     }
   };
 
