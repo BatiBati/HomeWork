@@ -3,7 +3,7 @@ import { userModel } from "../../models/user.model";
 
 export const getAllUsersController: RequestHandler = async (req, res) => {
   try {
-    const users = await userModel.find({});
+    const users = await userModel.find({}).populate("children");
     res.status(200).json({
       message: "All users fetched successfully",
       users,
