@@ -32,7 +32,7 @@ export default function StudentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 via-blue-500 to-purple-600">
+      <div className="min-h-screen flex items-center justify-center bg-[#f4f6f8]">
         <div className="text-white text-2xl font-bold">Ачааллаж байна...</div>
       </div>
     );
@@ -41,7 +41,7 @@ export default function StudentPage() {
 
   if (!student) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-400 via-pink-500 to-purple-600">
+      <div className="min-h-screen flex items-center justify-center bg-[#f4f6f8]">
         <Card className="w-full max-w-md shadow-2xl border-0 bg-white/95 backdrop-blur text-center">
           <CardContent className="p-8">
             <div className="text-6xl mb-4">😕</div>
@@ -58,7 +58,7 @@ export default function StudentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-4">
+    <div className="min-h-screen bg-[#f4f6f8] p-4">
       <div className="max-w-6xl mx-auto space-y-6">
         <StudentHeader student={student} />
         <StudentBody teacherId={student.teacherId._id} />
