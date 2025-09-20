@@ -1,25 +1,48 @@
 import { Schema, model } from "mongoose";
 
 enum Role {
-  Student = "Student",
-  Teacher = "Teacher",
-  Parents = "Parents",
+  Teacher = "teacher",
+  Parents = "parents",
 }
 
-const userSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
+const userSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    firstName: {
+      type: String,
+      required: true,
+    },
+    lastName: {
+      type: String,
+      required: true,
+    },
+    phoneNumber: {
+      type: Number,
+      required: true,
+    },
+    school: {
+      type: String,
+      required: false,
+    },
+    grade: {
+      type: String,
+      required: false,
+    },
+    role: {
+      type: String,
+      enum: Object.values(Role),
+      required: true,
+      default: Role.Teacher,
+    },
   },
-  password: {
-    type: String,
-    required: true,
-  },
-  role: {
-    type: String,
-    enum: Role,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 export const userModel = model("user", userSchema);
