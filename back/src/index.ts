@@ -6,8 +6,11 @@ import { config } from "dotenv";
 import { studentRouter } from "./routers/student.route";
 import { homeworkRouter } from "./routers/homework.route";
 import { teacherRouter } from "./routers/teacher.route";
-import { taskRouter } from "./routers/task.route";
+// import { taskRouter } from "./routers/task.route";
 import { childrenRouter } from "./routers/children.route";
+import { messageRouter } from "./routers/message.route";
+import { assignmentRouter } from "./routers/assignment.route";
+import { dayCareRouter } from "./routers/daycare.route";
 
 config();
 
@@ -25,10 +28,13 @@ app.get("/", (req, res) => {
 });
 app.use("/user", userRouter);
 app.use("/children", childrenRouter);
+app.use("/daycare", dayCareRouter);
+app.use("/assignment", assignmentRouter);
+app.use("/message", messageRouter);
 app.use("/student", studentRouter);
 app.use("/homework", homeworkRouter);
 app.use("/teacher", teacherRouter);
-app.use("/task", taskRouter);
+// app.use("/task", taskRouter);
 
 app.listen(port, () => {
   console.log(`Example app listening on port${port}`);

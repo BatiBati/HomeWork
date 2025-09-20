@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { childrenModel } from "../../models/children-models";
+import { childrenModel } from "../../models/children.models";
 import { userModel } from "../../models/user.model";
 
 export const createChildren: RequestHandler = async (req, res) => {
@@ -11,7 +11,7 @@ export const createChildren: RequestHandler = async (req, res) => {
   try {
     const parent = await userModel.findById(parentId);
     if (!parent) {
-      res.status(404).json({ message: `Parent with ${parentId}:id not found`});
+      res.status(404).json({ message: `Parent with ${parentId}:id not found` });
       return;
     }
     if (parent.role !== "parents") {
@@ -33,6 +33,7 @@ export const createChildren: RequestHandler = async (req, res) => {
       firstName,
       lastName,
       profilePicture,
+      teacher: teacher,
       parents: parent._id,
       grade: teacher._id,
       school: teacher._id,
@@ -41,6 +42,10 @@ export const createChildren: RequestHandler = async (req, res) => {
     if (!parent.children) parent.children = [];
     parent.children.push(newChild._id);
     await parent.save();
+
+    if (!teacher.children) teacher.children = [];
+    teacher.children.push(newChild._id);
+    await teacher.save();
 
     res.status(201).json({
       message: "Child created successfully",

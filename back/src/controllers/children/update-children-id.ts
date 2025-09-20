@@ -1,5 +1,5 @@
 import { RequestHandler } from "express";
-import { childrenModel } from "../../models/children-models";
+import { childrenModel } from "../../models/children.models";
 
 export const updateChildrenById: RequestHandler = async (req, res) => {
   const { id } = req.params;
