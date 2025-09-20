@@ -34,9 +34,9 @@ export default function Home() {
   };
 
   return (
-    <div className="flex h-screen bg-[#d2e3f6]">
+    <div className="flex h-screen bg-[#f2f2f2]">
       <div className="flex flex-1 items-center justify-center">
-        <div className="w-[380px] bg-white shadow-lg rounded-2xl p-8 flex flex-col gap-6">
+        <div className="w-[380px] bg-white border-[1px] rounded-2xl p-8 flex flex-col gap-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[#c3ddfb] flex gap-1">
               Welcome to <span className="text-sky-600">Homework Hub</span> 📖
