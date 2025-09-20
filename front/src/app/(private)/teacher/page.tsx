@@ -21,7 +21,6 @@ export default function TeacherDashboard() {
   const [loading, setLoading] = useState(false);
   const { teacher, token, logout } = useAuth();
   const router = useRouter();
-  console.log(teacher);
 
   if (!teacher) return <div>Loading...</div>;
 

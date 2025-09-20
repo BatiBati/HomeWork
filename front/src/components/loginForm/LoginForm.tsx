@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/form";
 const loginSchema = z.object({
   email: z.string().min(2, {
-    message: "Username must be at least 2 characters.",
+    message: "Багадаа 2 утга оруулна уу.",
   }),
-  password: z.string(),
+  password: z.string().min(3, { message: "Багадаа 3 үсэг оруулна уу." }),
 });
 
 export const LoginForm = () => {
@@ -68,7 +68,9 @@ export const LoginForm = () => {
               </FormItem>
             )}
           />
-          <Button className="bg-indigo-600 text-white w-full">Нэвтрэх</Button>
+          <Button className="bg-indigo-600 text-white w-full hover:bg-indigo-500 hover:text-[white] cursor-pointer">
+            Нэвтрэх
+          </Button>
         </form>
       </Form>
     </div>
