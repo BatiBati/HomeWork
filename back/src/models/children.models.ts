@@ -14,6 +14,11 @@ const childrenSchema = new Schema(
       type: String,
       required: false,
     },
+    teacher: {
+      type: Schema.Types.ObjectId,
+      ref: "user",
+      required: true,
+    },
     parents: {
       type: Schema.Types.ObjectId,
       ref: "user",
@@ -29,6 +34,12 @@ const childrenSchema = new Schema(
       ref: "user",
       required: true,
     },
+    assignment: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Assignment",
+      },
+    ],
   },
   { timestamps: true }
 );
