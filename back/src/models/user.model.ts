@@ -41,6 +41,13 @@ const userSchema = new Schema(
       required: true,
       default: Role.Teacher,
     },
+    children: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "children",
+        required: false,
+      },
+    ],
   },
   { timestamps: true }
 );
