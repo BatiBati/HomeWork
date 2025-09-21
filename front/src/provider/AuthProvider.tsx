@@ -114,13 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       return user;
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("Login error:", error.message);
-        throw error;
-      } else {
-        console.error("Login unknown error", error);
-        throw new Error("Unknown login error");
-      }
+      throw new Error("Login error");
     }
   };
 
