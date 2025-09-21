@@ -4,6 +4,13 @@ const lessonSchema = new Schema(
   {
     lessonName: { type: String, required: true },
     taskDescription: { type: String, required: true },
+    childrens: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "children",
+        required: true,
+      },
+    ],
   },
   { _id: false }
 );
