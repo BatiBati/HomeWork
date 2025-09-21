@@ -60,12 +60,29 @@ export type StudentType = {
   createdAt: Date;
   updatedAt: Date;
 };
+export type ChildrenType = {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  teacher: string;
+  parents: string;
+  grade: string;
+  school: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
 
 interface UserType {
   _id: string;
   email: string;
-  name?: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: number;
+  daycareEmail: string | null;
+  school: string | null;
+  grade: string | null;
   role: "parents" | "teacher";
+  children: ChildrenType[];
 }
 interface AuthContextType {
   user: UserType | null;
@@ -88,12 +105,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const token = localStorage.getItem("token");
     if (token) {
       setAuthToken(token);
+      setToken(token);
       api
         .get<{ user: UserType }>("/auth/me")
         .then((res) => setUser(res.data.user))
         .catch(() => {
           localStorage.removeItem("token");
           setAuthToken(null);
+          setToken(null);
         });
     }
   }, []);
