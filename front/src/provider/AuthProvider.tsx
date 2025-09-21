@@ -80,8 +80,6 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  // router ашиглагдахгүй бол устгаж болно
-  // const router = useRouter();
   const [teacher, setTeacher] = useState<TeacherType | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
@@ -91,7 +89,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (token) {
       setAuthToken(token);
       api
-        .get<{ user: UserType }>("/auth/me") // API response-ийн type
+        .get<{ user: UserType }>("/auth/me")
         .then((res) => setUser(res.data.user))
         .catch(() => {
           localStorage.removeItem("token");
@@ -113,7 +111,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser(user);
 
       return user;
-    } catch (error: unknown) {
+    } catch {
       throw new Error("Login error");
     }
   };
