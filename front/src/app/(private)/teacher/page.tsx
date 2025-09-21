@@ -19,7 +19,7 @@ export default function TeacherDashboard() {
   const [parentname, setParentname] = useState("");
   const [childname, setChildname] = useState("");
   const [loading, setLoading] = useState(false);
-  const { teacher, token, logout } = useAuth();
+  const { teacher, token } = useAuth();
   const router = useRouter();
 
   if (!teacher) return <div>Loading...</div>;
@@ -49,7 +49,7 @@ export default function TeacherDashboard() {
           </h1>
           <div className="flex items-center gap-4">
             <p className="text-gray-600">Welcome, {teacher.teacherName}! 🌞</p>
-            <Button onClick={logout} variant="outline">
+            <Button variant="outline">
               Sign Out
             </Button>
           </div>
