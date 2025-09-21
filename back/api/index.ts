@@ -11,6 +11,7 @@ import { childrenRouter } from "../src/routers/children.route";
 import { messageRouter } from "../src/routers/message.route";
 import { dayCareRouter } from "../src/routers/daycare.route";
 import { assignmentRouter } from "../src/routers/assignment.route";
+import { getMeUser } from "../src/controllers/auth/get-me";
 
 config();
 
@@ -28,6 +29,7 @@ app.get("/", (req, res) => {
 });
 app.use("/user", userRouter);
 app.use("/children", childrenRouter);
+app.use("/auth", getMeUser);
 app.use("/daycare", dayCareRouter);
 app.use("/message", messageRouter);
 app.use("/assignment", assignmentRouter);

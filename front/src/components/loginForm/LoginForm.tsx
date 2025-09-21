@@ -13,6 +13,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useAuth } from "@/provider/AuthProvider";
+import { api } from "../../../axios";
+import { useRouter } from "next/navigation";
 const loginSchema = z.object({
   email: z.string().min(2, {
     message: "Багадаа 2 утга оруулна уу.",
@@ -21,6 +24,8 @@ const loginSchema = z.object({
 });
 
 export const LoginForm = () => {
+  const { login } = useAuth();
+const router=useRouter()
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -29,9 +34,25 @@ export const LoginForm = () => {
     },
   });
 
-  function onSubmit(values: z.infer<typeof loginSchema>) {
-    console.log(values);
+ async function onSubmit(values: z.infer<typeof loginSchema>) {
+  try {
+    const user = await login(values); // login returns user
+    console.log("Амжилттай нэвтэрлээ:", user);
+
+    console.log(user);
+    // optional: fetch fresh data
+    // await getMe();
+if(user.role==="parent"){
+  router.push("/parent")
+}else{
+  router.push("/teacher")
+}
+  } catch (error: any) {
+    alert(error.response?.data?.message || "Login алдаа гарлаа");
   }
+}
+
+  
 
   return (
     <div className="flex flex-col gap-3">
@@ -68,11 +89,24 @@ export const LoginForm = () => {
               </FormItem>
             )}
           />
+
           <Button className="bg-indigo-600 text-white w-full hover:bg-indigo-500 hover:text-[white] cursor-pointer">
             Нэвтрэх
           </Button>
         </form>
       </Form>
+      <div className="w-full flex flex-col gap-2 ">
+        <div className="border-[2px] p-3 rounded-xl">
+          <span className="font-semibold"> Parents information</span>
+          <div className="ml-[10px]">Email: tamirbulgan621@gmail.com</div>
+          <div className="ml-[10px]">Password: 12345678</div>
+        </div>
+        <div className="border-[2px] p-3 rounded-xl">
+          <span className="font-semibold"> Teacher information</span>
+          <div className="ml-[10px]">Email: codecatalysts2025@gmail.com</div>
+          <div className="ml-[10px]">Password: 12345678</div>
+        </div>
+      </div>
     </div>
   );
 };

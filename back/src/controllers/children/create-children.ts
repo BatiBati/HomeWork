@@ -20,6 +20,8 @@ export const createChildren: RequestHandler = async (req, res) => {
     }
 
     const teacher = await userModel.findById(teacherId);
+    console.log(teacher);
+
     if (!teacher) {
       res.status(404).json({ message: "Teacher not found" });
       return;
@@ -38,6 +40,7 @@ export const createChildren: RequestHandler = async (req, res) => {
       grade: teacher._id,
       school: teacher._id,
     });
+    console.log(newChild.teacher);
 
     if (!parent.children) parent.children = [];
     parent.children.push(newChild._id);
