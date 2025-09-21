@@ -47,19 +47,36 @@ export const sendHomeworkAddedNotification = async (
 
     // ---------- Parent email ----------
     if (parentEmails.length > 0) {
+      // Create HTML content for all lessons
+      const lessonsHtml = lessons
+        .map(
+          (lesson, index) => `
+        <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
+          <h4>Хичээл ${index + 1}: ${lesson.lessonName}</h4>
+          <p><strong>Даалгавар:</strong> ${lesson.taskDescription}</p>
+        </div>
+      `
+        )
+        .join("");
+
       await transport.sendMail({
         from: EMAIL_USER,
         to: parentEmails.join(","),
-        subject: "Таны хүүхдийн шинэ даалгавар нэмэгдлээ",
+        subject: `Таны хүүхдийн шинэ даалгавар нэмэгдлээ (${lessons.length} хичээл)`,
         html: `
           <div>
             <h3>Шинэ даалгавар ирлээ</h3>
-            <p>Хичээлийн нэр: ${lessons[0].lessonName}</p>
-            <p>Дуусах хугацаа: ${new Date(taskEndSchedule).toLocaleString(
-              "mn-MN"
-            )}</p>
-            <p>Таны хүүхдийн даалгавар: ${lessons[0].taskDescription}</p>
-            <a href="http://localhost:3000/assignment">Даалгавар харах</a>
+            <p><strong>Дуусах хугацаа:</strong> ${new Date(
+              taskEndSchedule
+            ).toLocaleString("mn-MN")}</p>
+            <p><strong>Хичээлийн тоо:</strong> ${lessons.length}</p>
+            
+            <h4>Хичээлийн жагсаалт:</h4>
+            ${lessonsHtml}
+            
+            <div style="margin-top: 20px;">
+              <a href="http://localhost:3000/assignment" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Даалгавар харах</a>
+            </div>
           </div>
         `,
       });
@@ -70,19 +87,36 @@ export const sendHomeworkAddedNotification = async (
     for (const child of childrens) {
       const daycareEmail = child.parents[0].daycareEmail;
       if (daycareEmail && daycareEmail.trim() !== "") {
+        // Create HTML content for all lessons for daycare
+        const lessonsHtml = lessons
+          .map(
+            (lesson, index) => `
+          <div style="margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+            <h4>Хичээл ${index + 1}: ${lesson.lessonName}</h4>
+            <p><strong>Даалгавар:</strong> ${lesson.taskDescription}</p>
+          </div>
+        `
+          )
+          .join("");
+
         await transport.sendMail({
           from: EMAIL_USER,
           to: daycareEmail,
-          subject: `${child.firstName} ${child.lastName} хүүхдийн даалгавар: ${lessons[0].lessonName}`,
+          subject: `${child.firstName} ${child.lastName} хүүхдийн даалгавар (${lessons.length} хичээл)`,
           html: `
             <div>
               <h3>${child.firstName} ${child.lastName} хүүхдийн даалгавар</h3>
-              <p>Хичээлийн нэр: ${lessons[0].lessonName}</p>
-              <p>Дуусах хугацаа: ${new Date(taskEndSchedule).toLocaleString(
-                "mn-MN"
-              )}</p>
-              <p>Даалгаврын мэдээлэл: ${lessons[0].taskDescription}</p>
-              <p>Хүүхдийн даалгавар харах: <a href="http://localhost:3000/daycare/assignment">Click Here</a></p>
+              <p><strong>Дуусах хугацаа:</strong> ${new Date(
+                taskEndSchedule
+              ).toLocaleString("mn-MN")}</p>
+              <p><strong>Хичээлийн тоо:</strong> ${lessons.length}</p>
+              
+              <h4>Хичээлийн жагсаалт:</h4>
+              ${lessonsHtml}
+              
+              <div style="margin-top: 15px;">
+                <p>Хүүхдийн даалгавар харах: <a href="http://localhost:3000/daycare/assignment" style="background-color: #28a745; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Click Here</a></p>
+              </div>
             </div>
           `,
         });

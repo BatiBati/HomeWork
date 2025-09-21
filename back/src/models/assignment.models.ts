@@ -4,11 +4,10 @@ const lessonSchema = new Schema(
   {
     lessonName: { type: String, required: true },
     taskDescription: { type: String, required: true },
-    childrens: [
+    images: [
       {
-        type: Schema.Types.ObjectId,
-        ref: "children",
-        required: true,
+        type: String,
+        required: false,
       },
     ],
   },
@@ -35,12 +34,6 @@ const assignmentSchema = new Schema(
     ],
     lessons: [lessonSchema],
 
-    images: [
-      {
-        type: String,
-        required: false,
-      },
-    ],
     publicLinks: [
       {
         token: String,
