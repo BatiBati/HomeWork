@@ -14,7 +14,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useAuth } from "@/provider/AuthProvider";
-import { api } from "../../../axios";
 import { useRouter } from "next/navigation";
 const loginSchema = z.object({
   email: z.string().min(2, {
@@ -25,7 +24,7 @@ const loginSchema = z.object({
 
 export const LoginForm = () => {
   const { login } = useAuth();
-const router=useRouter()
+  const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -34,25 +33,24 @@ const router=useRouter()
     },
   });
 
- async function onSubmit(values: z.infer<typeof loginSchema>) {
-  try {
-    const user = await login(values); // login returns user
-    console.log("Амжилттай нэвтэрлээ:", user);
+  async function onSubmit(values: z.infer<typeof loginSchema>) {
+    try {
+      const user = await login(values); // login returns user
+      console.log("Амжилттай нэвтэрлээ:", user);
 
-    console.log(user);
-    // optional: fetch fresh data
-    // await getMe();
-if(user.role==="parent"){
-  router.push("/parent")
-}else{
-  router.push("/teacher")
-}
-  } catch (error: any) {
-    alert(error.response?.data?.message || "Login алдаа гарлаа");
+      console.log(user);
+      // optional: fetch fresh data
+      // await getMe();
+      if (user.role === "parent") {
+        router.push("/parent");
+      } else {
+        router.push("/teacher");
+      }
+    } catch (error) {
+      console.log(error);
+      return console.error("Login алдаа гарлаа");
+    }
   }
-}
-
-  
 
   return (
     <div className="flex flex-col gap-3">
