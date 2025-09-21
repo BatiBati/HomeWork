@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ChildrenType, HomeworkType, useAuth } from "@/provider/AuthProvider";
+import { ChildrenType, useAuth } from "@/provider/AuthProvider";
 import { AddStudentForm } from "./_components/add-student";
 import { AddAssignmentForm } from "./_components/add-task";
 import { useRouter } from "next/navigation";
@@ -29,7 +29,12 @@ export type AssignmentType = {
   lessons: LessonType[];
   taskEndSchedule: Date;
   images: string[];
-  publicLinks: any[];
+  publicLinks: Array<{
+    token: string;
+    sharedBy: "Teacher" | "Parent";
+    expireAt: Date;
+    createdAt: Date;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -191,11 +196,11 @@ export default function TeacherDashboard() {
                   </div>
                   <div className="text-right">
                     <p className="text-sm text-gray-500">
-                      🕒 Дуусах:{" "}
+                      🕒 Дуусах:
                       {new Date(a.taskEndSchedule).toLocaleDateString("mn-MN")}
                     </p>
                     <p className="text-xs text-gray-400">
-                      ⏰{" "}
+                      ⏰
                       {new Date(a.taskEndSchedule).toLocaleTimeString("mn-MN", {
                         hour: "2-digit",
                         minute: "2-digit",
