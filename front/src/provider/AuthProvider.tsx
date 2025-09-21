@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
+
 import { api, setAuthToken } from "../../axios";
 
 interface LoginValues {
