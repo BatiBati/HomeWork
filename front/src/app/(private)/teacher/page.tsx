@@ -12,17 +12,24 @@ import {
 } from "@/components/ui/dialog";
 import { ChildrenType, HomeworkType, useAuth } from "@/provider/AuthProvider";
 import { AddStudentForm } from "./_components/add-student";
-import { AddTaskForm } from "./_components/add-task";
+import { AddAssignmentForm } from "./_components/add-task";
 import { useRouter } from "next/navigation";
 import { api } from "../../../../axios";
 
+export type LessonType = {
+  lessonName: string;
+  taskDescription: string;
+  images: string[];
+};
+
 export type AssignmentType = {
   _id: string;
-  title: string;
-  lessons: string[];
-  description: string;
   teacher: string; // teacherId
   childrens: ChildrenType[];
+  lessons: LessonType[];
+  taskEndSchedule: Date;
+  images: string[];
+  publicLinks: any[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -32,6 +39,7 @@ export default function TeacherDashboard() {
   const [childname, setChildname] = useState("");
   const [assignments, setAssignments] = useState<AssignmentType[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { user, token } = useAuth();
   const router = useRouter();
   console.log(user);
@@ -126,19 +134,19 @@ export default function TeacherDashboard() {
                 <DialogHeader>
                   <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
                 </DialogHeader>
-                {/* <AddStudentForm
+                <AddStudentForm
                   parentname={parentname}
                   setParentname={setParentname}
                   childname={childname}
                   setChildname={setChildname}
-                  teacherId={teacher._id}
+                  teacherId={user._id}
                   loading={loading}
                   setLoading={setLoading}
-                /> */}
+                />
               </DialogContent>
             </Dialog>
 
-            <Dialog>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-white hover:bg-gray-300 border-3">
                   + Даалгавар оруулах
@@ -148,11 +156,14 @@ export default function TeacherDashboard() {
                 <DialogHeader>
                   <DialogTitle>➕ Даалгавар нэмэх</DialogTitle>
                 </DialogHeader>
-                {/* <AddTaskForm
-                  teacherId={teacher._id}
+                <AddAssignmentForm
+                  teacherId={user._id}
                   token={token || ""}
-                  onCreated={() => router.refresh()}
-                /> */}
+                  onCreated={() => {
+                    setIsDialogOpen(false);
+                    router.refresh();
+                  }}
+                />
               </DialogContent>
             </Dialog>
           </div>
@@ -166,20 +177,110 @@ export default function TeacherDashboard() {
               className="w-full cursor-pointer hover:shadow-md transition mt-3"
               onClick={() => router.push(`/assignment/${a._id}`)}
             >
-              <CardContent className="p-4">
-                <h3 className="font-bold text-lg">{a.title}</h3>
-                <p className="text-gray-600">{a.description}</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  📅 :{" "}
-                  {new Date(a.createdAt).toLocaleDateString("GB-en", {
-                    month: "2-digit",
-                    day: "2-digit",
-                  })}
-                </p>
-                <Progress value={0} className="h-3 my-3" />
-                <p className="text-gray-500">
-                  Хичээлийн явц: {}/{students.length}
-                </p>
+              <CardContent className="p-6">
+                {/* Assignment Header */}
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="font-bold text-xl text-gray-800">
+                      📚 Даалгавар
+                    </h3>
+                    <p className="text-sm text-gray-500 mt-1">
+                      📅 Үүссэн:{" "}
+                      {new Date(a.createdAt).toLocaleDateString("mn-MN")}
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">
+                      🕒 Дуусах:{" "}
+                      {new Date(a.taskEndSchedule).toLocaleDateString("mn-MN")}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      ⏰{" "}
+                      {new Date(a.taskEndSchedule).toLocaleTimeString("mn-MN", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Lessons Summary */}
+                <div className="mb-4">
+                  <h4 className="font-semibold text-gray-700 mb-2">
+                    📖 Хичээлүүд ({a.lessons.length})
+                  </h4>
+                  <div className="space-y-2">
+                    {a.lessons.slice(0, 2).map((lesson, index) => (
+                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-800">
+                              {index + 1}. {lesson.lessonName}
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              {lesson.taskDescription.length > 100
+                                ? `${lesson.taskDescription.substring(
+                                    0,
+                                    100
+                                  )}...`
+                                : lesson.taskDescription}
+                            </p>
+                          </div>
+                          {lesson.images.length > 0 && (
+                            <div className="ml-3 flex gap-1">
+                              {lesson.images
+                                .slice(0, 2)
+                                .map((imageUrl, imgIndex) => (
+                                  <img
+                                    key={imgIndex}
+                                    src={imageUrl}
+                                    alt={`${lesson.lessonName} image ${
+                                      imgIndex + 1
+                                    }`}
+                                    className="w-12 h-12 object-cover rounded border"
+                                  />
+                                ))}
+                              {lesson.images.length > 2 && (
+                                <div className="w-12 h-12 bg-gray-200 rounded border flex items-center justify-center">
+                                  <span className="text-xs text-gray-500">
+                                    +{lesson.images.length - 2}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {a.lessons.length > 2 && (
+                      <p className="text-sm text-gray-500 text-center">
+                        ... болон дахиад {a.lessons.length - 2} хичээл
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Assignment Stats */}
+                <div className="flex justify-between items-center pt-4 border-t">
+                  <div className="flex gap-4 text-sm">
+                    <span className="text-gray-600">
+                      👶 Сурагч: {a.childrens.length}
+                    </span>
+                    <span className="text-gray-600">
+                      🖼️ Зураг:{" "}
+                      {a.lessons.reduce(
+                        (total, lesson) => total + lesson.images.length,
+                        0
+                      )}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-sm text-gray-500">
+                      Хичээлийн явц: 0/{students.length}
+                    </p>
+                    <Progress value={0} className="h-2 w-20" />
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))
