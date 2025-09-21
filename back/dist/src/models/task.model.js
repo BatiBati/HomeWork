@@ -7,13 +7,29 @@ const taskSchema = new mongoose_1.Schema({
         type: String,
         required: true,
     },
-    image: {
-        type: String,
-        required: false,
-    },
+    image: [
+        {
+            type: String,
+            required: true,
+        },
+    ],
     taskEndSchedule: {
         type: Date,
         required: true,
+    },
+    homeworks: [
+        {
+            type: mongoose_1.Schema.Types.ObjectId,
+            ref: "Homework",
+        },
+    ],
+    teacherId: {
+        type: mongoose_1.Schema.Types.ObjectId,
+        ref: "Teacher",
+    },
+    description: {
+        type: String,
+        required: false,
     },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },

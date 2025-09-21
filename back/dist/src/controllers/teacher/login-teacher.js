@@ -23,9 +23,12 @@ const loginTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* (
         return;
     }
     try {
-        const teacher = yield teacher_model_1.teacherModel.findOne({
+        const teacher = yield teacher_model_1.teacherModel
+            .findOne({
             email: email.trim().toLowerCase(),
-        });
+        })
+            .populate("students")
+            .populate("tasks");
         if (!teacher) {
             res.status(404).json({ message: "Teacher not found" });
             return;
@@ -45,6 +48,8 @@ const loginTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* (
                 email: teacher.email,
                 school: teacher.school,
                 grade: teacher.grade,
+                students: teacher.students,
+                tasks: teacher.tasks,
             },
         });
     }

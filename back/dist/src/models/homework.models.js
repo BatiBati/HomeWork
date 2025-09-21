@@ -42,6 +42,7 @@ const homeworkSchema = new mongoose_1.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
     status: { type: Boolean, default: false },
+    image: [{ type: String, require: true }],
 });
 exports.homeworkModel = (0, mongoose_1.model)("Homework", homeworkSchema);
 //# sourceMappingURL=homework.models.js.map

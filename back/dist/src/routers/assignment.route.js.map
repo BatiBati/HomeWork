@@ -1,0 +1,1 @@
+{"version":3,"file":"assignment.route.js","sourceRoot":"","sources":["../../../src/routers/assignment.route.ts"],"names":[],"mappings":";;;AAAA,qCAAiC;AACjC,0DAImC;AACnC,mEAA+D;AAElD,QAAA,gBAAgB,GAAG,IAAA,gBAAM,GAAE;KACrC,IAAI,CAAC,GAAG,EAAE,gCAAc,EAAE,6BAAgB,CAAC;KAC3C,GAAG,CAAC,GAAG,EAAE,gCAAc,EAAE,2BAAc,CAAC;KACxC,KAAK,CAAC,MAAM,EAAE,gCAAc,EAAE,6BAAgB,CAAC,CAAC"}

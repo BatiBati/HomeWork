@@ -18,10 +18,10 @@ const student_model_1 = require("../../models/student.model");
 const refreshTokenController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authHeader = req.headers.authorization;
-        const token = authHeader && authHeader.split(' ')[1];
+        const token = authHeader && authHeader.split(" ")[1];
         if (!token) {
             res.status(401).json({
-                message: "Access token required"
+                message: "Access token required",
             });
             return;
         }
@@ -31,24 +31,25 @@ const refreshTokenController = (req, res) => __awaiter(void 0, void 0, void 0, f
         const student = yield student_model_1.studentModel.findById(decoded.studentId);
         if (!student) {
             res.status(401).json({
-                message: "Invalid token - student not found"
+                message: "Invalid token - student not found",
             });
             return;
         }
         // Generate new token
         const newToken = jsonwebtoken_1.default.sign({
             studentId: student._id,
-            parentname: student.parentname
+            parentname: student.parentname,
+            parentEmail: student.parentEmail,
         }, JWT_SECRET, { expiresIn: "7d" });
         res.status(200).json({
             message: "Token refreshed successfully",
-            token: newToken
+            token: newToken,
         });
     }
     catch (error) {
         console.error("Token refresh error:", error);
         res.status(403).json({
-            message: "Invalid or expired token"
+            message: "Invalid or expired token",
         });
     }
 });

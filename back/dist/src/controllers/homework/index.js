@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteHomeworkController = exports.getHomeworkByStudentIdController = exports.updateHomeworkController = exports.getMyHomeworksController = exports.getHomeworksController = exports.createHomeworkController = void 0;
+exports.deleteHomeworkController = exports.getHomeworkByStudentIdController = exports.updateHomeworkController = exports.getMyHomeworksController = exports.getHomeworksController = exports.submitHomework = void 0;
 var create_homework_1 = require("./create-homework");
-Object.defineProperty(exports, "createHomeworkController", { enumerable: true, get: function () { return create_homework_1.createHomeworkController; } });
+Object.defineProperty(exports, "submitHomework", { enumerable: true, get: function () { return create_homework_1.submitHomework; } });
 var get_homeworks_1 = require("./get-homeworks");
 Object.defineProperty(exports, "getHomeworksController", { enumerable: true, get: function () { return get_homeworks_1.getHomeworksController; } });
 var get_my_homeworks_1 = require("./get-my-homeworks");
