@@ -9,7 +9,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const { getMe, setToken } = useAuth();
+  const { setToken } = useAuth();
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -22,7 +22,7 @@ export default function Home() {
       setToken(token);
       localStorage.setItem("token", token);
 
-      await getMe(token);
+      // await getMe(token);
       toast.success("Logged in successfully!");
       router.push("/teacher");
     } catch (err) {

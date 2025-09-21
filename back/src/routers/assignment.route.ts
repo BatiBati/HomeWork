@@ -4,8 +4,9 @@ import {
   getAssignments,
   updateAssignment,
 } from "../controllers/assignment";
+import { authMiddleware } from "../middleware/auth.middleware";
 
 export const assignmentRouter = Router()
-  .post("/", createAssignment)
-  .get("/", getAssignments)
-  .patch("/:id", updateAssignment);
+  .post("/", authMiddleware, createAssignment)
+  .get("/", authMiddleware, getAssignments)
+  .patch("/:id", authMiddleware, updateAssignment);
