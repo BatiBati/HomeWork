@@ -15,6 +15,10 @@ const assignmentSchema = new Schema(
       ref: "user",
       required: true,
     },
+    taskEndSchedule: {
+      type: Date,
+      required: true,
+    },
     childrens: [
       {
         type: Schema.Types.ObjectId,
@@ -23,14 +27,7 @@ const assignmentSchema = new Schema(
       },
     ],
     lessons: [lessonSchema],
-    taskEndSchedule: {
-      type: Date,
-    },
 
-    dayCares: {
-      type: Schema.Types.ObjectId,
-      ref: "Daycare",
-    },
     images: [
       {
         type: String,

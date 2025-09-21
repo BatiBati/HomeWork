@@ -27,6 +27,10 @@ const userSchema = new Schema(
       type: Number,
       required: true,
     },
+    daycareEmail: {
+      type: String,
+      required: false,
+    },
     school: {
       type: String,
       required: false,
