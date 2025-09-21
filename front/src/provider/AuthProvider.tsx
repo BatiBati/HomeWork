@@ -65,7 +65,7 @@ interface UserType {
   _id: string;
   email: string;
   name?: string;
-  role: "parent" | "teacher"; // нэмэх
+  role: "parents" | "teacher";
 }
 interface AuthContextType {
   user: UserType | null;

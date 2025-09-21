@@ -41,8 +41,8 @@ export const LoginForm = () => {
       console.log(user);
       // optional: fetch fresh data
       // await getMe();
-      if (user.role === "parent") {
-        router.push("/parent");
+      if (user.role === "parents") {
+        router.push("/parents");
       } else {
         router.push("/teacher");
       }
