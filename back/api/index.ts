@@ -12,6 +12,7 @@ import { messageRouter } from "../src/routers/message.route";
 import { dayCareRouter } from "../src/routers/daycare.route";
 import { assignmentRouter } from "../src/routers/assignment.route";
 import { getMeUser } from "../src/controllers/auth/get-me";
+import { getMeRouter } from "../src/routers/getMe.route";
 
 config();
 
@@ -28,11 +29,11 @@ app.get("/", (req, res) => {
   res.send("Back end");
 });
 app.use("/user", userRouter);
+app.use("/auth", getMeRouter);
 app.use("/children", childrenRouter);
-app.use("/auth", getMeUser);
 app.use("/daycare", dayCareRouter);
-app.use("/message", messageRouter);
 app.use("/assignment", assignmentRouter);
+app.use("/message", messageRouter);
 app.use("/student", studentRouter);
 app.use("/homework", homeworkRouter);
 app.use("/teacher", teacherRouter);
