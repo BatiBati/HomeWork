@@ -17,7 +17,7 @@ const student_model_1 = require("../../models/student.model");
 const teacher_model_1 = require("../../models/teacher.model");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const loginOrRegisterStudentController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { parentname, childname, teacherId } = req.body;
+    const { parentname, childname, teacherId, parentEmail } = req.body;
     if (!parentname || !childname || !teacherId) {
         res.status(400).json({
             message: "Parent name, child name, and teacher ID are required",
@@ -35,14 +35,18 @@ const loginOrRegisterStudentController = (req, res) => __awaiter(void 0, void 0,
         let student = yield student_model_1.studentModel.findOne({ parentname, childname });
         // 3. Create new student if not exists
         if (!student) {
-            student = yield student_model_1.studentModel.create({
+            const studentData = {
                 parentname,
                 childname,
                 teacherId,
                 homeworks: [], // This will hold the assigned tasks
                 createdAt: new Date(),
                 updatedAt: new Date(),
-            });
+            };
+            if (parentEmail) {
+                studentData.parentEmail = parentEmail;
+            }
+            student = yield student_model_1.studentModel.create(studentData);
             // Add student to teacher
             yield teacher_model_1.teacherModel.findByIdAndUpdate(teacherId, {
                 $addToSet: { students: student._id },
@@ -56,6 +60,7 @@ const loginOrRegisterStudentController = (req, res) => __awaiter(void 0, void 0,
             _id: student._id.toString(),
             parentname: student.parentname,
             childname: student.childname,
+            parentEmail: student.parentEmail,
         }, process.env.JWT_SECRET || "your-secret-key", { expiresIn: process.env.JWT_EXPIRES_IN || "7d" });
         // 6. Return token + student + homeworks
         res.status(200).json({
@@ -67,6 +72,7 @@ const loginOrRegisterStudentController = (req, res) => __awaiter(void 0, void 0,
                 _id: student._id,
                 parentname: student.parentname,
                 childname: student.childname,
+                parentEmail: student.parentEmail,
                 homeworks: student.homeworks, // <-- include tasks here
             },
         });

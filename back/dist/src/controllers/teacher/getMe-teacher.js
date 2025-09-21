@@ -21,8 +21,17 @@ const getMe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         const teacher = yield teacher_model_1.teacherModel
             .findById(teacherId)
-            .populate("tasks")
-            .populate("students");
+            .populate({
+            path: "tasks",
+            populate: {
+                path: "homeworks",
+                populate: {
+                    path: "studentId", // populate student info inside homework
+                    select: "childname parentname", // only select the fields you need
+                },
+            },
+        })
+            .populate("students"); // populate teacher's students
         if (!teacher) {
             res.status(404).json({ message: "Teacher not found" });
             return;

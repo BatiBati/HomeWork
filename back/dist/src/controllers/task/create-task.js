@@ -1,45 +1,78 @@
-"use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.createTaskController = void 0;
-const task_model_1 = require("../../models/task.model");
-const teacher_model_1 = require("../../models/teacher.model");
-const createTaskController = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { teacherId, lessonName, image, homeWork, taskEndSchedule } = req.body;
-    if (!teacherId || !lessonName || !taskEndSchedule) {
-        res.status(400).json({ message: "Missing required fields" });
-        return;
-    }
-    try {
-        const task = yield task_model_1.taskModel.create({
-            lessonName,
-            image,
-            homeWork,
-            taskEndSchedule,
-        });
-        const teacher = yield teacher_model_1.teacherModel.findByIdAndUpdate(teacherId, { $push: { tasks: task._id } }, { new: true });
-        if (!teacher) {
-            res.status(404).json({ message: "Teacher not found" });
-            return;
-        }
-        res.status(200).json({
-            message: "Task created and added to teacher",
-            task,
-            teacher,
-        });
-    }
-    catch (error) {
-        console.error(error);
-        res.status(500).json({ error, message: "Task create error" });
-    }
-});
-exports.createTaskController = createTaskController;
+// import { Request, Response } from "express";
+// import { taskModel } from "../../models/task.model";
+// import { teacherModel } from "../../models/teacher.model";
+// import { studentModel } from "../../models/student.model";
+// import { sendHomeworkAddedNotification } from "../../utils/mail-handler";
+// export const createTaskController = async (
+//   req: Request,
+//   res: Response
+// ): Promise<void> => {
+//   const { teacherId, lessonName, image, homeWork, taskEndSchedule } = req.body;
+//   if (!teacherId || !lessonName || !taskEndSchedule) {
+//     res.status(400).json({ message: "Missing required fields" });
+//     return;
+//   }
+//   try {
+//     const task = await taskModel.create({
+//       lessonName,
+//       image,
+//       homeWork,
+//       taskEndSchedule,
+//       teacherId,
+//     });
+//     const teacher = await teacherModel.findByIdAndUpdate(
+//       teacherId,
+//       { $push: { tasks: task._id } },
+//       { new: true }
+//     );
+//     // Send email notifications to all students' parents
+//     try {
+//       const students = await studentModel
+//         .find({ teacherId })
+//         .select("parentEmail parentname childname");
+//       const emailPromises = students
+//         .filter((student) => student.parentEmail) // Only send to students with email
+//         .map(async (student) => {
+//           try {
+//             await sendHomeworkAddedNotification(
+//               student.parentEmail,
+//               `${lessonName} даалгавар нэмэгдлээ`,
+//               student._id.toString(),
+//               lessonName,
+//               taskEndSchedule
+//             );
+//             console.log(
+//               `✅ Email sent to ${student.parentname} (${student.childname})`
+//             );
+//           } catch (emailError) {
+//             console.error(
+//               `❌ Failed to send email to ${student.parentname}:`,
+//               emailError
+//             );
+//           }
+//         });
+//       await Promise.allSettled(emailPromises);
+//       console.log(
+//         `📧 Email notifications sent to ${
+//           students.filter((s) => s.parentEmail).length
+//         } parents`
+//       );
+//     } catch (emailError) {
+//       console.error("Email notification error:", emailError);
+//       // Don't fail the task creation if email fails
+//     }
+//     if (!teacher) {
+//       res.status(404).json({ message: "Teacher not found" });
+//       return;
+//     }
+//     res.status(200).json({
+//       message: "Task created and added to teacher",
+//       task,
+//       teacherId,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error, message: "Task create error" });
+//   }
+// };
 //# sourceMappingURL=create-task.js.map

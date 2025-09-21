@@ -13,7 +13,9 @@ exports.getTeacherById = void 0;
 const teacher_model_1 = require("../../models/teacher.model");
 const getTeacherById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const teacher = yield teacher_model_1.teacherModel.findById(req.params.id);
+        const teacher = (yield teacher_model_1.teacherModel.findById(req.params.id))
+            .populated("students")
+            .populate("tasks");
         if (!teacher) {
             res.status(404).json({
                 message: "Teacher not found",

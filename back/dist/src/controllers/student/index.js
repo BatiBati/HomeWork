@@ -17,4 +17,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./create-student"), exports);
 __exportStar(require("./refresh-token"), exports);
 __exportStar(require("./logout-student"), exports);
+__exportStar(require("./get-student"), exports);
+__exportStar(require("./get-oneStudent"), exports);
+__exportStar(require("./update-student"), exports);
+__exportStar(require("./delete-student"), exports);
 //# sourceMappingURL=index.js.map

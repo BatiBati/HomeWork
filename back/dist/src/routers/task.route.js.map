@@ -1,1 +1,1 @@
-{"version":3,"file":"task.route.js","sourceRoot":"","sources":["../../../src/routers/task.route.ts"],"names":[],"mappings":";;;AAAA,qCAAiC;AACjC,iEAAuE;AACvE,MAAM,MAAM,GAAG,IAAA,gBAAM,GAAE,CAAC;AAEL,4BAAU;AAD7B,MAAM,CAAC,IAAI,CAAC,SAAS,EAAE,kCAAoB,CAAC,CAAC"}
+{"version":3,"file":"task.route.js","sourceRoot":"","sources":["../../../src/routers/task.route.ts"],"names":[],"mappings":"AAAA,oCAAoC;AACpC,6EAA6E;AAC7E,oEAAoE;AACpE,8EAA8E;AAC9E,8BAA8B;AAC9B,mDAAmD;AACnD,mCAAmC;AACnC,wDAAwD;AACxD,mCAAmC"}

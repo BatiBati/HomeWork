@@ -9,6 +9,8 @@ const studentSchema = new mongoose_1.Schema({
     homeworks: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Homework" }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
+    parentEmail: { type: String, required: false },
+    tasks: [{ type: mongoose_1.Schema.Types.ObjectId, ref: "Task" }],
 });
 exports.studentModel = (0, mongoose_1.model)("Student", studentSchema);
 //# sourceMappingURL=student.model.js.map
