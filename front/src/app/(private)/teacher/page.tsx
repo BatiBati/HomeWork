@@ -17,6 +17,7 @@ import { AddStudentForm } from "./_components/add-student";
 import { AddAssignmentForm } from "./_components/add-task";
 import { useRouter } from "next/navigation";
 import { api } from "../../../../axios";
+import { TeacherChat } from "./_components/chat";
 
 export type LessonType = {
   lessonName: string;
@@ -301,6 +302,7 @@ export default function TeacherDashboard() {
             )}
           </DialogContent>
         </Dialog>
+        <TeacherChat />
       </div>
     </div>
   );
