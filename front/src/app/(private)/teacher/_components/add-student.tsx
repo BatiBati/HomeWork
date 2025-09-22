@@ -27,11 +27,14 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
   onCreated,
 }) => {
   const { getMe } = useAuth();
+
   const handleAddStudent = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      console.log("teacherID", teacherId);
+
       const res = await api.post("/student/login", {
         parentname,
         childname,
@@ -44,10 +47,10 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
       setParentname("");
       setChildname("");
 
-      onCreated?.(); // Call the callback after successful creation
-    } catch (err) {
-      console.error(err);
-      toast.error("Error adding student");
+      onCreated?.();
+    } catch (err: any) {
+      console.error("Add student error:", err);
+      toast.error(err.response?.data?.message || "Error adding student");
     } finally {
       setLoading(false);
       getMe();
@@ -58,14 +61,14 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
     <form className="space-y-4" onSubmit={handleAddStudent}>
       <div>
         <label className="block text-sm font-medium text-gray-700">
-          Сурагчийн овог
+          Эцэг эхийн нэр
         </label>
         <input
           type="text"
           value={parentname}
           onChange={(e) => setParentname(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
-          placeholder="Enter parent name"
+          placeholder="Эцэг эхийн нэр"
           required
         />
       </div>
@@ -78,14 +81,14 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
           value={childname}
           onChange={(e) => setChildname(e.target.value)}
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
-          placeholder="Enter student name"
+          placeholder="Сурагчийн нэр"
           required
         />
       </div>
       <div className="flex justify-end">
         <Button
           type="submit"
-          className="bg-white hover:bg-gray-300 border-3"
+          className="bg-green-500 hover:bg-green-600 text-white"
           disabled={loading}
         >
           {loading ? "Adding..." : "Add Student"}
