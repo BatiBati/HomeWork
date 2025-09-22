@@ -74,7 +74,7 @@ export const sendHomeworkEditedNotification = async (
                 </div>
 
                 <div style="padding: 8px 24px 24px 24px;">
-                  <a href="http://localhost:3000/parent" style="display:inline-block; background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%); color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 12px; font-weight:600; box-shadow: 0 6px 14px rgba(2, 6, 23, 0.12);">Даалгавар харах</a>
+                  <a href="https://home-work-n1g4.vercel.app/parent" style="display:inline-block; background: linear-gradient(135deg, #6366f1 0%, #22d3ee 100%); color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 12px; font-weight:600; box-shadow: 0 6px 14px rgba(2, 6, 23, 0.12);">Даалгавар харах</a>
                 </div>
 
                 <div style="padding:16px 24px; background:#f8fafc; border-top:1px solid #e6ebf1; color:#64748b; font-size:12px;">
@@ -138,7 +138,7 @@ export const sendHomeworkEditedNotification = async (
                   ${lessonsHtml}
                 </div>
                 <div style="padding: 8px 24px 24px 24px;">
-                  <a href="http://localhost:3000/assignment/${
+                  <a href="https://home-work-n1g4.vercel.app/assignment/${
                     assignment.id
                   }" style="display:inline-block; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 12px; font-weight:600; box-shadow: 0 6px 14px rgba(2, 6, 23, 0.12);">Хүүхдийн даалгавар үзэх</a>
                 </div>

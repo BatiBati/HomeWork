@@ -12,11 +12,11 @@ export function AssignmentsList({
   assignments: AssignmentType[];
   onEdit: (a: AssignmentType) => void;
 }) {
-  if (assignments.length === 0) return <p>No assignments yet.</p>;
+  if (assignments.length === 0) return <p>No assignments yet</p>;
 
   return (
     <>
-      {assignments.map((a) => (
+      {assignments.reverse().map((a) => (
         <Card
           key={a._id}
           className="w-full cursor-pointer hover:shadow-md transition mt-4"

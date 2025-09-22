@@ -79,7 +79,7 @@ export const sendHomeworkAddedNotification = async (
             ${lessonsHtml}
             
             <div style="margin-top: 20px;">
-              <a href="http://localhost:3000/parent" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Даалгавар харах</a>
+              <a href="https://home-work-n1g4.vercel.app/parent" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Даалгавар харах</a>
             </div>
           </div>
         `,
@@ -119,7 +119,7 @@ export const sendHomeworkAddedNotification = async (
               ${lessonsHtml}
               
               <div style="margin-top: 15px;">
-                <p>Хүүхдийн даалгавар харах: <a href="http://localhost:3000/assignment/${
+                <p>Хүүхдийн даалгавар харах: <a href="https://home-work-n1g4.vercel.app/assignment/${
                   assignment.id
                 }" style="background-color: #28a745; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Click Here</a></p>
               </div>
