@@ -8,6 +8,7 @@ import React, {
 } from "react";
 
 import { api, setAuthToken } from "../../axios";
+import { LessonType } from "@/app/(private)/teacher/page";
 
 interface LoginValues {
   email: string;
@@ -40,7 +41,8 @@ export type TaskType = {
 export type TeacherType = {
   _id: string;
   email: string;
-  teacherName: string;
+  lastName: string;
+  firstName: string;
   password: string;
   school: string;
   grade: string;
@@ -68,6 +70,22 @@ export type ChildrenType = {
   parents: string;
   grade: string;
   school: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+export type AssignmentTypeee = {
+  _id: string;
+  teacher: TeacherType;
+  childrens: ChildrenType[];
+  lessons: LessonType[];
+  taskEndSchedule: Date;
+  images: string[];
+  publicLinks: Array<{
+    token: string;
+    sharedBy: "Teacher" | "Parent";
+    expireAt: Date;
+    createdAt: Date;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 };

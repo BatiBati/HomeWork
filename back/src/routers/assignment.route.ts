@@ -11,4 +11,4 @@ export const assignmentRouter = Router()
   .post("/", createAssignment)
   .get("/", getAssignments)
   .patch("/:id", updateAssignment)
-  .get("/get/:teacherId", getAssignmentsByTeacher);
+  .get("/get/:id", getAssignmentsByTeacher);

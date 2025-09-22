@@ -3,19 +3,11 @@ import { assignmentModel } from "../../models/assignment.models";
 
 export const getAssignmentsByTeacher: RequestHandler = async (req, res) => {
   try {
-    const { teacherId } = req.params;
+    const { id } = req.params;
 
-    if (!teacherId) {
-      res.status(400).json({ message: "Teacher ID is required" });
-      return;
-    }
-
-    const assignments = await assignmentModel
-      .find({ teacher: teacherId })
-      .populate("childrens");
+    const assignments = await assignmentModel.findById(id).populate("teacher");
 
     res.status(200).json({
-      message: "Assignments fetched successfully",
       assignments,
     });
   } catch (error) {
