@@ -6,6 +6,14 @@ const nextConfig: NextConfig = {
   },
   images: {
     domains: ["res.cloudinary.com"], // 👈 Cloudinary-г зөвшөөрнө
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+    ],
+    formats: ["image/avif", "image/webp"],
+    minimumCacheTTL: 60,
   },
 };
 
