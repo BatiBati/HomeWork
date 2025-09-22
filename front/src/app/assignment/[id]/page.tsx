@@ -35,8 +35,8 @@ export default function AssignmentTask() {
   const [currentIndex, setCurrentIndex] = useState(0); // modal дотор ямар зураг идэвхтэй байгааг хадгалах
 
   const fetchTask = async () => {
-    const response = await api.get(`/assignment/get/${id}`);
-    setData(response.data.assignments);
+    const response = await api.get(`/assignment/byId/${id}`);
+    setData(response.data.assignment);
   };
 
   useEffect(() => {
