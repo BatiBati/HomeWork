@@ -112,8 +112,15 @@ export default function TeacherDashboard() {
           </Card>
           <Card className="bg-blue-100">
             <CardContent className="p-4 text-center">
-              <p className="text-gray-700 font-semibold">📊 Даалгаварийн явц</p>
-              {/* <p className="text-3xl font-bold">{progress}%</p> */}
+              <Dialog>
+                <DialogTrigger>
+                  <div>chat</div>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogTitle>Messages</DialogTitle>
+                  <TeacherChat />
+                </DialogContent>
+              </Dialog>
             </CardContent>
           </Card>
         </div>
@@ -199,7 +206,6 @@ export default function TeacherDashboard() {
             )}
           </DialogContent>
         </Dialog>
-        <TeacherChat />
       </div>
     </div>
   );
