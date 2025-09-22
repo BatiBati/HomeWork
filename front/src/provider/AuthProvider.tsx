@@ -92,6 +92,8 @@ interface AuthContextType {
   getMe: () => Promise<UserType>;
   setTeacher: React.Dispatch<React.SetStateAction<TeacherType | null>>;
   setToken: React.Dispatch<React.SetStateAction<string | null>>;
+  loading: boolean;
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -100,22 +102,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [teacher, setTeacher] = useState<TeacherType | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      setAuthToken(token);
-      setToken(token);
-      api
-        .get<{ user: UserType }>("/auth/me")
-        .then((res) => setUser(res.data.user))
-        .catch(() => {
-          localStorage.removeItem("token");
-          setAuthToken(null);
-          setToken(null);
-        });
-    }
-  }, []);
+  const [loading, setLoading] = useState(false);
 
   const login = async (values: LoginValues): Promise<UserType> => {
     try {
@@ -127,6 +114,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       localStorage.setItem("token", token);
       setAuthToken(token);
+      setToken(token);
       setUser(user);
 
       return user;
@@ -145,9 +133,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return res.data.user;
   };
 
+  useEffect(() => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(true);
+        return;
+      }
+
+      try {
+        setLoading(true);
+        setAuthToken(token);
+        setToken(token);
+        const res = await api.get<{ user: UserType }>("/auth/me");
+        setUser(res.data.user);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        localStorage.removeItem("token");
+        setAuthToken(null);
+        setToken(null);
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ user, teacher, token, setTeacher, setToken, login, getMe }}
+      value={{
+        user,
+        teacher,
+        token,
+        setTeacher,
+        setToken,
+        login,
+        getMe,
+        loading,
+        setLoading,
+      }}
     >
       {children}
     </AuthContext.Provider>
