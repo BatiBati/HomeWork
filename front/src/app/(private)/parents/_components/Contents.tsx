@@ -1,5 +1,6 @@
 "use client";
 
+import { ParentChat } from "./Chat";
 import { ChildrenContent } from "./children/ChildrenContent";
 import { EditProfileContent } from "./EditProfile/EditProfileContent";
 
@@ -11,6 +12,7 @@ export const Contents = ({ selectedSidebar }: Props) => {
     <div className="p-6 border-[1px] w-full rounded-xl ">
       {selectedSidebar === 1 && <ChildrenContent />}
       {selectedSidebar === 2 && <EditProfileContent />}
+      {selectedSidebar === 3 && <ParentChat />}
     </div>
   );
 };
