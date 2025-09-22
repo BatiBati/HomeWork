@@ -33,11 +33,11 @@ const userSchema = new Schema(
     },
     school: {
       type: String,
-      required: false,
+      required: true,
     },
     grade: {
       type: String,
-      required: false,
+      required: true,
     },
     role: {
       type: String,

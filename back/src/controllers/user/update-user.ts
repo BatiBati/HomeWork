@@ -3,8 +3,16 @@ import { userModel } from "../../models/user.model";
 export const updateUserById = async (req, res) => {
   try {
     const { id } = req.params;
-    const { email, password, firstName, lastName, phoneNumber, role } =
-      req.body;
+    const {
+      email,
+      password,
+      firstName,
+      lastName,
+      phoneNumber,
+      role,
+      grade,
+      school,
+    } = req.body;
     const user = await userModel.findByIdAndUpdate(
       id,
       {
@@ -14,6 +22,8 @@ export const updateUserById = async (req, res) => {
         lastName,
         phoneNumber,
         role,
+        grade,
+        school,
       },
       { new: true }
     );

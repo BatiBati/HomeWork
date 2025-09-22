@@ -4,15 +4,12 @@ import { childrenModel } from "../../models/children.models";
 import { sendHomeworkAddedNotification } from "../../utils/mail-handler";
 
 export const createAssignment: RequestHandler = async (req, res) => {
-  const { teacher, lessons, images, publicLinks, taskEndSchedule } = req.body;
+  const { teacher, lessons, images, taskEndSchedule } = req.body;
 
   const childrens = await childrenModel
     .find({ teacher: teacher })
     .populate("parents", "email daycareEmail")
-    .select("_id parents firstName lastName");
-
-  console.log("👶 Found children:", childrens.length);
-  console.log("👶 Children data:", JSON.stringify(childrens, null, 2));
+    .select("_id parents firstName lastName grade school");
 
   if (!childrens.length) {
     res.status(404).json({ message: "Teacher has no children" });
@@ -26,7 +23,6 @@ export const createAssignment: RequestHandler = async (req, res) => {
       lessons,
       taskEndSchedule: new Date(taskEndSchedule),
       images,
-      publicLinks,
     });
 
     await childrenModel.updateMany(
@@ -62,10 +58,6 @@ export const createAssignment: RequestHandler = async (req, res) => {
         }
       }
     });
-
-    console.log("📧 All parent emails:", parentEmails);
-    console.log("📧 All daycare emails:", daycareEmails);
-
     // Send notifications to all parents and daycares (only once per assignment)
     if (parentEmails.length > 0 || daycareEmails.length > 0) {
       // Create a summary of all lessons for the notification
@@ -89,9 +81,11 @@ export const createAssignment: RequestHandler = async (req, res) => {
                 daycareEmail: (c.parents as any)?.daycareEmail || "",
               },
             ],
+            grade: c.grade,
+            school: c.school,
           })),
         lessonSummary, // Send lesson summary instead of individual lessons
-        newAssignment.taskEndSchedule.toISOString()
+        newAssignment
       );
     }
     res.status(201).json({

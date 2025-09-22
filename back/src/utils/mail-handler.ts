@@ -1,5 +1,6 @@
 import { config as configDotenv } from "dotenv";
 import { createTransport } from "nodemailer";
+import { assignmentModel } from "../models/assignment.models";
 
 configDotenv();
 
@@ -17,9 +18,11 @@ export const sendHomeworkAddedNotification = async (
     firstName: string;
     lastName: string;
     parents: { email: string; daycareEmail?: string }[];
+    grade: string;
+    school: string;
   }[],
   lessons: { lessonName: string; taskDescription: string }[],
-  taskEndSchedule: string
+  assignment: InstanceType<typeof assignmentModel>
 ) => {
   try {
     // Get all unique parent emails
@@ -42,12 +45,11 @@ export const sendHomeworkAddedNotification = async (
       }
     });
 
-    console.log("📧 All parent emails:", parentEmails);
-    console.log("📧 All daycare emails:", daycareEmails);
+    // ---------- Parent email (individualized per child) ----------
+    for (const child of childrens) {
+      const parentEmail = child.parents[0]?.email;
+      if (!parentEmail) continue;
 
-    // ---------- Parent email ----------
-    if (parentEmails.length > 0) {
-      // Create HTML content for all lessons
       const lessonsHtml = lessons
         .map(
           (lesson, index) => `
@@ -61,13 +63,15 @@ export const sendHomeworkAddedNotification = async (
 
       await transport.sendMail({
         from: EMAIL_USER,
-        to: parentEmails.join(","),
-        subject: `Таны хүүхдийн шинэ даалгавар нэмэгдлээ (${lessons.length} хичээл)`,
+        to: parentEmail,
+        subject: `Таны хүүхэд ${child.firstName} ${child.lastName}-д шинэ даалгавар нэмэгдлээ (${lessons.length} хичээл)`,
         html: `
           <div>
-            <h3>Шинэ даалгавар ирлээ</h3>
+            <h3>${child.firstName} ${
+          child.lastName
+        } хүүхдийн шинэ даалгавар</h3>
             <p><strong>Дуусах хугацаа:</strong> ${new Date(
-              taskEndSchedule
+              assignment.taskEndSchedule
             ).toLocaleString("mn-MN")}</p>
             <p><strong>Хичээлийн тоо:</strong> ${lessons.length}</p>
             
@@ -75,15 +79,13 @@ export const sendHomeworkAddedNotification = async (
             ${lessonsHtml}
             
             <div style="margin-top: 20px;">
-              <a href="http://localhost:3000/assignment" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Даалгавар харах</a>
+              <a href="http://localhost:3000/parent" style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Даалгавар харах</a>
             </div>
           </div>
         `,
       });
     }
 
-    // ---------- Daycare email ----------
-    // Send individual emails for each child to their specific daycare
     for (const child of childrens) {
       const daycareEmail = child.parents[0].daycareEmail;
       if (daycareEmail && daycareEmail.trim() !== "") {
@@ -105,9 +107,11 @@ export const sendHomeworkAddedNotification = async (
           subject: `${child.firstName} ${child.lastName} хүүхдийн даалгавар (${lessons.length} хичээл)`,
           html: `
             <div>
-              <h3>${child.firstName} ${child.lastName} хүүхдийн даалгавар</h3>
+              <h3>${child.school} ${child.grade} ${child.firstName} ${
+            child.lastName
+          } хүүхдийн даалгавар</h3>
               <p><strong>Дуусах хугацаа:</strong> ${new Date(
-                taskEndSchedule
+                assignment.taskEndSchedule
               ).toLocaleString("mn-MN")}</p>
               <p><strong>Хичээлийн тоо:</strong> ${lessons.length}</p>
               
@@ -115,7 +119,9 @@ export const sendHomeworkAddedNotification = async (
               ${lessonsHtml}
               
               <div style="margin-top: 15px;">
-                <p>Хүүхдийн даалгавар харах: <a href="http://localhost:3000/daycare/assignment" style="background-color: #28a745; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Click Here</a></p>
+                <p>Хүүхдийн даалгавар харах: <a href="http://localhost:3000/assignment/${
+                  assignment.id
+                }" style="background-color: #28a745; color: white; padding: 8px 16px; text-decoration: none; border-radius: 4px;">Click Here</a></p>
               </div>
             </div>
           `,

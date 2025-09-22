@@ -33,21 +33,6 @@ const assignmentSchema = new Schema(
       },
     ],
     lessons: [lessonSchema],
-
-    publicLinks: [
-      {
-        token: String,
-        sharedBy: {
-          type: String,
-          enum: ["Teacher", "Parent"],
-        },
-        expireAt: Date,
-        createdAt: {
-          type: Date,
-          default: Date.now,
-        },
-      },
-    ],
   },
   { timestamps: true }
 );

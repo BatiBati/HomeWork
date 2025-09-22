@@ -26,12 +26,11 @@ const childrenSchema = new Schema(
     },
     grade: {
       type: String,
-
-      required: true,
+      required: false,
     },
     school: {
       type: String,
-      required: true,
+      required: false,
     },
     assignment: [
       {
