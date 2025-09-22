@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useAuth } from "@/provider/AuthProvider";
 import { api } from "../../../../../axios";
+import { AssignmentType } from "../page";
 
 interface Lesson {
   lessonName: string;
@@ -206,6 +207,31 @@ export function AddAssignmentForm({
 
     setLoading(true);
     try {
+      const existing = await api.get<{ assignments: AssignmentType[] }>(
+        `/assignment/get/${teacherId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // 2. Шинэ taskEndSchedule-ээс зөвхөн огноо хэсгийг авах
+      const newDate = new Date(taskEndSchedule).toISOString().split("T")[0];
+
+      const alreadyExists = existing.data.assignments.some((a) => {
+        if (!a.taskEndSchedule) return false;
+        const existingDate = new Date(a.taskEndSchedule)
+          .toISOString()
+          .split("T")[0];
+        return existingDate === newDate;
+      });
+
+      if (alreadyExists) {
+        toast.error("❌ Энэ өдөрт хичээл аль хэдийн үүссэн байна!");
+        setLoading(false);
+        return;
+      }
       // Upload images for each lesson (if any images selected)
       const lessonsWithImages = await Promise.all(
         lessons.map(async (lesson) => {
