@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/provider/AuthProvider";
 import { api } from "../../../../../axios";
+import { AxiosError } from "axios";
 
 interface AddStudentFormProps {
   parentname: string;
@@ -48,9 +49,10 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
       setChildname("");
 
       onCreated?.();
-    } catch (err: any) {
-      console.error("Add student error:", err);
-      toast.error(err.response?.data?.message || "Error adding student");
+    } catch (err: unknown) {
+      const error = err as AxiosError<{ message: string }>;
+      console.error("Add student error:", error);
+      toast.error(error.response?.data?.message || "Error adding student");
     } finally {
       setLoading(false);
       getMe();
