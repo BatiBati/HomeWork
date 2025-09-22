@@ -31,6 +31,19 @@ export const createChildren: RequestHandler = async (req, res) => {
       return;
     }
 
+    // Ensure teacher has school and grade so child inherits them
+    if (!teacher.school || !teacher.grade) {
+      res.status(400).json({
+        message: "Teacher is missing school or grade",
+        details: {
+          teacherId,
+          school: teacher.school ?? null,
+          grade: teacher.grade ?? null,
+        },
+      });
+      return;
+    }
+
     const newChild = await childrenModel.create({
       firstName,
       lastName,
@@ -42,13 +55,16 @@ export const createChildren: RequestHandler = async (req, res) => {
     });
     console.log(newChild.teacher);
 
-    if (!parent.children) parent.children = [];
-    parent.children.push(newChild._id);
-    await parent.save();
+    // Avoid triggering full user validation; push child IDs atomically
+    await userModel.updateOne(
+      { _id: parent._id },
+      { $push: { children: newChild._id } }
+    );
 
-    if (!teacher.children) teacher.children = [];
-    teacher.children.push(newChild._id);
-    await teacher.save();
+    await userModel.updateOne(
+      { _id: teacher._id },
+      { $push: { children: newChild._id } }
+    );
 
     res.status(201).json({
       message: "Child created successfully",
@@ -56,6 +72,9 @@ export const createChildren: RequestHandler = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Create Student server error" });
+    res.status(500).json({
+      message: "Create Student server error",
+      error: error instanceof Error ? error.message : String(error),
+    });
   }
 };
