@@ -8,7 +8,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 import { getAssignmentsByTeacher } from "../controllers/assignment/get-assingments-by-id";
 
 export const assignmentRouter = Router()
-  .post("/", authMiddleware, createAssignment)
-  .get("/", authMiddleware, getAssignments)
-  .patch("/:id", authMiddleware, updateAssignment)
+  .post("/", createAssignment)
+  .get("/", getAssignments)
+  .patch("/:id", updateAssignment)
   .get("/get/:teacherId", getAssignmentsByTeacher);

@@ -15,6 +15,9 @@ import {
 } from "@/components/ui/form";
 import { useAuth } from "@/provider/AuthProvider";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { LoadingSvg } from "../svg/LoadingSvg";
+import { toast } from "sonner";
 const loginSchema = z.object({
   email: z.string().min(2, {
     message: "Багадаа 2 утга оруулна уу.",
@@ -24,6 +27,7 @@ const loginSchema = z.object({
 
 export const LoginForm = () => {
   const { login } = useAuth();
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -35,7 +39,8 @@ export const LoginForm = () => {
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
     try {
-      const user = await login(values); // login returns user
+      setLoading(true);
+      const user = await login(values);
       console.log("Амжилттай нэвтэрлээ:", user);
 
       console.log(user);
@@ -46,9 +51,12 @@ export const LoginForm = () => {
       } else {
         router.push("/teacher");
       }
+      toast.success("Амжилттай нэвтэрлээ.");
     } catch (error) {
       console.log(error);
       return console.error("Login алдаа гарлаа");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -89,7 +97,8 @@ export const LoginForm = () => {
           />
 
           <Button className="bg-indigo-600 text-white w-full hover:bg-indigo-500 hover:text-[white] cursor-pointer">
-            Нэвтрэх
+            {/* Нэвтрэх */}
+            {loading ? <LoadingSvg /> : "Нэвтрэх"}
           </Button>
         </form>
       </Form>
