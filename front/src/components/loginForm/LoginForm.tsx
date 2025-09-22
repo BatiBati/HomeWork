@@ -51,8 +51,8 @@ export const LoginForm = () => {
       await getMe();
       toast.success("Амжилттай нэвтэрлээ.");
     } catch (error) {
-      console.log(error);
-      return console.error("Login алдаа гарлаа");
+      console.error(error);
+      toast.error("Нэвтрэхэд алдаа гарлаа");
     } finally {
       setLoading(false);
     }
@@ -94,7 +94,10 @@ export const LoginForm = () => {
             )}
           />
 
-          <Button className="bg-indigo-600 text-white w-full hover:bg-indigo-500 hover:text-[white] cursor-pointer">
+          <Button
+            type="submit"
+            className="bg-indigo-600 text-white w-full hover:bg-indigo-500 hover:text-[white] cursor-pointer"
+          >
             {/* Нэвтрэх */}
             {loading ? <LoadingSvg /> : "Нэвтрэх"}
           </Button>
