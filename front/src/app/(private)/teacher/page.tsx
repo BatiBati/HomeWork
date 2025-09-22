@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
+
 // import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
