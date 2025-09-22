@@ -1,6 +1,12 @@
 "use client";
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { AxiosError } from "axios";
 import { useAuth } from "@/provider/AuthProvider";
@@ -33,6 +39,7 @@ export function AddAssignmentForm({
   const [taskEndSchedule, setTaskEndSchedule] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
+  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const { getMe } = useAuth();
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -53,6 +60,27 @@ export function AddAssignmentForm({
         return updatedLessons;
       });
     }
+  };
+
+  const removeImage = (lessonIndex: number, imageIndex: number) => {
+    setLessons((prev) => {
+      const updatedLessons = [...prev];
+      const lesson = updatedLessons[lessonIndex];
+
+      // Remove the image and preview URL at the same index
+      const newImages = lesson.images.filter((_, i) => i !== imageIndex);
+      const newPreviewUrls = lesson.previewUrls.filter(
+        (_, i) => i !== imageIndex
+      );
+
+      updatedLessons[lessonIndex] = {
+        ...lesson,
+        images: newImages,
+        previewUrls: newPreviewUrls,
+      };
+
+      return updatedLessons;
+    });
   };
 
   const uploadImagesToCloudinary = async (files: File[]) => {
@@ -248,172 +276,216 @@ export function AddAssignmentForm({
   };
 
   return (
-    <form className="space-y-6" onSubmit={handleSubmit}>
-      <div>
-        <label className="block mb-1">Даалгавар дуусах хугацаа</label>
-        <input
-          type="datetime-local"
-          value={taskEndSchedule}
-          onChange={(e) => setTaskEndSchedule(e.target.value)}
-          required
-          className="w-full border rounded p-2"
-        />
-      </div>
-
-      {/* Lesson Carousel */}
-      <div className="border rounded-lg bg-gray-50 overflow-hidden">
-        {/* Carousel Header */}
-        <div className="flex justify-between items-center p-4 border-b bg-white">
-          <h3 className="text-lg font-semibold">
-            Хичээл {currentLessonIndex + 1} / {lessons.length}
-          </h3>
-          <div className="flex items-center gap-2">
-            {lessons.length > 1 && (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => removeLesson(currentLessonIndex)}
-                className="text-red-600 hover:text-red-800"
-              >
-                ✕ Устгах
-              </Button>
-            )}
-          </div>
+    <>
+      <form className="space-y-6" onSubmit={handleSubmit}>
+        <div>
+          <label className="block mb-1">Даалгавар дуусах хугацаа</label>
+          <input
+            type="datetime-local"
+            value={taskEndSchedule}
+            onChange={(e) => setTaskEndSchedule(e.target.value)}
+            required
+            className="w-full border rounded p-2"
+          />
         </div>
 
-        {/* Carousel Content */}
-        <div className="relative p-6">
-          <div className="transition-all duration-300 ease-in-out">
-            {lessons.map((lesson, lessonIndex) => (
-              <div
-                key={lessonIndex}
-                className={`${
-                  lessonIndex === currentLessonIndex ? "block" : "hidden"
-                } space-y-4`}
-              >
-                <div>
-                  <label className="block mb-1">Хичээлийн нэр</label>
-                  <select
-                    value={lesson.lessonName}
-                    onChange={(e) =>
-                      updateLesson(lessonIndex, "lessonName", e.target.value)
-                    }
-                    required
-                    className="w-full border rounded p-2"
-                  >
-                    <option value="" className="text-gray-500">
-                      -Хичээл сонгох-
-                    </option>
-                    <option value="Математик">Математик</option>
-                    <option value="Англи хэл">Англи хэл</option>
-                    <option value="Монгол хэл">Монгол хэл</option>
-                    <option value="Байгалийн ухаан">Байгалийн ухаан</option>
-                    <option value="Нийгмийн ухаан">Нийгмийн ухаан</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label>Даалгаварийн дэлгэрэнгүй</label>
-                  <textarea
-                    value={lesson.taskDescription}
-                    onChange={(e) =>
-                      updateLesson(
-                        lessonIndex,
-                        "taskDescription",
-                        e.target.value
-                      )
-                    }
-                    required
-                    className="w-full border rounded p-2"
-                    rows={3}
-                  />
-                </div>
-
-                <div>
-                  <label>Зураг оруулах</label>
-                  <br />
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e, lessonIndex)}
-                    className="cursor-pointer mt-1"
-                  />
-                </div>
-
-                {lesson.previewUrls.length > 0 && (
-                  <div className="flex flex-wrap gap-2">
-                    {lesson.previewUrls.map((url, i) => (
-                      <img
-                        key={i}
-                        src={url}
-                        alt="preview"
-                        className="w-24 h-24 object-cover rounded border"
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+        {/* Lesson Carousel */}
+        <div className="border rounded-lg bg-gray-50 overflow-hidden">
+          {/* Carousel Header */}
+          <div className="flex justify-between items-center p-4 border-b bg-white">
+            <h3 className="text-lg font-semibold">
+              Хичээл {currentLessonIndex + 1} / {lessons.length}
+            </h3>
+            <div className="flex items-center gap-2">
+              {lessons.length > 1 && (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => removeLesson(currentLessonIndex)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  ✕ Устгах
+                </Button>
+              )}
+            </div>
           </div>
 
-          {/* Navigation Arrows */}
+          {/* Carousel Content */}
+          <div className="relative p-6">
+            <div className="transition-all duration-300 ease-in-out">
+              {lessons.map((lesson, lessonIndex) => (
+                <div
+                  key={lessonIndex}
+                  className={`${
+                    lessonIndex === currentLessonIndex ? "block" : "hidden"
+                  } space-y-4`}
+                >
+                  <div>
+                    <label className="block mb-1">Хичээлийн нэр</label>
+                    <select
+                      value={lesson.lessonName}
+                      onChange={(e) =>
+                        updateLesson(lessonIndex, "lessonName", e.target.value)
+                      }
+                      required
+                      className="w-full border rounded p-2"
+                    >
+                      <option value="" className="text-gray-500">
+                        -Хичээл сонгох-
+                      </option>
+                      <option value="Математик">Математик</option>
+                      <option value="Англи хэл">Англи хэл</option>
+                      <option value="Монгол хэл">Монгол хэл</option>
+                      <option value="Байгалийн ухаан">Байгалийн ухаан</option>
+                      <option value="Нийгмийн ухаан">Нийгмийн ухаан</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label>Даалгаварийн дэлгэрэнгүй</label>
+                    <textarea
+                      value={lesson.taskDescription}
+                      onChange={(e) =>
+                        updateLesson(
+                          lessonIndex,
+                          "taskDescription",
+                          e.target.value
+                        )
+                      }
+                      required
+                      className="w-full border rounded p-2"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Зураг оруулах
+                    </label>
+                    <input
+                      type="file"
+                      multiple
+                      accept="image/*"
+                      onChange={(e) => handleImageChange(e, lessonIndex)}
+                      className="w-full border rounded p-2 cursor-pointer hover:bg-gray-50"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">
+                      Олон зураг сонгож болно
+                    </p>
+                  </div>
+
+                  {lesson.previewUrls.length > 0 && (
+                    <div>
+                      <p className="text-sm font-medium text-gray-700 mb-2">
+                        Сонгосон зурагууд ({lesson.previewUrls.length})
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {lesson.previewUrls.map((url, i) => (
+                          <div key={i} className="relative">
+                            <img
+                              src={url}
+                              alt="preview"
+                              className="w-20 h-20 object-cover rounded border cursor-zoom-in"
+                              onClick={() => setPreviewImageUrl(url)}
+                            />
+                            <Button
+                              type="button"
+                              variant="destructive"
+                              size="sm"
+                              className="absolute -top-2 -right-2 w-6 h-6 p-0 text-xs"
+                              onClick={() => removeImage(lessonIndex, i)}
+                            >
+                              ✕
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Navigation Arrows */}
+            {lessons.length > 1 && (
+              <>
+                <button
+                  type="button"
+                  onClick={prevLesson}
+                  disabled={currentLessonIndex === 0}
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  ←
+                </button>
+                <button
+                  type="button"
+                  onClick={nextLesson}
+                  disabled={currentLessonIndex === lessons.length - 1}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  →
+                </button>
+              </>
+            )}
+          </div>
+
+          {/* Pagination Dots */}
           {lessons.length > 1 && (
-            <>
-              <button
-                type="button"
-                onClick={prevLesson}
-                disabled={currentLessonIndex === 0}
-                className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                ←
-              </button>
-              <button
-                type="button"
-                onClick={nextLesson}
-                disabled={currentLessonIndex === lessons.length - 1}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                →
-              </button>
-            </>
+            <div className="flex justify-center gap-2 p-4 border-t bg-white">
+              {lessons.map((_, index) => (
+                <button
+                  key={index}
+                  type="button"
+                  onClick={() => goToLesson(index)}
+                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                    index === currentLessonIndex
+                      ? "bg-blue-600 scale-110"
+                      : "bg-gray-300 hover:bg-gray-400"
+                  }`}
+                />
+              ))}
+            </div>
           )}
         </div>
 
-        {/* Pagination Dots */}
-        {lessons.length > 1 && (
-          <div className="flex justify-center gap-2 p-4 border-t bg-white">
-            {lessons.map((_, index) => (
-              <button
-                key={index}
-                type="button"
-                onClick={() => goToLesson(index)}
-                className={`w-3 h-3 rounded-full transition-all duration-200 ${
-                  index === currentLessonIndex
-                    ? "bg-blue-600 scale-110"
-                    : "bg-gray-300 hover:bg-gray-400"
-                }`}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        <div className="flex justify-between items-center">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={addLesson}
+            className="flex items-center gap-2"
+          >
+            + Хичээл нэмэх
+          </Button>
 
-      <div className="flex justify-between items-center">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={addLesson}
-          className="flex items-center gap-2"
-        >
-          + Хичээл нэмэх
-        </Button>
-
-        <Button type="submit" disabled={loading}>
-          {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
-        </Button>
-      </div>
-    </form>
+          <Button type="submit" disabled={loading}>
+            {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
+          </Button>
+        </div>
+      </form>
+      <Dialog
+        open={!!previewImageUrl}
+        onOpenChange={() => setPreviewImageUrl(null)}
+      >
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle className="sr-only">
+              Зургийн урьдчилсан харагдац
+            </DialogTitle>
+          </DialogHeader>
+          {previewImageUrl && (
+            <img
+              src={previewImageUrl}
+              alt="preview"
+              className="w-full h-auto rounded"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
+
+// Simple fullscreen image preview dialog
+// Placed after the component return using a fragment isn't applicable here; we add it at end of file
