@@ -15,7 +15,6 @@ import {
 } from "@/components/ui/form";
 import { useAuth } from "@/provider/AuthProvider";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { LoadingSvg } from "../svg/LoadingSvg";
 import { toast } from "sonner";
 const loginSchema = z.object({
@@ -26,8 +25,8 @@ const loginSchema = z.object({
 });
 
 export const LoginForm = () => {
-  const { login } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { login, loading, setLoading, getMe } = useAuth();
+
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -41,16 +40,15 @@ export const LoginForm = () => {
     try {
       setLoading(true);
       const user = await login(values);
-      console.log("Амжилттай нэвтэрлээ:", user);
 
-      console.log(user);
       // optional: fetch fresh data
-      // await getMe();
+
       if (user.role === "parents") {
         router.push("/parents");
       } else {
         router.push("/teacher");
       }
+      await getMe();
       toast.success("Амжилттай нэвтэрлээ.");
     } catch (error) {
       console.log(error);
