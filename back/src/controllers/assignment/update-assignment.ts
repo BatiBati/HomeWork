@@ -3,13 +3,18 @@ import { assignmentModel } from "../../models/assignment.models";
 
 export const updateAssignment: RequestHandler = async (req, res) => {
   const { id } = req.params;
-  const { lessons, dayCares, images, publicLinks } = req.body;
-console.log(id);
+  const { lessons, dayCares, images, publicLinks, taskEndSchedule } = req.body;
+  console.log(id);
 
   try {
+    const update: any = { lessons, dayCares, images, publicLinks };
+    if (taskEndSchedule) {
+      update.taskEndSchedule = new Date(taskEndSchedule);
+    }
+
     const updatedAssignment = await assignmentModel.findByIdAndUpdate(
-        id,
-      { lessons, dayCares, images, publicLinks },
+      id,
+      update,
       { new: true }
     );
 
