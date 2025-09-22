@@ -4,8 +4,6 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/provider/AuthProvider";
 import type { ChildrenType } from "@/provider/AuthProvider";
 import { ChildrenDataCard } from "./ChildrenDataCard";
-import { api } from "../../../../../../axios";
-import { ChildrenAssignments } from "./ChildrenAssignments";
 
 export const ChildrenContent = () => {
   const { user } = useAuth();

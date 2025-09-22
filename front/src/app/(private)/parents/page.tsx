@@ -1,8 +1,6 @@
 "use client";
 import { useState } from "react";
 import { Contents } from "./_components/Contents";
-
-import { useAuth } from "@/provider/AuthProvider";
 import { ParentChat } from "./_components/Chat";
 import { Sidebar } from "./_components/Sidebar";
 

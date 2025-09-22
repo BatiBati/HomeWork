@@ -37,7 +37,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
         )
       );
       setAssignments(filtered);
-    } catch (error) {
+    } catch {
       throw new Error("Fetch teacher data failed");
     } finally {
       setLoading(false);
