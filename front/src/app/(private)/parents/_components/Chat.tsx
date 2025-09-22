@@ -21,13 +21,11 @@ export const ParentChat = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  if (!user) return <div>Loading chat...</div>; // wait for user
-
-  const teacherId = user.children?.[0]?.teacher;
-  if (!teacherId) return <div>No teacher assigned</div>;
+  const teacherId = user?.children?.[0]?.teacher;
 
   // Fetch messages
   const fetchMessages = async () => {
+    if (!user || !teacherId) return; // safe guard
     try {
       const res = await api.get<{ messages: MessageType[] }>("/message", {
         params: { user1Id: user._id, user2Id: teacherId },
@@ -38,16 +36,20 @@ export const ParentChat = () => {
     }
   };
 
+  // Always call useEffect
   useEffect(() => {
     fetchMessages();
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-  }, [user._id, teacherId]);
+  }, [user?._id, teacherId]);
 
   // Scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  if (!user) return <div>Loading chat...</div>;
+  if (!teacherId) return <div>No teacher assigned</div>;
 
   // Send message
   const handleSend = async () => {
