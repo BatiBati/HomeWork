@@ -241,6 +241,8 @@ export default function TeacherDashboard() {
                                 .slice(0, 2)
                                 .map((imageUrl, imgIndex) => (
                                   <Image
+                                    width={500}
+                                    height={300}
                                     key={imgIndex}
                                     src={imageUrl}
                                     alt={`${lesson.lessonName} image ${
@@ -504,6 +506,8 @@ function EditAssignmentForm({
                         {lesson.images.map((imageUrl, imgIndex) => (
                           <div key={imgIndex} className="relative">
                             <Image
+                              width={500}
+                              height={300}
                               src={imageUrl}
                               alt={`${lesson.lessonName} image ${imgIndex + 1}`}
                               className="w-20 h-20 object-cover rounded border cursor-zoom-in"
@@ -567,6 +571,8 @@ function EditAssignmentForm({
           </DialogHeader>
           {previewImageUrl && (
             <Image
+              width={1000}
+              height={700}
               src={previewImageUrl}
               alt="preview"
               className="w-full h-auto rounded"
