@@ -21,7 +21,7 @@ export const SidebarParent = ({
                 onClick={() => onSelectChild(child._id)}
                 className="cursor-pointer hover:underline"
               >
-                {child.lastName[0]}.{child.lastName}
+                {child.lastName}.{child.lastName}
               </div>
             );
           })}

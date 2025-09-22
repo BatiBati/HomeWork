@@ -1,4 +1,3 @@
-// Parent.tsx
 "use client";
 import { useState } from "react";
 import { Contents } from "./_components/Contents";
