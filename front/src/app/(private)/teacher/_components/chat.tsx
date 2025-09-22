@@ -1,5 +1,11 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+  useCallback,
+} from "react";
 import { useAuth } from "@/provider/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,17 +27,18 @@ type MessageType = {
 };
 
 export const TeacherChat = () => {
-  const { user } = useAuth(); // teacher info
+  const { user } = useAuth();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [selectedParentId, setSelectedParentId] = useState<string | null>(null);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  if (!user) return <div>Loading...</div>;
-
-  // Fetch all messages for this teacher
-  const fetchMessages = async () => {
+  // ---------------------------
+  // Fetch messages
+  // ---------------------------
+  const fetchMessages = useCallback(async () => {
+    if (!user) return;
     try {
       const res = await api.get<{ messages: MessageType[] }>("/message", {
         params: { teacherId: user._id },
@@ -40,43 +47,50 @@ export const TeacherChat = () => {
     } catch (err) {
       console.error("Error fetching messages", err);
     }
-  };
+  }, [user?._id]);
 
   useEffect(() => {
     fetchMessages();
-    const interval = setInterval(fetchMessages, 5000); // refresh every 5s
+    const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
-  }, [user._id]);
+  }, [fetchMessages]);
 
+  // ---------------------------
   // Get unique parents
-  const parents = Array.from(
-    new Map(
-      messages
-        .filter((m) => m.sender._id !== user._id || m.receiver._id !== user._id)
-        .map((m) => {
-          const parent = m.sender._id !== user._id ? m.sender : m.receiver;
-          return [parent._id, parent];
-        })
-    ).values()
-  );
+  // ---------------------------
+  const parents = useMemo(() => {
+    const map = new Map<string, UserType>();
+    messages.forEach((m) => {
+      const parent = m.sender._id !== user?._id ? m.sender : m.receiver;
+      if (parent.role === "parents") map.set(parent._id, parent);
+    });
+    return Array.from(map.values());
+  }, [messages, user?._id]);
 
-  // Get messages for the selected parent
-  const currentMessages = selectedParentId
-    ? messages.filter(
-        (m) =>
-          (m.sender._id === user._id && m.receiver._id === selectedParentId) ||
-          (m.sender._id === selectedParentId && m.receiver._id === user._id)
-      )
-    : [];
+  // ---------------------------
+  // Current messages for selected parent
+  // ---------------------------
+  const currentMessages = useMemo(() => {
+    if (!selectedParentId) return [];
+    return messages.filter(
+      (m) =>
+        (m.sender._id === user?._id && m.receiver._id === selectedParentId) ||
+        (m.sender._id === selectedParentId && m.receiver._id === user?._id)
+    );
+  }, [messages, selectedParentId, user?._id]);
 
+  // ---------------------------
   // Scroll to bottom
+  // ---------------------------
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [currentMessages]);
 
+  // ---------------------------
   // Send message
+  // ---------------------------
   const handleSend = async () => {
-    if (!newMessage.trim() || !selectedParentId) return;
+    if (!newMessage.trim() || !selectedParentId || !user) return;
 
     const tempMessage: MessageType = {
       _id: `temp-${Date.now()}`,
@@ -102,16 +116,21 @@ export const TeacherChat = () => {
         receiverId: selectedParentId,
         content: tempMessage.content,
       });
-
       setMessages((prev) =>
         prev.map((m) => (m._id === tempMessage._id ? res.data.newMessage : m))
       );
     } catch (err) {
       console.error("Error sending message", err);
+      setMessages((prev) => prev.filter((m) => m._id !== tempMessage._id));
     } finally {
       setLoading(false);
     }
   };
+
+  // ---------------------------
+  // Render
+  // ---------------------------
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="flex h-full w-full gap-4">
