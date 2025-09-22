@@ -4,6 +4,7 @@ import { useAuth } from "@/provider/AuthProvider";
 import { Dispatch, SetStateAction } from "react";
 import { ChildrenForSidebar } from "./children/ChildrenForSidebar";
 import { EditProfileForSidebar } from "./EditProfile/EditProfileForSidebar";
+import { ChatForSidebar } from "./Chat/ChatForSidebar";
 type Props = {
   setSelectedSidebar: Dispatch<SetStateAction<number>>;
 };
@@ -19,6 +20,7 @@ export const Sidebar = ({ setSelectedSidebar }: Props) => {
         <div>
           <ChildrenForSidebar setSelectedSidebar={setSelectedSidebar} />
           <EditProfileForSidebar setSelectedSidebar={setSelectedSidebar} />
+          <ChatForSidebar setSelectedSidebar={setSelectedSidebar} />
         </div>
       </div>
     </div>

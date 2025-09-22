@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import { Contents } from "./_components/Contents";
-import { ParentChat } from "./_components/Chat";
 import { Sidebar } from "./_components/Sidebar";
 
 export default function Parent() {
@@ -12,7 +11,6 @@ export default function Parent() {
       <div className="w-[50%] h-[70%] border-[1px] p-4 flex gap-3 rounded-xl bg-white">
         <Sidebar setSelectedSidebar={setSelectedSidebar} />
         <Contents selectedSidebar={selectedSidebar} />
-        <ParentChat />
       </div>
     </div>
   );
