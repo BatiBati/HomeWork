@@ -5,7 +5,12 @@ export const getAssignmentsByTeacher: RequestHandler = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const assignments = await assignmentModel.findById(id).populate("teacher");
+    // Find all assignments created by this teacher
+    const assignments = await assignmentModel
+      .find({ teacher: id })
+      .populate("teacher")
+      .populate("childrens")
+      .sort({ createdAt: -1 });
 
     res.status(200).json({
       assignments,
