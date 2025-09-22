@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { studentModel } from "../../models/student.model";
 import { teacherModel } from "../../models/teacher.model";
 import jwt from "jsonwebtoken";
+import { userModel } from "../../models/user.model";
 
 export const loginOrRegisterStudentController: RequestHandler = async (
   req,
@@ -17,44 +18,60 @@ export const loginOrRegisterStudentController: RequestHandler = async (
   }
 
   try {
-    // 1. Check if teacher exists
-    const teacher = await teacherModel.findById(teacherId);
+    let teacher = await teacherModel.findById(teacherId);
+    if (!teacher) {
+      const user = await userModel.findById(teacherId);
+      if (user) {
+        const existingTeacherByEmail = await teacherModel.findOne({
+          email: user.email.trim().toLowerCase(),
+        });
+
+        if (existingTeacherByEmail) {
+          teacher = existingTeacherByEmail;
+        } else {
+          teacher = await teacherModel.create({
+            teacherName: `${user.firstName} ${user.lastName}`.trim(),
+            email: user.email.trim().toLowerCase(),
+            password: user.password,
+            school: user.school?.toString() || "",
+            grade: user.grade?.toString() || "",
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          });
+        }
+      }
+    }
+
     if (!teacher) {
       res.status(404).json({ message: "Teacher not found" });
       return;
     }
 
-    // 2. Check if student already exists
-    let student = await studentModel.findOne({ parentname, childname });
+    let student = await studentModel.findOne({
+      parentname,
+      childname,
+      teacherId: teacher._id,
+    });
 
-    // 3. Create new student if not exists
     if (!student) {
-      const studentData: any = {
+      student = await studentModel.create({
         parentname,
         childname,
-        teacherId,
-        homeworks: [], // This will hold the assigned tasks
+        teacherId: teacher._id,
+        parentEmail,
+        homeworks: [],
         createdAt: new Date(),
         updatedAt: new Date(),
-      };
+      });
 
-      if (parentEmail) {
-        studentData.parentEmail = parentEmail;
-      }
-
-      student = await studentModel.create(studentData);
-
-      // Add student to teacher
-      await teacherModel.findByIdAndUpdate(teacherId, {
+      await teacherModel.findByIdAndUpdate(teacher._id, {
         $addToSet: { students: student._id },
         updatedAt: new Date(),
       });
     }
 
-    // 4. Optionally populate homeworks if you store them as references
-    await student.populate("homeworks"); // only needed if homeworks is an array of ObjectId referencing tasks
+    await student.populate("homeworks");
 
-    // 5. Create JWT token with student info
     const token = jwt.sign(
       {
         _id: student._id.toString(),
@@ -66,10 +83,9 @@ export const loginOrRegisterStudentController: RequestHandler = async (
       { expiresIn: process.env.JWT_EXPIRES_IN || "7d" }
     );
 
-    // 6. Return token + student + homeworks
     res.status(200).json({
       message:
-        student.createdAt === student.updatedAt
+        student.createdAt.getTime() === student.updatedAt.getTime()
           ? "Registered & logged in"
           : "Logged in",
       token,
@@ -78,7 +94,7 @@ export const loginOrRegisterStudentController: RequestHandler = async (
         parentname: student.parentname,
         childname: student.childname,
         parentEmail: student.parentEmail,
-        homeworks: student.homeworks, // <-- include tasks here
+        homeworks: student.homeworks,
       },
     });
   } catch (error) {
