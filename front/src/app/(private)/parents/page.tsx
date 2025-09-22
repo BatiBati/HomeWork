@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Contents } from "./_components/Contents";
 import { SidebarParent } from "./_components/SidebarParent";
 import { useAuth } from "@/provider/AuthProvider";
-import { Chat } from "./_components/Chat";
+import { ParentChat } from "./_components/Chat";
 
 export default function Parent() {
   const [selectedChildId, setSelectedChildId] = useState<number>(1);
@@ -32,7 +32,7 @@ export default function Parent() {
           selectedChildId={selectedChildId}
         />
         <Contents selectedChildId={selectedChildId} />
-        <Chat />
+        <ParentChat />
       </div>
     </div>
   );
