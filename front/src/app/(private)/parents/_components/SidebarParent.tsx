@@ -7,6 +7,7 @@ export const SidebarParent = ({
   onSelectChild: (id: string) => void;
 }) => {
   const { user } = useAuth();
+  console.log(user);
 
   return (
     <div className="p-6 border-[1px] w-fit rounded-xl ">
@@ -14,14 +15,14 @@ export const SidebarParent = ({
         <div>{user?.firstName}</div>
         <div className="text-[12px]">
           <div className="font-semibold">Хүүхэд</div>
-          {user?.children.map((child) => {
+          {user?.children.map((child, i) => {
             return (
               <div
-                key={child._id}
+                key={i}
                 onClick={() => onSelectChild(child._id)}
                 className="cursor-pointer hover:underline"
               >
-                {child.lastName}.{child.lastName}
+                {child.lastName}
               </div>
             );
           })}

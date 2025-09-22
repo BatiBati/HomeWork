@@ -37,8 +37,8 @@ export const createChildren: RequestHandler = async (req, res) => {
       profilePicture,
       teacher: teacher,
       parents: parent._id,
-      grade: teacher._id,
-      school: teacher._id,
+      grade: teacher.grade,
+      school: teacher.school,
     });
     console.log(newChild.teacher);
 

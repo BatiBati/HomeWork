@@ -25,13 +25,12 @@ const childrenSchema = new Schema(
       required: true,
     },
     grade: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
+      type: String,
+
       required: true,
     },
     school: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
+      type: String,
       required: true,
     },
     assignment: [
