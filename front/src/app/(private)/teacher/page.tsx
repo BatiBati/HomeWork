@@ -2,8 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import Image from "next/image";
+
 // import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
@@ -15,6 +14,8 @@ import {
 import { ChildrenType, useAuth } from "@/provider/AuthProvider";
 import { AddStudentForm } from "./_components/add-student";
 import { AddAssignmentForm } from "./_components/add-task";
+import { EditAssignmentForm } from "./_components/edit-task";
+import { AssignmentsList } from "./_components/assignments-list";
 import { useRouter } from "next/navigation";
 import { api } from "../../../../axios";
 import { TeacherChat } from "./_components/chat";
@@ -165,116 +166,13 @@ export default function TeacherDashboard() {
             </Dialog>
           </div>
         </div>
-        {assignments.length === 0 ? (
-          <p>No assignments yet.</p>
-        ) : (
-          [...assignments].reverse().map((a) => (
-            <Card
-              key={a._id}
-              className="w-full cursor-pointer hover:shadow-md transition mt-4"
-            >
-              <CardContent className="px-6">
-                {/* Assignment Header */}
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <div className="flex justify-between items-start gap-4">
-                      <h3 className="font-bold text-xl text-gray-800">
-                        📚 Даалгавар
-                      </h3>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setEditingAssignment(a);
-                          setIsEditDialogOpen(true);
-                        }}
-                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50"
-                      >
-                        ✏️ Засах
-                      </Button>
-                    </div>
-                    <p className="text-sm text-gray-500 mt-1">
-                      📅 Үүссэн:
-                      {new Date(a.createdAt).toLocaleDateString("mn-MN")}
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">
-                      🕒 Дуусах:
-                      {new Date(a.taskEndSchedule).toLocaleDateString("mn-MN")}
-                    </p>
-                    <p className="text-xs text-gray-400">
-                      ⏰
-                      {new Date(a.taskEndSchedule).toLocaleTimeString("mn-MN", {
-                        hour: "2-digit",
-                        minute: "2-digit",
-                      })}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Lessons Summary */}
-                <div className="mb-4">
-                  <h4 className="font-semibold text-gray-700 mb-2">
-                    📖 Хичээлүүд ({a.lessons.length})
-                  </h4>
-                  <div className="space-y-2">
-                    {a.lessons.slice(0, 2).map((lesson, index) => (
-                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                        <div className="flex justify-between items-start">
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-800">
-                              {index + 1}. {lesson.lessonName}
-                            </p>
-                            <p className="text-sm text-gray-600 mt-1">
-                              {lesson.taskDescription.length > 100
-                                ? `${lesson.taskDescription.substring(
-                                    0,
-                                    100
-                                  )}...`
-                                : lesson.taskDescription}
-                            </p>
-                          </div>
-                          {lesson.images.length > 0 && (
-                            <div className="ml-3 flex gap-1">
-                              {lesson.images
-                                .slice(0, 2)
-                                .map((imageUrl, imgIndex) => (
-                                  <Image
-                                    width={500}
-                                    height={300}
-                                    key={imgIndex}
-                                    src={imageUrl}
-                                    alt={`${lesson.lessonName} image ${
-                                      imgIndex + 1
-                                    }`}
-                                    className="w-12 h-12 object-cover rounded border"
-                                  />
-                                ))}
-                              {lesson.images.length > 2 && (
-                                <div className="w-12 h-12 bg-gray-200 rounded border flex items-center justify-center">
-                                  <span className="text-xs text-gray-500">
-                                    +{lesson.images.length - 2}
-                                  </span>
-                                </div>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {a.lessons.length > 2 && (
-                      <p className="text-sm text-gray-500 text-center">
-                        ... болон дахиад {a.lessons.length - 2} хичээл
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
+        <AssignmentsList
+          assignments={assignments}
+          onEdit={(a) => {
+            setEditingAssignment(a);
+            setIsEditDialogOpen(true);
+          }}
+        />
 
         {/* Edit Assignment Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
@@ -289,7 +187,6 @@ export default function TeacherDashboard() {
                 onSuccess={(updated) => {
                   setIsEditDialogOpen(false);
                   setEditingAssignment(null);
-                  // Optimistically update local list without full refresh
                   setAssignments((prev) =>
                     prev.map((a) => (a._id === updated._id ? updated : a))
                   );
@@ -308,283 +205,6 @@ export default function TeacherDashboard() {
   );
 }
 
-function EditAssignmentForm({
-  assignment,
-  token,
-  onSuccess,
-  onCancel,
-}: {
-  assignment: AssignmentType;
-  token: string;
-  onSuccess: (updated: AssignmentType) => void;
-  onCancel: () => void;
-}) {
-  const [lessons, setLessons] = useState<LessonType[]>(assignment.lessons);
-  const [taskEndSchedule, setTaskEndSchedule] = useState(
-    new Date(assignment.taskEndSchedule).toISOString().slice(0, 16)
-  );
-  const [loading, setLoading] = useState(false);
-  const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
-
-  const addLesson = () => {
-    setLessons([
-      ...lessons,
-      {
-        lessonName: "",
-        taskDescription: "",
-        images: [],
-      },
-    ]);
-  };
-
-  const removeLesson = (index: number) => {
-    if (lessons.length > 1) {
-      setLessons(lessons.filter((_, i) => i !== index));
-    }
-  };
-
-  const updateLesson = (
-    index: number,
-    field: keyof LessonType,
-    value: string
-  ) => {
-    setLessons(
-      lessons.map((lesson, i) =>
-        i === index ? { ...lesson, [field]: value } : lesson
-      )
-    );
-  };
-
-  const removeImage = (lessonIndex: number, imageIndex: number) => {
-    setLessons(
-      lessons.map((lesson, i) =>
-        i === lessonIndex
-          ? {
-              ...lesson,
-              images: lesson.images.filter(
-                (_, imgIdx) => imgIdx !== imageIndex
-              ),
-            }
-          : lesson
-      )
-    );
-  };
-
-  const handleImageChange = (
-    lessonIndex: number,
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const files = e.target.files;
-    if (!files) return;
-
-    const newImages = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
-
-    setLessons(
-      lessons.map((lesson, i) =>
-        i === lessonIndex
-          ? {
-              ...lesson,
-              images: [...lesson.images, ...newImages],
-            }
-          : lesson
-      )
-    );
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const res = await api.patch<{ assignment: AssignmentType }>(
-        `/assignment/${assignment._id}`,
-        {
-          lessons,
-          taskEndSchedule,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const updated = res.data?.assignment ?? assignment;
-      onSuccess(updated as AssignmentType);
-    } catch (error) {
-      console.error("Error updating assignment:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <Label htmlFor="taskEndSchedule">Даалгавар дуусах хугацаа</Label>
-          <input
-            id="taskEndSchedule"
-            type="datetime-local"
-            value={taskEndSchedule}
-            onChange={(e) => setTaskEndSchedule(e.target.value)}
-            className="w-full border rounded p-2 mt-1"
-            required
-          />
-        </div>
-
-        <div>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">
-              Хичээлүүд ({lessons.length})
-            </h3>
-            <Button type="button" variant="outline" onClick={addLesson}>
-              + Хичээл нэмэх
-            </Button>
-          </div>
-
-          <div className="space-y-4">
-            {lessons.map((lesson, index) => (
-              <div key={index} className="border rounded-lg p-4 bg-gray-50">
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-medium">Хичээл {index + 1}</h4>
-                  {lessons.length > 1 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => removeLesson(index)}
-                      className="text-red-600 hover:text-red-800"
-                    >
-                      ✕ Устгах
-                    </Button>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <div>
-                    <Label htmlFor={`lessonName-${index}`}>Хичээлийн нэр</Label>
-                    <select
-                      id={`lessonName-${index}`}
-                      value={lesson.lessonName}
-                      onChange={(e) =>
-                        updateLesson(index, "lessonName", e.target.value)
-                      }
-                      className="w-full border rounded p-2 mt-1"
-                      required
-                    >
-                      <option value="">-Хичээл сонгох-</option>
-                      <option value="Математик">Математик</option>
-                      <option value="Англи хэл">Англи хэл</option>
-                      <option value="Монгол хэл">Монгол хэл</option>
-                      <option value="Байгалийн ухаан">Байгалийн ухаан</option>
-                      <option value="Нийгмийн ухаан">Нийгмийн ухаан</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <Label htmlFor={`taskDescription-${index}`}>
-                      Даалгаварийн дэлгэрэнгүй
-                    </Label>
-                    <textarea
-                      id={`taskDescription-${index}`}
-                      value={lesson.taskDescription}
-                      onChange={(e) =>
-                        updateLesson(index, "taskDescription", e.target.value)
-                      }
-                      className="mt-1 w-full border rounded p-2"
-                      rows={3}
-                      required
-                    />
-                  </div>
-
-                  {/* Existing Images */}
-                  {lesson.images && lesson.images.length > 0 && (
-                    <div>
-                      <Label>Одоогийн зурагууд ({lesson.images.length})</Label>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {lesson.images.map((imageUrl, imgIndex) => (
-                          <div key={imgIndex} className="relative">
-                            <Image
-                              width={500}
-                              height={300}
-                              src={imageUrl}
-                              alt={`${lesson.lessonName} image ${imgIndex + 1}`}
-                              className="w-20 h-20 object-cover rounded border cursor-zoom-in"
-                              onClick={() => setPreviewImageUrl(imageUrl)}
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute -top-2 -right-2 w-6 h-6 p-0 text-xs"
-                              onClick={() => removeImage(index, imgIndex)}
-                            >
-                              ✕
-                            </Button>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Add New Images */}
-                  <div>
-                    <Label htmlFor={`images-${index}`}>Шинэ зураг нэмэх</Label>
-                    <input
-                      id={`images-${index}`}
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={(e) => handleImageChange(index, e)}
-                      className="mt-1 w-full border rounded p-2"
-                    />
-                    <p className="text-xs text-gray-500 mt-1">
-                      Олон зураг сонгож болно
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>
-            Цуцлах
-          </Button>
-          <Button type="submit" disabled={loading}>
-            {loading ? "Хадгалж байна..." : "Хадгалах"}
-          </Button>
-        </div>
-      </form>
-      {/* Image preview dialog */}
-      <Dialog
-        open={!!previewImageUrl}
-        onOpenChange={() => setPreviewImageUrl(null)}
-      >
-        <DialogContent className="max-w-3xl">
-          <DialogHeader>
-            <DialogTitle className="sr-only">
-              Зургийн урьдчилсан харагдац
-            </DialogTitle>
-          </DialogHeader>
-          {previewImageUrl && (
-            <Image
-              width={1000}
-              height={700}
-              src={previewImageUrl}
-              alt="preview"
-              className="w-full h-auto rounded"
-            />
-          )}
-        </DialogContent>
-      </Dialog>
-    </>
-  );
-}
 // "use client";
 // import React, { useEffect, useState } from "react";
 // import { Card, CardContent } from "@/components/ui/card";
