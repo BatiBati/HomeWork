@@ -23,6 +23,13 @@ export function EditAssignmentForm({
   );
   const [loading, setLoading] = useState(false);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  // Files selected during edit that are not yet uploaded to Cloudinary
+  const [pendingFiles, setPendingFiles] = useState<File[][]>(
+    Array.from({ length: assignment.lessons.length }, () => [])
+  );
+  const [pendingPreviews, setPendingPreviews] = useState<string[][]>(
+    Array.from({ length: assignment.lessons.length }, () => [])
+  );
 
   const addLesson = () => {
     setLessons([
@@ -33,11 +40,15 @@ export function EditAssignmentForm({
         images: [],
       },
     ]);
+    setPendingFiles((prev) => [...prev, []]);
+    setPendingPreviews((prev) => [...prev, []]);
   };
 
   const removeLesson = (index: number) => {
     if (lessons.length > 1) {
       setLessons(lessons.filter((_, i) => i !== index));
+      setPendingFiles((prev) => prev.filter((_, i) => i !== index));
+      setPendingPreviews((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
@@ -74,18 +85,63 @@ export function EditAssignmentForm({
   ) => {
     const files = e.target.files;
     if (!files) return;
+    const selected = Array.from(files);
+    const previews = selected.map((file) => URL.createObjectURL(file));
+    setPendingFiles((prev) => {
+      const next = [...prev];
+      next[lessonIndex] = [...(next[lessonIndex] || []), ...selected];
+      return next;
+    });
+    setPendingPreviews((prev) => {
+      const next = [...prev];
+      next[lessonIndex] = [...(next[lessonIndex] || []), ...previews];
+      return next;
+    });
+  };
 
-    const newImages = Array.from(files).map((file) =>
-      URL.createObjectURL(file)
-    );
-
-    setLessons(
-      lessons.map((lesson, i) =>
-        i === lessonIndex
-          ? { ...lesson, images: [...lesson.images, ...newImages] }
-          : lesson
+  const removePendingImage = (lessonIndex: number, imageIndex: number) => {
+    setPendingFiles((prev) =>
+      prev.map((arr, i) =>
+        i === lessonIndex ? arr.filter((_, idx) => idx !== imageIndex) : arr
       )
     );
+    setPendingPreviews((prev) =>
+      prev.map((arr, i) =>
+        i === lessonIndex ? arr.filter((_, idx) => idx !== imageIndex) : arr
+      )
+    );
+  };
+
+  const uploadImagesToCloudinary = async (files: File[]) => {
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+    if (!cloudName || !uploadPreset) {
+      console.error(
+        "Cloudinary config missing: set NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME and NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET"
+      );
+      return [] as string[];
+    }
+    const urls: string[] = [];
+    for (const file of files) {
+      try {
+        const form = new FormData();
+        form.append("file", file);
+        form.append("upload_preset", uploadPreset);
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          { method: "POST", body: form }
+        );
+        if (!res.ok) {
+          const text = await res.text();
+          throw new Error(`${res.status} ${res.statusText} - ${text}`);
+        }
+        const data = await res.json();
+        if (data.secure_url) urls.push(data.secure_url);
+      } catch (err) {
+        console.error("Upload failed:", err);
+      }
+    }
+    return urls;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,10 +149,26 @@ export function EditAssignmentForm({
     setLoading(true);
 
     try {
+      // Upload any newly selected files per lesson
+      const uploadedPerLesson: string[][] = [];
+      for (let i = 0; i < lessons.length; i++) {
+        const files = pendingFiles[i] || [];
+        uploadedPerLesson[i] = files.length
+          ? await uploadImagesToCloudinary(files)
+          : [];
+      }
+      const lessonsWithImages = lessons.map((l, i) => ({
+        ...l,
+        images: [...(l.images || []), ...(uploadedPerLesson[i] || [])],
+      }));
+      const allImages = lessonsWithImages.flatMap((l) => l.images || []);
+
       const res = await api.patch<{ assignment: AssignmentType }>(
         `/assignment/${assignment._id}`,
         {
-          lessons,
+          lessons: lessonsWithImages,
+          images: allImages,
+          publicLinks: [],
           taskEndSchedule,
         },
         {
@@ -108,6 +180,12 @@ export function EditAssignmentForm({
       );
       const updated = res.data?.assignment ?? assignment;
       onSuccess(updated as AssignmentType);
+      setPendingFiles(
+        Array.from({ length: lessonsWithImages.length }, () => [])
+      );
+      setPendingPreviews(
+        Array.from({ length: lessonsWithImages.length }, () => [])
+      );
     } catch (error) {
       console.error("Error updating assignment:", error);
     } finally {
@@ -237,6 +315,38 @@ export function EditAssignmentForm({
                     <p className="text-xs text-gray-500 mt-1">
                       Олон зураг сонгож болно
                     </p>
+                    {pendingPreviews[index] &&
+                      pendingPreviews[index].length > 0 && (
+                        <div className="mt-2">
+                          <Label>
+                            Шинээр нэмэх зурагууд (
+                            {pendingPreviews[index].length})
+                          </Label>
+                          <div className="flex flex-wrap gap-2 mt-2">
+                            {pendingPreviews[index].map((url, i) => (
+                              <div key={i} className="relative">
+                                <Image
+                                  width={80}
+                                  height={80}
+                                  src={url}
+                                  alt="preview"
+                                  className="w-20 h-20 object-cover rounded border"
+                                  onClick={() => setPreviewImageUrl(url)}
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  className="absolute -top-2 -right-2 w-6 h-6 p-0 text-xs"
+                                  onClick={() => removePendingImage(index, i)}
+                                >
+                                  ✕
+                                </Button>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                   </div>
                 </div>
               </div>
