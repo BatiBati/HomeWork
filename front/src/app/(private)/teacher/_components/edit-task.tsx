@@ -201,41 +201,53 @@ export function EditAssignmentForm({
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
         <div>
-          <Label htmlFor="taskEndSchedule">Даалгавар дуусах хугацаа</Label>
+          <Label htmlFor="taskEndSchedule" className="text-sm sm:text-base">
+            Даалгавар дуусах хугацаа
+          </Label>
           <input
             id="taskEndSchedule"
             type="datetime-local"
             value={taskEndSchedule}
             onChange={(e) => setTaskEndSchedule(e.target.value)}
-            className="w-full border rounded p-2 mt-1"
+            className="w-full border rounded p-2 sm:p-3 mt-1 text-sm sm:text-base"
             required
           />
         </div>
 
         <div>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold text-lg">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
+            <h3 className="font-semibold text-base sm:text-lg">
               Хичээлүүд ({lessons.length})
             </h3>
-            <Button type="button" variant="outline" onClick={addLesson}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={addLesson}
+              className="text-sm sm:text-base"
+            >
               + Хичээл нэмэх
             </Button>
           </div>
 
           <div className="space-y-4">
             {lessons.map((lesson, index) => (
-              <div key={index} className="border rounded-lg p-4 bg-gray-50">
-                <div className="flex justify-between items-start mb-3">
-                  <h4 className="font-medium">Хичээл {index + 1}</h4>
+              <div
+                key={index}
+                className="border rounded-lg p-3 sm:p-4 bg-gray-50"
+              >
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 mb-3">
+                  <h4 className="font-medium text-sm sm:text-base">
+                    Хичээл {index + 1}
+                  </h4>
                   {lessons.length > 1 && (
                     <Button
                       type="button"
                       variant="outline"
                       size="sm"
                       onClick={() => removeLesson(index)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-red-600 hover:text-red-800 text-xs sm:text-sm"
                     >
                       ✕ Устгах
                     </Button>
@@ -244,14 +256,19 @@ export function EditAssignmentForm({
 
                 <div className="space-y-3">
                   <div>
-                    <Label htmlFor={`lessonName-${index}`}>Хичээлийн нэр</Label>
+                    <Label
+                      htmlFor={`lessonName-${index}`}
+                      className="text-sm sm:text-base"
+                    >
+                      Хичээлийн нэр
+                    </Label>
                     <select
                       id={`lessonName-${index}`}
                       value={lesson.lessonName}
                       onChange={(e) =>
                         updateLesson(index, "lessonName", e.target.value)
                       }
-                      className="w-full border rounded p-2 mt-1"
+                      className="w-full border rounded p-2 sm:p-3 mt-1 text-sm sm:text-base"
                       required
                     >
                       <option value="">-Хичээл сонгох-</option>
@@ -264,7 +281,10 @@ export function EditAssignmentForm({
                   </div>
 
                   <div>
-                    <Label htmlFor={`taskDescription-${index}`}>
+                    <Label
+                      htmlFor={`taskDescription-${index}`}
+                      className="text-sm sm:text-base"
+                    >
                       Даалгаварийн дэлгэрэнгүй
                     </Label>
                     <textarea
@@ -273,7 +293,7 @@ export function EditAssignmentForm({
                       onChange={(e) =>
                         updateLesson(index, "taskDescription", e.target.value)
                       }
-                      className="mt-1 w-full border rounded p-2"
+                      className="mt-1 w-full border rounded p-2 sm:p-3 text-sm sm:text-base"
                       rows={3}
                       required
                     />
@@ -281,7 +301,9 @@ export function EditAssignmentForm({
 
                   {lesson.images && lesson.images.length > 0 && (
                     <div>
-                      <Label>Одоогийн зурагууд ({lesson.images.length})</Label>
+                      <Label className="text-sm sm:text-base">
+                        Одоогийн зурагууд ({lesson.images.length})
+                      </Label>
                       <div className="flex flex-wrap gap-2 mt-2">
                         {lesson.images.map((imageUrl, imgIndex) => (
                           <div key={imgIndex} className="relative">
@@ -290,14 +312,14 @@ export function EditAssignmentForm({
                               height={300}
                               src={imageUrl}
                               alt={`${lesson.lessonName} image ${imgIndex + 1}`}
-                              className="w-20 h-20 object-cover rounded border cursor-zoom-in"
+                              className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded border cursor-zoom-in"
                               onClick={() => setPreviewImageUrl(imageUrl)}
                             />
                             <Button
                               type="button"
                               variant="destructive"
                               size="sm"
-                              className="absolute -top-2 -right-2 w-6 h-6 p-0 text-xs"
+                              className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 p-0 text-xs"
                               onClick={() => removeImage(index, imgIndex)}
                             >
                               ✕
@@ -309,14 +331,19 @@ export function EditAssignmentForm({
                   )}
 
                   <div>
-                    <Label htmlFor={`images-${index}`}>Шинэ зураг нэмэх</Label>
+                    <Label
+                      htmlFor={`images-${index}`}
+                      className="text-sm sm:text-base"
+                    >
+                      Шинэ зураг нэмэх
+                    </Label>
                     <input
                       id={`images-${index}`}
                       type="file"
                       multiple
                       accept="image/*"
                       onChange={(e) => handleImageChange(index, e)}
-                      className="mt-1 w-full border rounded p-2"
+                      className="mt-1 w-full border rounded p-2 sm:p-3 text-sm sm:text-base"
                     />
                     <p className="text-xs text-gray-500 mt-1">
                       Олон зураг сонгож болно
@@ -328,11 +355,20 @@ export function EditAssignmentForm({
           </div>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4 border-t">
-          <Button type="button" variant="outline" onClick={onCancel}>
+        <div className="flex flex-col sm:flex-row sm:justify-end gap-2 pt-4 border-t">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            className="text-sm sm:text-base"
+          >
             Цуцлах
           </Button>
-          <Button type="submit" disabled={loading}>
+          <Button
+            type="submit"
+            disabled={loading}
+            className="text-sm sm:text-base"
+          >
             {loading ? "Хадгалж байна..." : "Хадгалах"}
           </Button>
         </div>
@@ -340,7 +376,7 @@ export function EditAssignmentForm({
 
       {previewImageUrl && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
           onClick={() => setPreviewImageUrl(null)}
         >
           <Image
