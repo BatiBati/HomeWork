@@ -8,11 +8,9 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ChildrenType, useAuth } from "@/provider/AuthProvider";
 import { AddStudentForm } from "./_components/add-student";
-import { AddAssignmentForm } from "./_components/add-task";
 import { EditAssignmentForm } from "./_components/edit-task";
 import { AssignmentsList } from "./_components/assignments-list";
 import { useRouter } from "next/navigation";
@@ -31,7 +29,6 @@ export type AssignmentType = {
   teacher: string;
   childrens: ChildrenType[];
   lessons: LessonType[];
-  taskEndSchedule: Date;
   images: string[];
   publicLinks: Array<{
     token: string;
@@ -48,7 +45,6 @@ export default function TeacherDashboard() {
   const [childname, setChildname] = useState("");
   const [assignments, setAssignments] = useState<AssignmentType[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingAssignment, setEditingAssignment] =
     useState<AssignmentType | null>(null);
@@ -56,8 +52,9 @@ export default function TeacherDashboard() {
   const [activeTab, setActiveTab] = useState<
     "assignments" | "chat" | "students"
   >("assignments");
-  const { user, token } = useAuth();
+  const { user, token, signOut } = useAuth();
   const router = useRouter();
+
   console.log(user);
   useEffect(() => {
     if (!user?._id) return;
@@ -90,7 +87,7 @@ export default function TeacherDashboard() {
   const students = user.children ?? [];
 
   return (
-    <div className="relative w-screen flex justify-center  bg-gradient-to-br from-white to-slate-50">
+    <div className="relative w-screen flex justify-center overflow-hidden bg-gradient-to-br from-white to-slate-50">
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-br from-blue-200/60 to-violet-200/50 blur-3xl animate-pulse"></div>
@@ -98,147 +95,79 @@ export default function TeacherDashboard() {
       </div>
 
       <div className="min-h-screen w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-3 sm:mt-6">
-        {/* Header moved into main content to align with sidebar layout */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
-          <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-fuchsia-500 to-fuchsia-600">
-              🎓 Teaching Hub
-            </h1>
-            <p className="text-slate-600 mt-1 text-sm sm:text-base">
-              Welcome, {user.firstName}! 🌞
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="outline"
-              className="text-sm sm:text-base border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
-            >
-              Sign Out
-            </Button>
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-[240px_1fr] gap-4 sm:gap-6 mb-6 sm:mb-8 items-start">
-          <aside className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
-            <div className="space-y-2">
+        {/* Header + Tabs */}
+        <div className="grid grid-cols-1 gap-4 sm:gap-6 mb-6 sm:mb-8 items-start">
+          <section id="main-content">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
+              <div className="flex-1">
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-fuchsia-500 to-fuchsia-600">
+                  🎓 Teaching Hub
+                </h1>
+                <p className="text-slate-600 mt-1 text-sm sm:text-base">
+                  Welcome, {user.firstName}! 🌞
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  onClick={signOut}
+                  className="text-sm sm:text-base border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
+                >
+                  Гарах
+                </Button>
+              </div>
+            </div>
+
+            {/* Tabs under header */}
+            <div className="rounded-2xl border border-slate-200 bg-white p-2 sm:p-3 flex flex-wrap gap-2 mb-4">
               <button
-                className={`w-full text-left rounded-lg p-3 border transition hover:bg-cyan-50 ${
+                className={`rounded-lg px-3 py-2 border transition hover:bg-cyan-50 ${
                   activeTab === "assignments"
                     ? "border-cyan-500 bg-cyan-50"
                     : "border-slate-200 bg-white"
                 }`}
                 onClick={() => setActiveTab("assignments")}
               >
-                <div className="text-slate-600 text-sm">📚 Даалгаврууд</div>
-                <div className="text-2xl font-extrabold text-slate-900">
-                  {assignments.length}
-                </div>
+                📚 Даалгаврууд ({assignments.length})
               </button>
               <button
-                className={`w-full text-left rounded-lg p-3 border transition hover:bg-cyan-50 ${
+                className={`rounded-lg px-3 py-2 border transition hover:bg-cyan-50 ${
                   activeTab === "students"
                     ? "border-cyan-500 bg-cyan-50"
                     : "border-slate-200 bg-white"
                 }`}
                 onClick={() => setActiveTab("students")}
               >
-                <div className="text-slate-600 text-sm">👥 Нийт сурагчид</div>
-                <div className="text-2xl font-extrabold text-slate-900">
-                  {students.length}
-                </div>
+                👥 Сурагчид ({students.length})
               </button>
               <button
-                className={`w-full text-left rounded-lg p-3 border transition hover:bg-cyan-50 ${
+                className={`rounded-lg px-3 py-2 border transition hover:bg-cyan-50 ${
                   activeTab === "chat"
                     ? "border-cyan-500 bg-cyan-50"
                     : "border-slate-200 bg-white"
                 }`}
                 onClick={() => setActiveTab("chat")}
               >
-                <div className="text-xl font-extrabold text-slate-900">
-                  💬 Чат
-                </div>
+                💬 Чат
               </button>
             </div>
-          </aside>
-
-          <div>
             {activeTab === "assignments" && (
               <>
-                {/* Add Student / Add Task */}
-                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                <div className="flex flex-col gap-4 mb-6">
                   <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-sky-500 to-fuchsia-600">
                     📝 Гэрийн даалгаврууд ✨
                   </h2>
-                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-                    <Dialog
-                      open={isAddStudentOpen}
-                      onOpenChange={(open) => {
-                        setIsAddStudentOpen(open);
-                        if (!open) {
-                          setParentEmail("");
-                          setChildname("");
-                        }
-                      }}
-                    >
-                      <DialogTrigger asChild>
-                        <Button
-                          variant="secondary"
-                          className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
-                        >
-                          + Сурагч нэмэх
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="w-[95vw] max-w-md bg-white border border-slate-200 rounded-xl">
-                        <DialogHeader>
-                          <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
-                        </DialogHeader>
-                        <AddStudentForm
-                          parentEmail={parentEmail}
-                          setParentEmail={setParentEmail}
-                          childname={childname}
-                          setChildname={setChildname}
-                          teacherId={user._id}
-                          loading={loading}
-                          setLoading={setLoading}
-                          onCreated={() => {
-                            setIsAddStudentOpen(false);
-                            setParentEmail("");
-                            setChildname("");
-                          }}
-                        />
-                      </DialogContent>
-                    </Dialog>
-
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800">
-                          + Даалгавар оруулах
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-slate-200 rounded-xl">
-                        <DialogHeader>
-                          <DialogTitle>➕ Даалгавар нэмэх</DialogTitle>
-                        </DialogHeader>
-                        <AddAssignmentForm
-                          teacherId={user._id}
-                          token={token || ""}
-                          onCreated={() => {
-                            setIsDialogOpen(false);
-                            router.refresh();
-                          }}
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  </div>
+                  <AssignmentsList
+                    assignments={assignments}
+                    onEdit={(a) => {
+                      setEditingAssignment(a);
+                      setIsEditDialogOpen(true);
+                    }}
+                    teacherId={user._id}
+                    token={token || ""}
+                    onCreated={() => router.refresh()}
+                  />
                 </div>
-
-                <AssignmentsList
-                  assignments={assignments}
-                  onEdit={(a) => {
-                    setEditingAssignment(a);
-                    setIsEditDialogOpen(true);
-                  }}
-                />
               </>
             )}
 
@@ -280,6 +209,9 @@ export default function TeacherDashboard() {
                               {s.school} • {s.grade}
                             </p>
                           </div>
+                          <span className="text-xs text-slate-500">
+                            ID: {s._id.slice(-6)}
+                          </span>
                         </li>
                       ))}
                       {students.length === 0 && (
@@ -292,10 +224,40 @@ export default function TeacherDashboard() {
                 </CardContent>
               </Card>
             )}
-          </div>
+          </section>
         </div>
 
-        {/* moved above into main-content section */}
+        {/* Add Student Dialog */}
+        <Dialog
+          open={isAddStudentOpen}
+          onOpenChange={(open) => {
+            setIsAddStudentOpen(open);
+            if (!open) {
+              setParentEmail("");
+              setChildname("");
+            }
+          }}
+        >
+          <DialogContent className="w-[95vw] max-w-md bg-white border border-slate-200 rounded-xl">
+            <DialogHeader>
+              <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
+            </DialogHeader>
+            <AddStudentForm
+              parentEmail={parentEmail}
+              setParentEmail={setParentEmail}
+              childname={childname}
+              setChildname={setChildname}
+              teacherId={user._id}
+              loading={loading}
+              setLoading={setLoading}
+              onCreated={() => {
+                setIsAddStudentOpen(false);
+                setParentEmail("");
+                setChildname("");
+              }}
+            />
+          </DialogContent>
+        </Dialog>
 
         {/* Edit Assignment Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>

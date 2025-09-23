@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { useAuth } from "@/provider/AuthProvider";
 import type { ChildrenType } from "@/provider/AuthProvider";
 import { ChildrenDataCard } from "./ChildrenDataCard";
@@ -32,15 +33,23 @@ export const ChildrenContent = () => {
       <div className="flex gap-2 flex-wrap mb-4">
         {user?.children.map((child) => (
           <button key={child._id} onClick={() => setSelectedChildId(child._id)}>
-            <div
-              className={`px-2 py-1 rounded cursor-pointer ${
-                selectedChildId === child._id
-                  ? "bg-blue-500 text-white"
-                  : "bg-white border-[1px]"
-              }`}
-            >
-              {child.firstName}
+            <div className={` rounded cursor-pointer w-[50px] h-[50px]`}>
+              <Image
+                src={
+                  child.profilePicture ||
+                  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyMCIgcj0iOCIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMTIgNDBDMTIgMzEuMTYzNCAxOC4xNjM0IDI1IDI3IDI1UzQyIDMxLjE2MzQgNDIgNDBWNDBIMTJaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo="
+                }
+                alt={`${child.firstName} ${child.lastName}`}
+                width={50}
+                height={50}
+                className="w-full h-full rounded-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.src =
+                    "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyNSIgcj0iMjUiIGZpbGw9IiNGM0Y0RjYiLz4KPGNpcmNsZSBjeD0iMjUiIGN5PSIyMCIgcj0iOCIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMTIgNDBDMTIgMzEuMTYzNCAxOC4xNjM0IDI1IDI3IDI1UzQyIDMxLjE2MzQgNDIgNDBWNDBIMTJaIiBmaWxsPSIjOUNBM0FGIi8+Cjwvc3ZnPgo=";
+                }}
+              />
             </div>
+            {child.lastName}
           </button>
         ))}
       </div>

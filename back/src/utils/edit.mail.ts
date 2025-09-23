@@ -57,15 +57,8 @@ export const sendHomeworkEditedNotification = async (
               <div style="max-width:640px; margin:0 auto; background:#ffffff; border:1px solid #e6ebf1; border-radius:16px; overflow:hidden; box-shadow: 0 6px 20px rgba(2, 6, 23, 0.08);">
                 <div style="height:6px; background: linear-gradient(90deg, #6366f1 0%, #22d3ee 100%);"></div>
                 <div style="padding:24px 24px 8px 24px;">
-                  <h3 style="margin:0 0 8px 0; font-size:20px;">${
-                    child.firstName
-                  } ${child.lastName} хүүхдийн даалгавар шинэчлэгдлээ</h3>
-                  <p style="margin:0; color:#475569;">
-                    <strong style="color:#0f172a;">Дуусах хугацаа:</strong>
-                    ${new Date(assignment.taskEndSchedule).toLocaleString(
-                      "mn-MN"
-                    )}
-                  </p>
+                  <h3 style="margin:0 0 8px 0; font-size:20px;">${child.firstName} ${child.lastName} хүүхдийн даалгавар шинэчлэгдлээ</h3>
+                 
                 </div>
 
                 <div style="padding:16px 24px 8px 24px;">
@@ -99,12 +92,7 @@ export const sendHomeworkEditedNotification = async (
                     index + 1
                   }: ${lesson.lessonName}</h4>
                 </div>
-                <p style="margin:0 0 6px 0; color:#334155;">
-                  <strong style="color:#0f172a;">Дуусах хугацаа:</strong>
-                  ${new Date(assignment.taskEndSchedule).toLocaleString(
-                    "mn-MN"
-                  )}
-                </p>
+                
                 <p style="margin:0; color:#334155; line-height:1.6;">
                   <strong style="color:#0f172a;">Шинэчилсэн даалгавар:</strong>
                   ${lesson.taskDescription}
@@ -123,25 +111,14 @@ export const sendHomeworkEditedNotification = async (
               <div style="max-width:680px; margin:0 auto; background:#ffffff; border:1px solid #e6ebf1; border-radius:16px; overflow:hidden; box-shadow: 0 6px 20px rgba(2, 6, 23, 0.08);">
                 <div style="height:6px; background: linear-gradient(90deg, #10b981 0%, #06b6d4 100%);"></div>
                 <div style="padding:24px 24px 8px 24px;">
-                  <h3 style="margin:0 0 8px 0; font-size:20px;">${
-                    child.school
-                  } ${child.grade} ${child.firstName} ${
-            child.lastName
-          } хүүхдийн даалгавар шинэчлэгдлээ</h3>
-                  <p style="margin:0; color:#475569;">
-                    <strong style="color:#0f172a;">Дуусах хугацаа:</strong>
-                    ${new Date(assignment.taskEndSchedule).toLocaleString(
-                      "mn-MN"
-                    )}
-                  </p>
+                  <h3 style="margin:0 0 8px 0; font-size:20px;">${child.school} ${child.grade} ${child.firstName} ${child.lastName} хүүхдийн даалгавар шинэчлэгдлээ</h3>
+                  
                 </div>
                 <div style="padding:16px 24px 8px 24px;">
                   ${lessonsHtml}
                 </div>
                 <div style="padding: 8px 24px 24px 24px;">
-                  <a href="https://home-work-n1g4.vercel.app/assignment/${
-                    assignment.id
-                  }" style="display:inline-block; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 12px; font-weight:600; box-shadow: 0 6px 14px rgba(2, 6, 23, 0.12);">Хүүхдийн даалгавар үзэх</a>
+                  <a href="https://home-work-n1g4.vercel.app/assignment/${assignment.id}" style="display:inline-block; background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%); color: #ffffff; padding: 12px 18px; text-decoration: none; border-radius: 12px; font-weight:600; box-shadow: 0 6px 14px rgba(2, 6, 23, 0.12);">Хүүхдийн даалгавар үзэх</a>
                 </div>
                 <div style="padding:16px 24px; background:#f8fafc; border-top:1px solid #e6ebf1; color:#64748b; font-size:12px;">
                   Энэ имэйл автоматаар илгээгдсэн болно. Хариу бичих шаардлагагүй.
