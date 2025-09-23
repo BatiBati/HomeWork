@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
@@ -23,6 +23,20 @@ export function EditAssignmentForm({
   );
   const [loading, setLoading] = useState(false);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
+  const [newFilesByLesson, setNewFilesByLesson] = useState<File[][]>(
+    Array.from({ length: assignment.lessons.length }, () => [])
+  );
+
+  // Keep files array in sync when lessons are added/removed
+  useEffect(() => {
+    setNewFilesByLesson((prev) => {
+      const next: File[][] = Array.from({ length: lessons.length }, () => []);
+      for (let i = 0; i < Math.min(prev.length, lessons.length); i += 1) {
+        next[i] = prev[i] ?? [];
+      }
+      return next;
+    });
+  }, [lessons.length]);
 
   const addLesson = () => {
     setLessons([
@@ -33,11 +47,13 @@ export function EditAssignmentForm({
         images: [],
       },
     ]);
+    setNewFilesByLesson((prev) => [...prev, []]);
   };
 
   const removeLesson = (index: number) => {
     if (lessons.length > 1) {
       setLessons(lessons.filter((_, i) => i !== index));
+      setNewFilesByLesson((prev) => prev.filter((_, i) => i !== index));
     }
   };
 
@@ -54,6 +70,8 @@ export function EditAssignmentForm({
   };
 
   const removeImage = (lessonIndex: number, imageIndex: number) => {
+    const isBlob =
+      lessons[lessonIndex]?.images?.[imageIndex]?.startsWith("blob:");
     setLessons(
       lessons.map((lesson, i) =>
         i === lessonIndex
@@ -66,6 +84,15 @@ export function EditAssignmentForm({
           : lesson
       )
     );
+    if (isBlob) {
+      setNewFilesByLesson((prev) =>
+        prev.map((files, i) =>
+          i === lessonIndex
+            ? files.filter((_, idx) => idx !== imageIndex)
+            : files
+        )
+      );
+    }
   };
 
   const handleImageChange = (
@@ -86,6 +113,45 @@ export function EditAssignmentForm({
           : lesson
       )
     );
+    setNewFilesByLesson((prev) =>
+      prev.map((filesArr, i) =>
+        i === lessonIndex ? [...filesArr, ...Array.from(files)] : filesArr
+      )
+    );
+  };
+
+  const uploadImagesToCloudinary = async (files: File[]) => {
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const uploadPreset = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+
+    if (!cloudName || !uploadPreset) {
+      console.error(
+        "Cloudinary config missing: NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME or NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET"
+      );
+      return [] as string[];
+    }
+
+    const uploadedUrls: string[] = [];
+    for (const file of files) {
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", uploadPreset);
+        const res = await fetch(
+          `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+          { method: "POST", body: formData }
+        );
+        if (!res.ok) {
+          const t = await res.text();
+          throw new Error(`Cloudinary upload failed: ${res.status} ${t}`);
+        }
+        const data = await res.json();
+        if (data.secure_url) uploadedUrls.push(data.secure_url);
+      } catch (err) {
+        console.error("Edit upload error:", err);
+      }
+    }
+    return uploadedUrls;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,10 +159,28 @@ export function EditAssignmentForm({
     setLoading(true);
 
     try {
+      // Upload newly added images (blob previews) per lesson
+      const lessonsPrepared = await Promise.all(
+        lessons.map(async (lesson, idx) => {
+          const existingUrls = (lesson.images || []).filter(
+            (u) => !u.startsWith("blob:")
+          );
+          const filesToUpload = newFilesByLesson[idx] || [];
+          const uploaded = filesToUpload.length
+            ? await uploadImagesToCloudinary(filesToUpload)
+            : [];
+          return {
+            lessonName: lesson.lessonName,
+            taskDescription: lesson.taskDescription,
+            images: [...existingUrls, ...uploaded],
+          };
+        })
+      );
+
       const res = await api.patch<{ assignment: AssignmentType }>(
         `/assignment/${assignment._id}`,
         {
-          lessons,
+          lessons: lessonsPrepared,
           taskEndSchedule,
         },
         {
