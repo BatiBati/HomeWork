@@ -21,10 +21,6 @@ const assignmentSchema = new Schema(
       ref: "user",
       required: true,
     },
-    taskEndSchedule: {
-      type: Date,
-      required: true,
-    },
     childrens: [
       {
         type: Schema.Types.ObjectId,

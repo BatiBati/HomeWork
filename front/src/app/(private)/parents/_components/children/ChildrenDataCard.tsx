@@ -2,7 +2,8 @@
 
 import type { ChildrenType } from "@/provider/AuthProvider";
 import { api } from "../../../../../../axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import {
   Accordion,
   AccordionContent,
@@ -26,7 +27,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   type Assignment = {
     _id: string;
     teacher: string;
-    taskEndSchedule: string;
+
     createdAt: string;
     childrens: Array<string | { _id: string }>;
     lessons?: Lesson[];
@@ -44,7 +45,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const getChildrenAssignment = async () => {
+  const getChildrenAssignment = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
@@ -63,12 +64,12 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [child.teacher, child._id]);
 
   useEffect(() => {
     if (!child?.teacher || !child?._id) return;
     getChildrenAssignment();
-  }, [child?._id, child?.teacher]);
+  }, [child?._id, child?.teacher, getChildrenAssignment]);
 
   const sortedAssignments = [...assignments].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -117,7 +118,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   // Auto-open first accordion (latest date)
   useEffect(() => {
     if (dayLabels.length > 0) setOpenAccordion(dayLabels[0].label);
-  }, [assignments]);
+  }, [assignments, dayLabels]);
 
   const openImageModal = (images: string[], index: number) => {
     setCurrentImages(images);
@@ -160,9 +161,10 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
         >
           {dayLabels.map(({ label, date, items }) => (
             <AccordionItem key={date} value={label}>
-              <AccordionTrigger className="flex justify-between items-center">
-                <span>{label}</span>
-                <span className="ml-2 text-xs text-gray-500">{date}</span>
+              <AccordionTrigger className="flex items-center">
+                <span className="font-semibold text-2xl">
+                  {label} <span className="text-[12px] opacity-50">{date}</span>
+                </span>
               </AccordionTrigger>
               <AccordionContent className="space-y-2">
                 {items.map((a) => (
@@ -184,10 +186,12 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
                             {l.images && l.images.length > 0 && (
                               <div className="mt-2 flex flex-wrap gap-3">
                                 {l.images.map((img, idx) => (
-                                  <img
+                                  <Image
                                     key={idx}
                                     src={img}
                                     alt={`lesson-${idx}`}
+                                    width={500}
+                                    height={300}
                                     className="w-full sm:w-[300px] md:w-[400px] lg:w-[500px] rounded-lg border object-cover cursor-pointer hover:scale-105 transition"
                                     onClick={() =>
                                       openImageModal(l.images!, idx)
@@ -243,9 +247,11 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
             </>
           )}
 
-          <img
+          <Image
             src={currentImages[currentIndex]}
             alt={`modal-img-${currentIndex}`}
+            width={800}
+            height={600}
             className="max-h-[80vh] max-w-[90vw] rounded-lg object-contain"
           />
         </div>

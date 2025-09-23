@@ -24,7 +24,7 @@ export default function Parent() {
     } finally {
       setLoading(false);
     }
-  }, [router]);
+  }, [router, setLoading]);
 
   return (
     <div className="bg-white w-screen min-h-screen flex">

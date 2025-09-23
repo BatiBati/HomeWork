@@ -12,7 +12,7 @@ export const Sidebar = ({ setSelectedSidebar }: Props) => {
   const { user: authUser } = useAuth();
   const [active, setActive] = useState<number>(1);
   const [isOpen, setIsOpen] = useState(false);
-
+  const { signOut } = useAuth();
   const handleClick = (index: number) => {
     setActive(index);
     setSelectedSidebar(index);
@@ -76,6 +76,14 @@ export const Sidebar = ({ setSelectedSidebar }: Props) => {
               </div>
             ))}
           </nav>
+          <div className="w-full flex justify-center mt-10">
+            <div
+              className="flex items-center justify-center gap-3 w-[85%] px-4 py-2 rounded-xl cursor-pointer  bg-white/10 hover:bg-white/20 transition"
+              onClick={signOut}
+            >
+              Гарах
+            </div>
+          </div>
         </div>
 
         <div className="text-xs text-white/70 text-center mt-auto">

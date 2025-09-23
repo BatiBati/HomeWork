@@ -4,7 +4,7 @@ import { childrenModel } from "../../models/children.models";
 import { sendHomeworkAddedNotification } from "../../utils/mail-handler";
 
 export const createAssignment: RequestHandler = async (req, res) => {
-  const { teacher, lessons, images, taskEndSchedule } = req.body;
+  const { teacher, lessons, images } = req.body;
 
   const childrens = await childrenModel
     .find({ teacher: teacher })
@@ -21,7 +21,7 @@ export const createAssignment: RequestHandler = async (req, res) => {
       teacher,
       childrens: childrens.map((c) => c._id),
       lessons,
-      taskEndSchedule: new Date(taskEndSchedule),
+
       images,
     });
 

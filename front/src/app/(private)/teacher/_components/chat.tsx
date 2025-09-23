@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useAuth } from "@/provider/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,7 +30,7 @@ export const TeacherChat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Fetch parents
-  const fetchParents = async () => {
+  const fetchParents = useCallback(async () => {
     try {
       const res = await api.get<{ parents: ParentType[] }>("/message/parents", {
         params: { teacherId: user?._id },
@@ -43,20 +43,23 @@ export const TeacherChat = () => {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [user?._id]);
 
   // Fetch messages
-  const fetchMessages = async (parentId: string) => {
-    if (!user?._id || !parentId) return;
-    try {
-      const res = await api.get<{ messages: MessageType[] }>("/message", {
-        params: { user1Id: user._id, user2Id: parentId },
-      });
-      setMessages(res.data.messages || []);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const fetchMessages = useCallback(
+    async (parentId: string) => {
+      if (!user?._id || !parentId) return;
+      try {
+        const res = await api.get<{ messages: MessageType[] }>("/message", {
+          params: { user1Id: user._id, user2Id: parentId },
+        });
+        setMessages(res.data.messages || []);
+      } catch (err) {
+        console.error(err);
+      }
+    },
+    [user?._id]
+  );
 
   // Polling
   useEffect(() => {
@@ -64,7 +67,7 @@ export const TeacherChat = () => {
     fetchMessages(selectedParent._id);
     const interval = setInterval(() => fetchMessages(selectedParent._id), 5000);
     return () => clearInterval(interval);
-  }, [selectedParent]);
+  }, [selectedParent, fetchMessages]);
 
   //scroll
   useEffect(() => {
@@ -98,7 +101,7 @@ export const TeacherChat = () => {
 
   useEffect(() => {
     fetchParents();
-  }, [user?._id]);
+  }, [user?._id, fetchParents]);
 
   if (!user)
     return (

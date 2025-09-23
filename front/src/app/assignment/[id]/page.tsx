@@ -1,15 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Calendar,
-  User,
-  School,
-  X,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
+import { User, School, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { api } from "../../../../axios";
 import { useParams } from "next/navigation";
 import { AssignmentTypeee } from "@/provider/AuthProvider";
@@ -34,14 +28,14 @@ export default function AssignmentTask() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0); // modal дотор ямар зураг идэвхтэй байгааг хадгалах
 
-  const fetchTask = async () => {
+  const fetchTask = useCallback(async () => {
     const response = await api.get(`/assignment/byId/${id}`);
     setData(response.data.assignment);
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchTask();
-  }, []);
+  }, [fetchTask]);
 
   if (!data) {
     return (
@@ -86,9 +80,7 @@ export default function AssignmentTask() {
       <h2 className="text-3xl font-bold mb-6">
         Ангийн багш {data.teacher.firstName.charAt(0)}. {data.teacher.lastName}
       </h2>
-      <h2 className="text-3xl font-bold mb-6">
-        {formatDate(data.createdAt)} - {formatDate(data.taskEndSchedule)}
-      </h2>
+      <h2 className="text-3xl font-bold mb-6">{formatDate(data.createdAt)}</h2>
 
       <div className="flex flex-wrap gap-3 mb-8">
         {data.lessons.map((lesson, index) => (
@@ -119,10 +111,12 @@ export default function AssignmentTask() {
             {data.lessons[activeLesson].images.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {data.lessons[activeLesson].images.map((img, idx) => (
-                  <img
+                  <Image
                     key={idx}
                     src={img}
                     alt={`homework-${idx}`}
+                    width={400}
+                    height={240}
                     className="rounded-xl border object-cover w-full h-60 cursor-pointer hover:scale-105 transition"
                     onClick={() => openModal(idx)}
                   />
@@ -138,10 +132,6 @@ export default function AssignmentTask() {
 
             {/* Info */}
             <div className="flex flex-wrap gap-6 text-gray-600 text-lg">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-5 h-5" />
-                Due: {formatDate(data.taskEndSchedule)}
-              </div>
               <div className="flex items-center gap-2">
                 <User className="w-5 h-5" />
                 {data.teacher.firstName}
@@ -183,9 +173,11 @@ export default function AssignmentTask() {
             </>
           )}
 
-          <img
+          <Image
             src={data.lessons[activeLesson].images[currentIndex]}
             alt={`modal-img-${currentIndex}`}
+            width={800}
+            height={600}
             className="max-h-[80vh] max-w-[90vw] rounded-lg object-contain"
           />
         </div>

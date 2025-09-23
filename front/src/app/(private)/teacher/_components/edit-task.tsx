@@ -18,9 +18,7 @@ export function EditAssignmentForm({
   onCancel: () => void;
 }) {
   const [lessons, setLessons] = useState<LessonType[]>(assignment.lessons);
-  const [taskEndSchedule, setTaskEndSchedule] = useState(
-    new Date(assignment.taskEndSchedule).toISOString().slice(0, 16)
-  );
+
   const [loading, setLoading] = useState(false);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [newFilesByLesson, setNewFilesByLesson] = useState<File[][]>(
@@ -181,7 +179,6 @@ export function EditAssignmentForm({
         `/assignment/${assignment._id}`,
         {
           lessons: lessonsPrepared,
-          taskEndSchedule,
         },
         {
           headers: {
@@ -202,20 +199,6 @@ export function EditAssignmentForm({
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-        <div>
-          <Label htmlFor="taskEndSchedule" className="text-sm sm:text-base">
-            Даалгавар дуусах хугацаа
-          </Label>
-          <input
-            id="taskEndSchedule"
-            type="datetime-local"
-            value={taskEndSchedule}
-            onChange={(e) => setTaskEndSchedule(e.target.value)}
-            className="w-full border rounded p-2 sm:p-3 mt-1 text-sm sm:text-base"
-            required
-          />
-        </div>
-
         <div>
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 mb-4">
             <h3 className="font-semibold text-base sm:text-lg">

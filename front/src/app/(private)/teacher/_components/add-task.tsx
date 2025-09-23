@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +13,6 @@ import { AxiosError } from "axios";
 import { useAuth } from "@/provider/AuthProvider";
 import { api } from "../../../../../axios";
 import { AssignmentType } from "../page";
-
 interface Lesson {
   lessonName: string;
   taskDescription: string;
@@ -23,10 +23,12 @@ interface Lesson {
 export function AddAssignmentForm({
   teacherId,
   token,
+  assignments,
   onCreated,
 }: {
   teacherId: string;
   token: string;
+  assignments: AssignmentType[];
   onCreated?: () => void;
 }) {
   const [lessons, setLessons] = useState<Lesson[]>([
@@ -37,7 +39,21 @@ export function AddAssignmentForm({
       previewUrls: [],
     },
   ]);
-  const [taskEndSchedule, setTaskEndSchedule] = useState("");
+  const today = new Date();
+  const todayStr = today.toLocaleDateString("mn-MN");
+
+  // Өнөөдөр үүссэн даалгаварууд
+  const todaysAssignments = assignments.filter(
+    (a) => new Date(a.createdAt).toLocaleDateString("mn-MN") === todayStr
+  );
+  const lessonNameArray = [
+    "Математик",
+    "Англи хэл",
+    "Монгол хэл",
+    "Байгалийн ухаан",
+    "Нийгмийн ухаан",
+  ];
+  console.log(todaysAssignments);
   const [loading, setLoading] = useState(false);
   const [currentLessonIndex, setCurrentLessonIndex] = useState(0);
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
@@ -207,31 +223,6 @@ export function AddAssignmentForm({
 
     setLoading(true);
     try {
-      const existing = await api.get<{ assignments: AssignmentType[] }>(
-        `/assignment/get/${teacherId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      // 2. Шинэ taskEndSchedule-ээс зөвхөн огноо хэсгийг авах
-      const newDate = new Date(taskEndSchedule).toISOString().split("T")[0];
-
-      const alreadyExists = existing.data.assignments.some((a) => {
-        if (!a.taskEndSchedule) return false;
-        const existingDate = new Date(a.taskEndSchedule)
-          .toISOString()
-          .split("T")[0];
-        return existingDate === newDate;
-      });
-
-      if (alreadyExists) {
-        toast.error("❌ Энэ өдөрт хичээл аль хэдийн үүссэн байна!");
-        setLoading(false);
-        return;
-      }
       // Upload images for each lesson (if any images selected)
       const lessonsWithImages = await Promise.all(
         lessons.map(async (lesson) => {
@@ -259,7 +250,6 @@ export function AddAssignmentForm({
           lessons: lessonsWithImages,
           images: allImages, // Backend expects this field
           publicLinks: [], // Backend expects this field (can be empty for now)
-          taskEndSchedule,
         },
         {
           headers: {
@@ -281,7 +271,7 @@ export function AddAssignmentForm({
           previewUrls: [],
         },
       ]);
-      setTaskEndSchedule("");
+
       setCurrentLessonIndex(0); // Reset carousel to first lesson
 
       // Close the form/dialog
@@ -303,20 +293,7 @@ export function AddAssignmentForm({
 
   return (
     <>
-      <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
-        <div>
-          <label className="block mb-1 text-sm font-medium text-muted-foreground">
-            Даалгавар дуусах хугацаа
-          </label>
-          <input
-            type="datetime-local"
-            value={taskEndSchedule}
-            onChange={(e) => setTaskEndSchedule(e.target.value)}
-            required
-            className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-sm sm:text-base"
-          />
-        </div>
-
+      <form className="space-y-2 sm:space-y-4 w-full" onSubmit={handleSubmit}>
         {/* Lesson Carousel */}
         <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
           {/* Carousel Header */}
@@ -353,23 +330,32 @@ export function AddAssignmentForm({
                     <label className="block mb-1 text-sm font-medium text-muted-foreground">
                       Хичээлийн нэр
                     </label>
-                    <select
-                      value={lesson.lessonName}
-                      onChange={(e) =>
-                        updateLesson(lessonIndex, "lessonName", e.target.value)
-                      }
-                      required
-                      className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-sm sm:text-base"
-                    >
-                      <option value="" className="text-gray-500">
-                        -Хичээл сонгох-
-                      </option>
-                      <option value="Математик">Математик</option>
-                      <option value="Англи хэл">Англи хэл</option>
-                      <option value="Монгол хэл">Монгол хэл</option>
-                      <option value="Байгалийн ухаан">Байгалийн ухаан</option>
-                      <option value="Нийгмийн ухаан">Нийгмийн ухаан</option>
-                    </select>
+                    <div className="w-full flex flex-wrap gap-2 text-[12px] font-bold">
+                      {lessonNameArray.map((item, index) => {
+                        const isSelected = lesson.lessonName === item;
+
+                        return (
+                          <button
+                            key={index}
+                            type="button"
+                            onClick={() =>
+                              updateLesson(
+                                lessonIndex,
+                                "lessonName",
+                                isSelected ? "" : item // хэрэв сонгосон бол → хоосолно
+                              )
+                            }
+                            className={`px-3 py-1 rounded-full border transition ${
+                              isSelected
+                                ? "bg-fuchsia-600 text-white border-fuchsia-600"
+                                : "hover:bg-blue-100 border-gray-300"
+                            }`}
+                          >
+                            {item}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div>
@@ -395,46 +381,88 @@ export function AddAssignmentForm({
                     <label className="block text-sm font-medium text-muted-foreground mb-2">
                       Зураг оруулах
                     </label>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={(e) => handleImageChange(e, lessonIndex)}
-                      className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background cursor-pointer hover:bg-muted/50 text-sm sm:text-base"
-                    />
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Олон зураг сонгож болно
-                    </p>
-                  </div>
-
-                  {lesson.previewUrls.length > 0 && (
-                    <div>
-                      <p className="text-sm font-medium text-muted-foreground mb-2">
-                        Сонгосон зурагууд ({lesson.previewUrls.length})
-                      </p>
-                      <div className="flex flex-wrap gap-2">
-                        {lesson.previewUrls.map((url, i) => (
-                          <div key={i} className="relative">
-                            <img
-                              src={url}
-                              alt="preview"
-                              className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border cursor-zoom-in"
-                              onClick={() => setPreviewImageUrl(url)}
+                    <div className="flex gap-1">
+                      <label
+                        htmlFor={`file-upload-${lessonIndex}`}
+                        className="w-16 h-16 sm:w-20 sm:h-20 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-6 cursor-pointer hover:bg-gray-50 transition"
+                      >
+                        {/* Icon */}
+                        <div className="flex flex-col items-center  text-gray-500">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-5 w-5 mb-0 text-gray-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 4v16m8-8H4"
                             />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 p-0 text-xs"
-                              onClick={() => removeImage(lessonIndex, i)}
-                            >
-                              ✕
-                            </Button>
+                          </svg>
+                        </div>
+                      </label>
+
+                      <input
+                        id={`file-upload-${lessonIndex}`}
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={(e) => handleImageChange(e, lessonIndex)}
+                        className="hidden"
+                      />
+                      {lesson.previewUrls.length > 0 && (
+                        <div>
+                          <div className="flex flex-wrap gap-2 border-l-1 pl-1">
+                            {lesson.previewUrls.map((url, i) => (
+                              <div key={i} className="relative">
+                                <Image
+                                  src={url}
+                                  alt="preview"
+                                  width={80}
+                                  height={80}
+                                  className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border cursor-zoom-in"
+                                  onClick={() => setPreviewImageUrl(url)}
+                                />
+                                <Button
+                                  type="button"
+                                  variant="destructive"
+                                  size="sm"
+                                  className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 p-0 text-xs"
+                                  onClick={() => removeImage(lessonIndex, i)}
+                                >
+                                  ✕
+                                </Button>
+                              </div>
+                            ))}
                           </div>
-                        ))}
-                      </div>
+                        </div>
+                      )}
                     </div>
-                  )}
+                    <span className="text-xs text-muted-foreground mt-1">
+                      Олон зураг сонгож болно
+                    </span>
+                  </div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={addLesson}
+                      className="flex items-center gap-2 text-sm sm:text-base"
+                    >
+                      + Хичээл нэмэх
+                    </Button>
+
+                    <Button
+                      type="submit"
+                      disabled={loading}
+                      className="shadow-sm text-sm sm:text-base"
+                    >
+                      {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
+                    </Button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -480,25 +508,6 @@ export function AddAssignmentForm({
             </div>
           )}
         </div>
-
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={addLesson}
-            className="flex items-center gap-2 text-sm sm:text-base"
-          >
-            + Хичээл нэмэх
-          </Button>
-
-          <Button
-            type="submit"
-            disabled={loading}
-            className="shadow-sm text-sm sm:text-base"
-          >
-            {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
-          </Button>
-        </div>
       </form>
       <Dialog
         open={!!previewImageUrl}
@@ -511,9 +520,11 @@ export function AddAssignmentForm({
             </DialogTitle>
           </DialogHeader>
           {previewImageUrl && (
-            <img
+            <Image
               src={previewImageUrl}
               alt="preview"
+              width={800}
+              height={600}
               className="w-full h-auto rounded"
             />
           )}
