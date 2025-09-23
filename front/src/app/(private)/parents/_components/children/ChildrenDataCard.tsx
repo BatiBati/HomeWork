@@ -16,6 +16,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { BookOpen } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 type ChildrenDataCardProps = {
   child: ChildrenType;
@@ -87,7 +88,14 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
 
   return (
     <div>
-      {loading && <div>Уншиж байна...</div>}
+      {loading && (
+        <div>
+          <div className="p-4 border rounded-xl space-y-3 bg-gray-200/30 dark:bg-gray-800/40">
+            <Skeleton className="h-6 w-ful rounded bg-gray-300 dark:bg-gray-700" />
+            <Skeleton className="h-6 w-ful rounded bg-gray-300 dark:bg-gray-700" />
+          </div>
+        </div>
+      )}
       {error && <div className="text-red-500">{error}</div>}
 
       {!loading && dayLabels.length > 0 && (
