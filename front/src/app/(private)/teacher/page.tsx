@@ -87,27 +87,27 @@ export default function TeacherDashboard() {
   const students = user.children ?? [];
 
   return (
-    <div className="relative w-screen flex justify-center overflow-hidden">
+    <div className="relative w-screen flex justify-center overflow-hidden bg-gradient-to-br from-white to-slate-50">
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-br from-blue-200/60 to-violet-200/50 blur-3xl animate-pulse"></div>
         <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-200/60 to-cyan-200/50 blur-3xl animate-pulse [animation-delay:400ms]"></div>
       </div>
 
-      <div className="min-h-screen w-full max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-3 sm:mt-6">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-600">
-              🍎 Teaching Hub
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-fuchsia-500  to-fuchsia-600">
+              🎓 Teaching Hub
             </h1>
-            <p className="text-muted-foreground mt-1 text-sm sm:text-base">
+            <p className="text-slate-600 mt-1 text-sm sm:text-base">
               Welcome, {user.firstName}! 🌞
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Button
               variant="outline"
-              className="backdrop-blur supports-[backdrop-filter]:bg-white/50 text-sm sm:text-base"
+              className="text-sm sm:text-base border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
             >
               Sign Out
             </Button>
@@ -115,9 +115,9 @@ export default function TeacherDashboard() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 sm:mb-8">
-          <Card className="backdrop-blur supports-[backdrop-filter]:bg-white/60 border   transition will-change-transform hover:shadow-md hover:-translate-y-0.5">
+          <Card className="rounded-2xl border border-slate-200 bg-white transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_30px_-10px_rgba(14,165,233,0.45)]">
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-muted-foreground font-medium text-sm sm:text-base">
+              <p className="text-slate-600 font-medium text-sm sm:text-base">
                 👥 Нийт сурагчид
               </p>
               <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-1">
@@ -125,9 +125,9 @@ export default function TeacherDashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card className="backdrop-blur supports-[backdrop-filter]:bg-white/60 border  transition will-change-transform hover:shadow-md hover:-translate-y-0.5">
+          <Card className="rounded-2xl border border-slate-200 bg-white transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_30px_-10px_rgba(14,165,233,0.45)]">
             <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-muted-foreground font-medium text-sm sm:text-base">
+              <p className="text-slate-600 font-medium text-sm sm:text-base">
                 📚 Идэвхитэй даалгаврууд
               </p>
               <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-1">
@@ -135,7 +135,7 @@ export default function TeacherDashboard() {
               </p>
             </CardContent>
           </Card>
-          <Card className="backdrop-blur supports-[backdrop-filter]:bg-white/60 border   transition will-change-transform hover:shadow-md hover:-translate-y-0.5">
+          <Card className="rounded-2xl border border-slate-200 bg-white transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_30px_-10px_rgba(14,165,233,0.45)]">
             <CardContent className="p-4 sm:p-5 text-center">
               <Dialog>
                 <DialogTrigger>
@@ -143,7 +143,7 @@ export default function TeacherDashboard() {
                     💬 Chat
                   </div>
                 </DialogTrigger>
-                <DialogContent className="w-[95vw] max-w-4xl h-[80vh]">
+                <DialogContent className="w-[95vw] max-w-4xl h-[80vh] bg-white border border-slate-200 rounded-xl">
                   <DialogTitle>Messages</DialogTitle>
                   <TeacherChat />
                 </DialogContent>
@@ -154,7 +154,7 @@ export default function TeacherDashboard() {
 
         {/* Add Student / Add Task */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold">
+          <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-sky-500 to-fuchsia-600">
             📝 гэрийн даалгаврууд ✨
           </h2>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
@@ -171,12 +171,12 @@ export default function TeacherDashboard() {
               <DialogTrigger asChild>
                 <Button
                   variant="secondary"
-                  className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base"
+                  className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
                 >
                   + Сурагч нэмэх
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[95vw] max-w-md">
+              <DialogContent className="w-[95vw] max-w-md bg-white border border-slate-200 rounded-xl">
                 <DialogHeader>
                   <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
                 </DialogHeader>
@@ -199,11 +199,11 @@ export default function TeacherDashboard() {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base">
+                <Button className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800">
                   + Даалгавар оруулах
                 </Button>
               </DialogTrigger>
-              <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-slate-200 rounded-xl">
                 <DialogHeader>
                   <DialogTitle>➕ Даалгавар нэмэх</DialogTitle>
                 </DialogHeader>
