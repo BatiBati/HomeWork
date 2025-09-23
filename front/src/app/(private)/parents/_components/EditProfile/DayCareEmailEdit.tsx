@@ -23,7 +23,7 @@ export const DayCareEmailEdit = () => {
       });
 
       toast.success(`Өдөр өнжүүлэхийн и-мэйл амжилттай шинэчлэгдлээ.`);
-    } catch (error) {
+    } catch {
       toast.error("Өдөр өнжүүлэхийн и-мэйл солиход алдаа гарлаа");
     } finally {
       setLoading(false);
