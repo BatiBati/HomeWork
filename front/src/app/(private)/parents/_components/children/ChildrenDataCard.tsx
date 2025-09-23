@@ -9,13 +9,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { BookOpen } from "lucide-react";
+import { BookOpen, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 type ChildrenDataCardProps = {
@@ -41,10 +35,14 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
   const [openAccordion, setOpenAccordion] = useState<string | undefined>(
     undefined
   );
+
+  // For modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentImages, setCurrentImages] = useState<string[]>([]);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const getChildrenAssignment = async () => {
     try {
@@ -121,6 +119,26 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
     if (dayLabels.length > 0) setOpenAccordion(dayLabels[0].label);
   }, [assignments]);
 
+  const openImageModal = (images: string[], index: number) => {
+    setCurrentImages(images);
+    setCurrentIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => setIsModalOpen(false);
+
+  const prevImage = () => {
+    setCurrentIndex((prev) =>
+      prev === 0 ? currentImages.length - 1 : prev - 1
+    );
+  };
+
+  const nextImage = () => {
+    setCurrentIndex((prev) =>
+      prev === currentImages.length - 1 ? 0 : prev + 1
+    );
+  };
+
   return (
     <div className="flex-1 overflow-y-auto p-4">
       {loading && (
@@ -129,6 +147,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
           <Skeleton className="h-6 w-full rounded bg-gray-300 dark:bg-gray-700" />
         </div>
       )}
+
       {error && <div className="text-red-500">{error}</div>}
 
       {!loading && dayLabels.length > 0 && (
@@ -169,7 +188,10 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
                                     key={idx}
                                     src={img}
                                     alt={`lesson-${idx}`}
-                                    className="max-w-full w-full sm:w-60 rounded-lg border object-cover"
+                                    className="w-full sm:w-[300px] md:w-[400px] lg:w-[500px] rounded-lg border object-cover cursor-pointer hover:scale-105 transition"
+                                    onClick={() =>
+                                      openImageModal(l.images!, idx)
+                                    }
                                   />
                                 ))}
                               </div>
@@ -192,6 +214,41 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
 
       {!loading && dayLabels.length === 0 && (
         <div>Хүүхэд дээр даалгавар байхгүй байна.</div>
+      )}
+
+      {/* Image Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+          <button
+            className="absolute top-6 right-6 text-white"
+            onClick={closeModal}
+          >
+            <X className="w-8 h-8" />
+          </button>
+
+          {currentImages.length > 1 && (
+            <>
+              <button
+                className="absolute left-6 text-white"
+                onClick={prevImage}
+              >
+                <ChevronLeft className="w-10 h-10" />
+              </button>
+              <button
+                className="absolute right-6 text-white"
+                onClick={nextImage}
+              >
+                <ChevronRight className="w-10 h-10" />
+              </button>
+            </>
+          )}
+
+          <img
+            src={currentImages[currentIndex]}
+            alt={`modal-img-${currentIndex}`}
+            className="max-h-[80vh] max-w-[90vw] rounded-lg object-contain"
+          />
+        </div>
       )}
     </div>
   );
