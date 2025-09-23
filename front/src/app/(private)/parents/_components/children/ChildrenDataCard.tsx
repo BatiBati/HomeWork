@@ -110,8 +110,9 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
                     </div>
                     {a.lessons?.length ? (
                       <ul className="list-disc pl-5 space-y-1">
-                        {a.lessons.map((l) => (
+                        {a.lessons.map((l, i) => (
                           <button
+                            key={i + 1}
                             type="button"
                             onClick={() => setSelectedLesson(l)}
                             className="font-semibold text-blue-600 hover:underline flex justify-center items-center gap-2"
