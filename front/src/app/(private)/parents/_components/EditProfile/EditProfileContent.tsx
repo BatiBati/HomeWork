@@ -1,7 +1,6 @@
 "use client";
 
 import { SettingsSvg } from "@/components/svg/SettingsSvg";
-import { EditProfileForChildren } from "./EditProfileForChildren";
 import { ParentInformation } from "./ParentInformation";
 
 export const EditProfileContent = () => {
