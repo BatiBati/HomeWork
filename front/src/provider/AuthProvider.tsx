@@ -70,6 +70,14 @@ export type ChildrenType = {
   parents: string;
   grade: string;
   school: string;
+  tasks?: Array<{
+    _id: string;
+    title: string;
+    description: string;
+    subject: string;
+    taskEndSchedule: string;
+    createdAt: string;
+  }>;
   createdAt: Date;
   updatedAt: Date;
 };
