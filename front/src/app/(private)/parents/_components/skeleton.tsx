@@ -30,9 +30,3 @@ export const ParentSkeleton = () => {
     </div>
   );
 };
-{
-  /* <div className="p-4 border rounded-xl space-y-3 bg-gray-200/30 dark:bg-gray-800/40">
-  <Skeleton className="h-6 w-ful rounded bg-gray-300 dark:bg-gray-700" />
-  <Skeleton className="h-6 w-ful rounded bg-gray-300 dark:bg-gray-700" />
-</div>; */
-}
