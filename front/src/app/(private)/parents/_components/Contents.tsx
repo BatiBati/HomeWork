@@ -9,7 +9,7 @@ type Props = {
 };
 export const Contents = ({ selectedSidebar }: Props) => {
   return (
-    <div className="p-6 border-[1px] w-full rounded-xl ">
+    <div className="p-6 w-full rounded-xl ">
       {selectedSidebar === 1 && <ChildrenContent />}
       {selectedSidebar === 2 && <EditProfileContent />}
       {selectedSidebar === 3 && <ParentChat />}

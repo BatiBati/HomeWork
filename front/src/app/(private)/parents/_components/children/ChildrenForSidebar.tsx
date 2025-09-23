@@ -17,7 +17,7 @@ export const ChildrenForSidebar = ({ setSelectedSidebar }: Props) => {
                  bg-white/10 hover:bg-white/20 transition"
     >
       <Users className="w-5 h-5 text-white" />
-      <span className="text-white font-medium">Хүүхэд</span>
+      <span className="text-white font-medium">Гэрийн даалгавар</span>
     </div>
   );
 };
