@@ -43,7 +43,7 @@ export type AssignmentType = {
 };
 
 export default function TeacherDashboard() {
-  const [parentname, setParentname] = useState("");
+  const [parentEmail, setParentEmail] = useState("");
   const [childname, setChildname] = useState("");
   const [assignments, setAssignments] = useState<AssignmentType[]>([]);
   const [loading, setLoading] = useState(false);
@@ -51,6 +51,7 @@ export default function TeacherDashboard() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingAssignment, setEditingAssignment] =
     useState<AssignmentType | null>(null);
+  const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
   const { user, token } = useAuth();
   const router = useRouter();
   console.log(user);
@@ -153,7 +154,16 @@ export default function TeacherDashboard() {
             📝 гэрийн даалгаврууд ✨
           </h2>
           <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Dialog>
+            <Dialog
+              open={isAddStudentOpen}
+              onOpenChange={(open) => {
+                setIsAddStudentOpen(open);
+                if (!open) {
+                  setParentEmail("");
+                  setChildname("");
+                }
+              }}
+            >
               <DialogTrigger asChild>
                 <Button
                   variant="secondary"
@@ -167,13 +177,18 @@ export default function TeacherDashboard() {
                   <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
                 </DialogHeader>
                 <AddStudentForm
-                  parentname={parentname}
-                  setParentname={setParentname}
+                  parentEmail={parentEmail}
+                  setParentEmail={setParentEmail}
                   childname={childname}
                   setChildname={setChildname}
                   teacherId={user._id}
                   loading={loading}
                   setLoading={setLoading}
+                  onCreated={() => {
+                    setIsAddStudentOpen(false);
+                    setParentEmail("");
+                    setChildname("");
+                  }}
                 />
               </DialogContent>
             </Dialog>
