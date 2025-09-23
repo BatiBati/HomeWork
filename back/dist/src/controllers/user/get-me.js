@@ -9,28 +9,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMeUser = void 0;
+exports.getMe = void 0;
 const user_model_1 = require("../../models/user.model");
-const getMeUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const getMe = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const { _id } = req.user;
+        // authMiddleware should attach userId to req.user or req.body
+        const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.id;
+        if (!userId) {
+            res.status(401).json({ message: "Unauthorized" });
+            return;
+        }
         const user = yield user_model_1.userModel
-            .findById(_id)
-            .select("-password")
-            .populate("children");
+            .findById(userId)
+            .select("-password") // exclude password
+            .populate("children"); // populate children if needed
         if (!user) {
             res.status(404).json({ message: "User not found" });
             return;
         }
         res.status(200).json({
-            message: "Get me successfully fetched",
+            message: "User fetched successfully",
             user,
         });
     }
     catch (error) {
-        console.error("GetMe error", error);
-        res.status(500).json({ message: "Get me server error", error });
+        console.error(error);
+        res.status(500).json({ message: "Server error fetching user" });
     }
 });
-exports.getMeUser = getMeUser;
+exports.getMe = getMe;
 //# sourceMappingURL=get-me.js.map

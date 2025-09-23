@@ -14,11 +14,11 @@ const assignment_models_1 = require("../../models/assignment.models");
 const children_models_1 = require("../../models/children.models");
 const mail_handler_1 = require("../../utils/mail-handler");
 const createAssignment = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { teacher, lessons, images, publicLinks, taskEndSchedule } = req.body;
+    const { teacher, lessons, images, taskEndSchedule } = req.body;
     const childrens = yield children_models_1.childrenModel
         .find({ teacher: teacher })
         .populate("parents", "email daycareEmail")
-        .select("_id parents firstName lastName");
+        .select("_id parents firstName lastName grade school");
     if (!childrens.length) {
         res.status(404).json({ message: "Teacher has no children" });
         return;
@@ -30,38 +30,55 @@ const createAssignment = (req, res) => __awaiter(void 0, void 0, void 0, functio
             lessons,
             taskEndSchedule: new Date(taskEndSchedule),
             images,
-            publicLinks,
         });
         yield children_models_1.childrenModel.updateMany({ teacher: teacher }, { $push: { assignment: newAssignment._id } });
         // Get all unique parent emails and daycare emails
         const parentEmails = [];
         const daycareEmails = [];
         childrens.forEach((child) => {
-            if (child.parents && child.parents.email) {
-                const parentEmail = child.parents.email;
-                if (!parentEmails.includes(parentEmail)) {
+            var _a, _b;
+            if (child.parents &&
+                typeof child.parents === "object" &&
+                child.parents !== null) {
+                const parentEmail = (_a = child.parents) === null || _a === void 0 ? void 0 : _a.email;
+                if (parentEmail &&
+                    typeof parentEmail === "string" &&
+                    !parentEmails.includes(parentEmail)) {
                     parentEmails.push(parentEmail);
                 }
-                const daycareEmail = child.parents.daycareEmail;
-                if (daycareEmail && !daycareEmails.includes(daycareEmail)) {
+                const daycareEmail = (_b = child.parents) === null || _b === void 0 ? void 0 : _b.daycareEmail;
+                if (daycareEmail &&
+                    typeof daycareEmail === "string" &&
+                    !daycareEmails.includes(daycareEmail)) {
                     daycareEmails.push(daycareEmail);
                 }
             }
         });
-        console.log("📧 All parent emails:", parentEmails);
-        console.log("📧 All daycare emails:", daycareEmails);
-        // Send notifications to all parents and daycares
+        // Send notifications to all parents and daycares (only once per assignment)
         if (parentEmails.length > 0 || daycareEmails.length > 0) {
-            (0, mail_handler_1.sendHomeworkAddedNotification)(childrens.map((c) => ({
-                firstName: c.firstName,
-                lastName: c.lastName,
-                parents: [
-                    {
-                        email: c.parents.email,
-                        daycareEmail: c.parents.daycareEmail || "",
-                    },
-                ],
-            })), newAssignment.lessons, newAssignment.taskEndSchedule.toISOString());
+            // Create a summary of all lessons for the notification
+            const lessonSummary = newAssignment.lessons.map((lesson) => ({
+                lessonName: lesson.lessonName,
+                taskDescription: lesson.taskDescription,
+            }));
+            (0, mail_handler_1.sendHomeworkAddedNotification)(childrens
+                .filter((c) => c.parents && typeof c.parents === "object" && c.parents !== null)
+                .map((c) => {
+                var _a, _b;
+                return ({
+                    firstName: c.firstName,
+                    lastName: c.lastName,
+                    parents: [
+                        {
+                            email: ((_a = c.parents) === null || _a === void 0 ? void 0 : _a.email) || "",
+                            daycareEmail: ((_b = c.parents) === null || _b === void 0 ? void 0 : _b.daycareEmail) || "",
+                        },
+                    ],
+                    grade: c.grade,
+                    school: c.school,
+                });
+            }), lessonSummary, // Send lesson summary instead of individual lessons
+            newAssignment);
         }
         res.status(201).json({
             message: "Assignment created successfully",

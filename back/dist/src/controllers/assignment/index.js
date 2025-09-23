@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./create-assignment"), exports);
 __exportStar(require("./get-assignments"), exports);
 __exportStar(require("./update-assignment"), exports);
+__exportStar(require("./get-assignment-by-id"), exports);
 //# sourceMappingURL=index.js.map

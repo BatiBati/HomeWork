@@ -26,14 +26,12 @@ const childrenSchema = new mongoose_1.Schema({
         required: true,
     },
     grade: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "user",
-        required: true,
+        type: String,
+        required: false,
     },
     school: {
-        type: mongoose_1.Schema.Types.ObjectId,
-        ref: "user",
-        required: true,
+        type: String,
+        required: false,
     },
     assignment: [
         {

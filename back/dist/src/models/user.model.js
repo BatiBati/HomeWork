@@ -34,11 +34,11 @@ const userSchema = new mongoose_1.Schema({
     },
     school: {
         type: String,
-        required: false,
+        required: true,
     },
     grade: {
         type: String,
-        required: false,
+        required: true,
     },
     role: {
         type: String,

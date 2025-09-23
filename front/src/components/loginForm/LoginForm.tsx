@@ -17,6 +17,7 @@ import { useAuth } from "@/provider/AuthProvider";
 import { useRouter } from "next/navigation";
 import { LoadingSvg } from "../svg/LoadingSvg";
 import { toast } from "sonner";
+import { useState } from "react";
 const loginSchema = z.object({
   email: z.string().min(2, {
     message: "Багадаа 2 утга оруулна уу.",
@@ -25,7 +26,8 @@ const loginSchema = z.object({
 });
 
 export const LoginForm = () => {
-  const { login, loading, setLoading, getMe } = useAuth();
+  const { login, getMe } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const router = useRouter();
   const form = useForm<z.infer<typeof loginSchema>>({

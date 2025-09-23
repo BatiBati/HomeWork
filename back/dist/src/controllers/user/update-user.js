@@ -14,7 +14,7 @@ const user_model_1 = require("../../models/user.model");
 const updateUserById = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const { id } = req.params;
-        const { email, password, firstName, lastName, phoneNumber, role } = req.body;
+        const { email, password, firstName, lastName, phoneNumber, role, grade, school, } = req.body;
         const user = yield user_model_1.userModel.findByIdAndUpdate(id, {
             email,
             password,
@@ -22,6 +22,8 @@ const updateUserById = (req, res) => __awaiter(void 0, void 0, void 0, function*
             lastName,
             phoneNumber,
             role,
+            grade,
+            school,
         }, { new: true });
         res.status(200).json({ message: `User updated`, user });
     }
