@@ -31,6 +31,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
       const { data } = await api.get<{ assignments: Assignment[] }>(
         `/assignment/get/${child.teacher}`
       );
+
       const filtered = data.assignments.filter((a) =>
         a.childrens?.some(
           (c) => (typeof c === "string" ? c : c._id) === child._id
@@ -51,8 +52,6 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
 
   return (
     <div>
-      <div>{child.school}</div>
-      <div>{child.grade}</div>
       {loading && <div>Loading assignments...</div>}
       {error && <div className="text-red-500">{error}</div>}
       {!loading && assignments.length > 0 && (

@@ -1,17 +1,41 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Contents } from "./_components/Contents";
 import { Sidebar } from "./_components/Sidebar";
+import { useAuth } from "@/provider/AuthProvider";
+import { LoadingSvg } from "@/components/svg/LoadingSvg";
+import { toast } from "sonner";
 
 export default function Parent() {
   const [selectedSidebar, setSelectedSidebar] = useState<number>(1);
+  const { loading, setLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        router.replace("/");
+      }
+    } catch {
+      toast.error("Error");
+    } finally {
+      setLoading(false);
+    }
+  }, [router]);
 
   return (
     <div className="bg-[#f2f2f2] h-screen w-screen flex justify-center items-center">
-      <div className="w-[50%] h-[70%] border-[1px] p-4 flex gap-3 rounded-xl bg-white">
-        <Sidebar setSelectedSidebar={setSelectedSidebar} />
-        <Contents selectedSidebar={selectedSidebar} />
-      </div>
+      {loading ? (
+        <LoadingSvg />
+      ) : (
+        <div className="w-full h-full border-[1px] p-4 flex gap-3 rounded-xl bg-white">
+          <Sidebar setSelectedSidebar={setSelectedSidebar} />
+          <Contents selectedSidebar={selectedSidebar} />
+        </div>
+      )}
     </div>
   );
 }
