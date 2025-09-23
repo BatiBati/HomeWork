@@ -55,9 +55,9 @@ export const Sidebar = ({ setSelectedSidebar }: Props) => {
             </div>
             <div>
               <h2 className="font-bold text-lg">
-                {authUser?.firstName} {authUser?.lastName}
+                {authUser?.firstName?.[0].toUpperCase()}.{authUser?.lastName}
               </h2>
-              <p className="text-sm text-white/80">{authUser?.role}</p>
+              <p className="text-sm text-white/80">Эвэг эх</p>
             </div>
           </div>
 

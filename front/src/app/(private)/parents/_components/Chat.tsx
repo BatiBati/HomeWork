@@ -14,7 +14,7 @@ type MessageType = {
 };
 
 export const ParentChat = () => {
-  const { user } = useAuth(); // parent info
+  const { user } = useAuth();
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +22,6 @@ export const ParentChat = () => {
 
   const teacherId = user?.children?.[0]?.teacher;
 
-  // Fetch messages
   const fetchMessages = async () => {
     if (!user?._id || !teacherId) return;
     try {
@@ -35,19 +34,16 @@ export const ParentChat = () => {
     }
   };
 
-  // Initial fetch + polling
   useEffect(() => {
     fetchMessages();
     const interval = setInterval(fetchMessages, 5000);
     return () => clearInterval(interval);
   }, [user?._id, teacherId]);
 
-  // Scroll to bottom whenever messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Send message
   const handleSend = async () => {
     if (!newMessage.trim() || !user?._id || !teacherId) return;
 
@@ -87,7 +83,8 @@ export const ParentChat = () => {
   };
 
   return (
-    <div className="rounded-xl h-full w-full p-4 flex flex-col">
+    <div className="flex flex-col h-full w-full rounded-xl p-2 sm:p-4">
+      {/* Messages area */}
       <div className="flex-1 flex flex-col overflow-y-auto space-y-2 px-2 py-1">
         {messages.length === 0 ? (
           <p className="text-gray-400 text-sm text-center mt-4">
@@ -104,17 +101,17 @@ export const ParentChat = () => {
                 }`}
               >
                 <div
-                  className={`p-3 rounded-lg max-w-[70%] break-words ${
+                  className={`p-2 sm:p-3 rounded-lg break-words max-w-[75%] sm:max-w-[70%] md:max-w-[60%] ${
                     isParent
                       ? "bg-blue-500 text-white"
-                      : "bg-gray-200 text-gray-800"
+                      : "bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-100"
                   }`}
                 >
-                  <h1 className="font-semibold text-sm mb-1">
+                  <h1 className="font-semibold text-sm sm:text-base mb-1">
                     {isParent ? "You" : msg.sender.firstName}
                   </h1>
-                  <p className="text-sm">{msg.content}</p>
-                  <p className="text-[10px] text-right mt-1 opacity-70">
+                  <p className="text-sm sm:text-base">{msg.content}</p>
+                  <p className="text-[10px] sm:text-xs text-right mt-1 opacity-70">
                     {new Date(msg.createdAt).toLocaleTimeString([], {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -128,8 +125,8 @@ export const ParentChat = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input box */}
-      <div className="mt-3 flex gap-2 items-center">
+      {/* Input area */}
+      <div className="mt-2 sm:mt-3 flex flex-col sm:flex-row gap-2">
         <Input
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
@@ -137,7 +134,11 @@ export const ParentChat = () => {
           placeholder="Type a message..."
           className="flex-1"
         />
-        <Button onClick={handleSend} disabled={loading}>
+        <Button
+          onClick={handleSend}
+          disabled={loading}
+          className="w-full sm:w-auto"
+        >
           Send
         </Button>
       </div>
