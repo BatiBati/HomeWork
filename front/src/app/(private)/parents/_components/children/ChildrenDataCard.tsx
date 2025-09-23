@@ -15,6 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { BookOpen } from "lucide-react";
 
 type ChildrenDataCardProps = {
   child: ChildrenType;
@@ -109,16 +110,15 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
                     </div>
                     {a.lessons?.length ? (
                       <ul className="list-disc pl-5 space-y-1">
-                        {a.lessons.map((l, idx) => (
-                          <li key={idx}>
-                            <button
-                              type="button"
-                              onClick={() => setSelectedLesson(l)}
-                              className="font-semibold text-blue-600 hover:underline"
-                            >
-                              {l.lessonName}
-                            </button>
-                          </li>
+                        {a.lessons.map((l) => (
+                          <button
+                            type="button"
+                            onClick={() => setSelectedLesson(l)}
+                            className="font-semibold text-blue-600 hover:underline flex justify-center items-center gap-2"
+                          >
+                            <BookOpen className="w-4 h-4" />
+                            {l.lessonName}
+                          </button>
                         ))}
                       </ul>
                     ) : (
