@@ -69,7 +69,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
           type="text"
           value={parentname}
           onChange={(e) => setParentname(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm sm:text-base p-2 sm:p-3"
           placeholder="Эцэг эхийн нэр"
           required
         />
@@ -82,7 +82,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
           type="text"
           value={childname}
           onChange={(e) => setChildname(e.target.value)}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 sm:text-sm"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500 text-sm sm:text-base p-2 sm:p-3"
           placeholder="Сурагчийн нэр"
           required
         />
@@ -90,7 +90,7 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
       <div className="flex justify-end">
         <Button
           type="submit"
-          className="bg-green-500 hover:bg-green-600 text-white"
+          className="bg-green-500 hover:bg-green-600 text-white text-sm sm:text-base px-4 py-2"
           disabled={loading}
         >
           {loading ? "Adding..." : "Add Student"}
