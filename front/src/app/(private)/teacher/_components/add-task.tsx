@@ -305,20 +305,22 @@ export function AddAssignmentForm({
     <>
       <form className="space-y-6" onSubmit={handleSubmit}>
         <div>
-          <label className="block mb-1">Даалгавар дуусах хугацаа</label>
+          <label className="block mb-1 text-sm font-medium text-muted-foreground">
+            Даалгавар дуусах хугацаа
+          </label>
           <input
             type="datetime-local"
             value={taskEndSchedule}
             onChange={(e) => setTaskEndSchedule(e.target.value)}
             required
-            className="w-full border rounded p-2"
+            className="w-full border border-input rounded-lg p-2 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           />
         </div>
 
         {/* Lesson Carousel */}
-        <div className="border rounded-lg bg-gray-50 overflow-hidden">
+        <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
           {/* Carousel Header */}
-          <div className="flex justify-between items-center p-4 border-b bg-white">
+          <div className="flex justify-between items-center p-4 border-b bg-card">
             <h3 className="text-lg font-semibold">
               Хичээл {currentLessonIndex + 1} / {lessons.length}
             </h3>
@@ -348,14 +350,16 @@ export function AddAssignmentForm({
                   } space-y-4`}
                 >
                   <div>
-                    <label className="block mb-1">Хичээлийн нэр</label>
+                    <label className="block mb-1 text-sm font-medium text-muted-foreground">
+                      Хичээлийн нэр
+                    </label>
                     <select
                       value={lesson.lessonName}
                       onChange={(e) =>
                         updateLesson(lessonIndex, "lessonName", e.target.value)
                       }
                       required
-                      className="w-full border rounded p-2"
+                      className="w-full border border-input rounded-lg p-2 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                     >
                       <option value="" className="text-gray-500">
                         -Хичээл сонгох-
@@ -369,7 +373,9 @@ export function AddAssignmentForm({
                   </div>
 
                   <div>
-                    <label>Даалгаварийн дэлгэрэнгүй</label>
+                    <label className="block mb-1 text-sm font-medium text-muted-foreground">
+                      Даалгаварийн дэлгэрэнгүй
+                    </label>
                     <textarea
                       value={lesson.taskDescription}
                       onChange={(e) =>
@@ -380,13 +386,13 @@ export function AddAssignmentForm({
                         )
                       }
                       required
-                      className="w-full border rounded p-2"
+                      className="w-full border border-input rounded-lg p-2 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       rows={3}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-muted-foreground mb-2">
                       Зураг оруулах
                     </label>
                     <input
@@ -394,16 +400,16 @@ export function AddAssignmentForm({
                       multiple
                       accept="image/*"
                       onChange={(e) => handleImageChange(e, lessonIndex)}
-                      className="w-full border rounded p-2 cursor-pointer hover:bg-gray-50"
+                      className="w-full border border-input rounded-lg p-2 bg-background cursor-pointer hover:bg-muted/50"
                     />
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       Олон зураг сонгож болно
                     </p>
                   </div>
 
                   {lesson.previewUrls.length > 0 && (
                     <div>
-                      <p className="text-sm font-medium text-gray-700 mb-2">
+                      <p className="text-sm font-medium text-muted-foreground mb-2">
                         Сонгосон зурагууд ({lesson.previewUrls.length})
                       </p>
                       <div className="flex flex-wrap gap-2">
@@ -412,7 +418,7 @@ export function AddAssignmentForm({
                             <img
                               src={url}
                               alt="preview"
-                              className="w-20 h-20 object-cover rounded border cursor-zoom-in"
+                              className="w-20 h-20 object-cover rounded-lg border cursor-zoom-in"
                               onClick={() => setPreviewImageUrl(url)}
                             />
                             <Button
@@ -440,7 +446,7 @@ export function AddAssignmentForm({
                   type="button"
                   onClick={prevLesson}
                   disabled={currentLessonIndex === 0}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-background border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   ←
                 </button>
@@ -448,7 +454,7 @@ export function AddAssignmentForm({
                   type="button"
                   onClick={nextLesson}
                   disabled={currentLessonIndex === lessons.length - 1}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-background border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   →
                 </button>
@@ -458,7 +464,7 @@ export function AddAssignmentForm({
 
           {/* Pagination Dots */}
           {lessons.length > 1 && (
-            <div className="flex justify-center gap-2 p-4 border-t bg-white">
+            <div className="flex justify-center gap-2 p-4 border-t bg-card">
               {lessons.map((_, index) => (
                 <button
                   key={index}
@@ -467,7 +473,7 @@ export function AddAssignmentForm({
                   className={`w-3 h-3 rounded-full transition-all duration-200 ${
                     index === currentLessonIndex
                       ? "bg-blue-600 scale-110"
-                      : "bg-gray-300 hover:bg-gray-400"
+                      : "bg-muted-foreground/30 hover:bg-muted-foreground/40"
                   }`}
                 />
               ))}
@@ -485,7 +491,7 @@ export function AddAssignmentForm({
             + Хичээл нэмэх
           </Button>
 
-          <Button type="submit" disabled={loading}>
+          <Button type="submit" disabled={loading} className="shadow-sm">
             {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
           </Button>
         </div>
