@@ -98,7 +98,7 @@ export const LoginForm = () => {
 
           <Button
             type="submit"
-            className="bg-indigo-600 text-white w-full hover:bg-indigo-500 hover:text-[white] cursor-pointer"
+            className="bg-[#61b3ae] text-white w-full hover:bg-[#50928e] hover:text-[white] cursor-pointer"
           >
             {/* Нэвтрэх */}
             {loading ? <LoadingSvg /> : "Нэвтрэх"}

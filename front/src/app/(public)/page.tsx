@@ -7,12 +7,12 @@ export default function Home() {
       <div className="h-full w-full flex justify-center items-center">
         <div className="bg-white flex flex-col justify-center p-5 rounded-xl gap-6 border-[1px]">
           <div className="w-full flex justify-center ">
-            <div className="w-fit h-fit p-6 rounded-full bg-indigo-100">
+            <div className="w-fit h-fit p-6 rounded-full bg-[#e6faf9]">
               <SchoolSvg />
             </div>
           </div>
           <div className="w-full flex justify-center px-6">
-            <div className="font-semibold text-[24px] opacity-80">
+            <div className="font-semibold text-[24px] opacity-70">
               Homework-Hub
             </div>
           </div>

@@ -6,7 +6,7 @@ export const SettingsSvg = () => {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-    stroke="var(--color-indigo-600)"
+      stroke="#5da19e"
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
