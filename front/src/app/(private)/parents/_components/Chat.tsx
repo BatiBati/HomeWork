@@ -64,7 +64,6 @@ export const ParentChat = () => {
       createdAt: new Date().toISOString(),
     };
 
-    // Optimistic update
     setNewMessage("");
 
     try {
@@ -75,7 +74,6 @@ export const ParentChat = () => {
         content: tempMessage.content,
       });
 
-      // Replace temp message with server message
       setMessages((prev) =>
         prev.map((m) => (m._id === tempMessage._id ? res.data.newMessage : m))
       );
