@@ -1,6 +1,20 @@
+"use client";
+
 import type { ChildrenType } from "@/provider/AuthProvider";
 import { api } from "../../../../../../axios";
 import { useEffect, useState } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type ChildrenDataCardProps = {
   child: ChildrenType;
@@ -12,10 +26,12 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
     taskDescription: string;
     images?: string[];
   };
+
   type Assignment = {
     _id: string;
     teacher: string;
     taskEndSchedule: string;
+    createdAt: string;
     childrens: Array<string | { _id: string }>;
     lessons?: Lesson[];
   };
@@ -23,6 +39,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
 
   const getChildrenAssignment = async () => {
     try {
@@ -39,7 +56,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
       );
       setAssignments(filtered);
     } catch {
-      throw new Error("Fetch teacher data failed");
+      setError("Fetch teacher data failed");
     } finally {
       setLoading(false);
     }
@@ -50,36 +67,105 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
     getChildrenAssignment();
   }, [child?._id, child?.teacher]);
 
+  const sortedAssignments = [...assignments].sort(
+    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+  );
+
+  const groupedByDay: Record<string, Assignment[]> = {};
+  sortedAssignments.forEach((a) => {
+    const dayKey = new Date(a.createdAt).toISOString().split("T")[0];
+    if (!groupedByDay[dayKey]) groupedByDay[dayKey] = [];
+    groupedByDay[dayKey].push(a);
+  });
+
+  const dayLabels = Object.keys(groupedByDay).map((day, idx) => ({
+    label: `${idx + 1} дэх өдөр`,
+    date: day,
+    items: groupedByDay[day],
+  }));
+
   return (
     <div>
-      {loading && <div>Loading assignments...</div>}
+      {loading && <div>Уншиж байна...</div>}
       {error && <div className="text-red-500">{error}</div>}
-      {!loading && assignments.length > 0 && (
-        <div className="mt-2">
-          {assignments.map((a) => (
-            <div key={a._id} className="border p-2 rounded mb-2">
-              <div className="text-sm text-gray-600">
-                Due: {new Date(a.taskEndSchedule).toLocaleString()}
-              </div>
-              {a.lessons?.length ? (
-                <ul className="list-disc pl-4">
-                  {a.lessons.map((l, idx) => (
-                    <li key={idx}>
-                      <span className="font-medium">{l.lessonName}</span>
-                      {l.taskDescription ? ` — ${l.taskDescription}` : ""}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <div>No lessons</div>
-              )}
-            </div>
+
+      {!loading && dayLabels.length > 0 && (
+        <Accordion type="single" collapsible className="w-full">
+          {dayLabels.map(({ label, date, items }) => (
+            <AccordionItem key={date} value={label}>
+              <AccordionTrigger>
+                {label}{" "}
+                <span className="ml-2 text-xs text-gray-500">({date})</span>
+              </AccordionTrigger>
+              <AccordionContent>
+                {items.map((a) => (
+                  <div
+                    key={a._id}
+                    className="border p-3 rounded mb-2 bg-gray-50"
+                  >
+                    <div className="text-sm text-gray-600 mb-2">
+                      Дуусах хугацаа:{" "}
+                      {new Date(a.taskEndSchedule).toLocaleString()}
+                    </div>
+                    {a.lessons?.length ? (
+                      <ul className="list-disc pl-5 space-y-1">
+                        {a.lessons.map((l, idx) => (
+                          <li key={idx}>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedLesson(l)}
+                              className="font-semibold text-blue-600 hover:underline"
+                            >
+                              {l.lessonName}
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className="text-gray-500">
+                        Даалгавар байхгүй байна.
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </AccordionContent>
+            </AccordionItem>
           ))}
-        </div>
+        </Accordion>
       )}
-      {!loading && assignments.length === 0 && (
-        <div>No assignments for this child.</div>
+
+      {!loading && dayLabels.length === 0 && (
+        <div>Хүүхэд дээр даалгавар байхгүй байна.</div>
       )}
+      <Dialog
+        open={!!selectedLesson}
+        onOpenChange={() => setSelectedLesson(null)}
+      >
+        <DialogContent>
+          {selectedLesson && (
+            <>
+              <DialogHeader>
+                <DialogTitle>{selectedLesson.lessonName}</DialogTitle>
+              </DialogHeader>
+              <div className="mt-2 text-gray-700">
+                {selectedLesson.taskDescription || "No description"}
+              </div>
+              {(selectedLesson.images?.length ?? 0) > 0 && (
+                <div className="mt-4">
+                  {selectedLesson.images?.map((img, idx) => (
+                    <img
+                      key={idx}
+                      src={img}
+                      alt={`lesson-${idx}`}
+                      className="w-full rounded-lg mb-2"
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
