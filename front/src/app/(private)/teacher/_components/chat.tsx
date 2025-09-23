@@ -66,11 +66,16 @@ export const TeacherChat = () => {
     return () => clearInterval(interval);
   }, [selectedParent]);
 
-  // Scroll
+  //scroll
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesEndRef.current;
+    if (container) {
+      container.scrollTo({
+        top: container.scrollHeight,
+        behavior: "smooth",
+      });
+    }
   }, [messages]);
-
   // Send message (no temp)
   const handleSend = async () => {
     if (!user || !newMessage.trim() || !selectedParent) return;
@@ -133,7 +138,10 @@ export const TeacherChat = () => {
             <div className="border-b p-2 font-semibold">
               Chat with {selectedParent.firstName} {selectedParent.lastName}
             </div>
-            <div className="flex-1 flex flex-col overflow-y-auto space-y-2 p-3">
+            <div
+              ref={messagesEndRef}
+              className="flex-1 flex flex-col overflow-y-auto space-y-2 p-3"
+            >
               {messages.length === 0 ? (
                 <p className="text-gray-400 text-sm text-center mt-4">
                   No messages yet.
