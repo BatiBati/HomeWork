@@ -6,6 +6,7 @@ import { Sidebar } from "./_components/Sidebar";
 import { useAuth } from "@/provider/AuthProvider";
 import { LoadingSvg } from "@/components/svg/LoadingSvg";
 import { toast } from "sonner";
+import { ParentSkeleton } from "./_components/skeleton";
 
 export default function Parent() {
   const [selectedSidebar, setSelectedSidebar] = useState<number>(1);
@@ -29,7 +30,7 @@ export default function Parent() {
   return (
     <div className="bg-white h-screen w-screen flex justify-center items-center">
       {loading ? (
-        <LoadingSvg />
+        <ParentSkeleton />
       ) : (
         <div className="w-full h-full flex gap-3 rounded-xl">
           <Sidebar setSelectedSidebar={setSelectedSidebar} />
