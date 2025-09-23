@@ -18,6 +18,7 @@ import { AssignmentsList } from "./_components/assignments-list";
 import { useRouter } from "next/navigation";
 import { api } from "../../../../axios";
 import { TeacherChat } from "./_components/chat";
+import { TeacherDashboardSkeleton } from "./_components/skeleton";
 
 export type LessonType = {
   lessonName: string;
@@ -76,8 +77,11 @@ export default function TeacherDashboard() {
 
     fetchAssignments();
   }, [user?._id, token]);
+  if (!user || loading) {
+    return <TeacherDashboardSkeleton />;
+  }
 
-  if (!user) return <div>Loading...</div>;
+  console.log(user);
 
   const students = user.children ?? [];
 
