@@ -90,7 +90,7 @@ export default function TeacherDashboard() {
   const students = user.children ?? [];
 
   return (
-    <div className="relative w-screen flex justify-center overflow-hidden bg-gradient-to-br from-white to-slate-50">
+    <div className="relative w-screen flex justify-center  bg-gradient-to-br from-white to-slate-50">
       {/* Animated gradient orbs */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-br from-blue-200/60 to-violet-200/50 blur-3xl animate-pulse"></div>
@@ -161,7 +161,7 @@ export default function TeacherDashboard() {
             </div>
           </aside>
 
-          <section id="main-content">
+          <div>
             {activeTab === "assignments" && (
               <>
                 {/* Add Student / Add Task */}
@@ -292,7 +292,7 @@ export default function TeacherDashboard() {
                 </CardContent>
               </Card>
             )}
-          </section>
+          </div>
         </div>
 
         {/* moved above into main-content section */}
