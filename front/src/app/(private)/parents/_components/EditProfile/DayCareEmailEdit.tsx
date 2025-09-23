@@ -32,6 +32,7 @@ export const DayCareEmailEdit = () => {
 
   return (
     <div className="flex gap-3">
+      <div>И-мэйл хаяг</div>
       <Input
         className="w-fit"
         onChange={(e) => setUpdatedDaycareEmail(e.target.value)}

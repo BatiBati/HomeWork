@@ -1,3 +1,7 @@
 export const EditProfileForChildren = () => {
-  return <div>sdadas</div>;
+  return (
+    <div>
+      <div>1</div>
+    </div>
+  );
 };

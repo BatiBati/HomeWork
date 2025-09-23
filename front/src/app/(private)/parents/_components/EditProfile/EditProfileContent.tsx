@@ -1,15 +1,22 @@
 "use client";
 
-import { DayCareEmailEdit } from "./DayCareEmailEdit";
+import { SettingsSvg } from "@/components/svg/SettingsSvg";
 import { EditProfileForChildren } from "./EditProfileForChildren";
+import { ParentInformation } from "./ParentInformation";
 
 export const EditProfileContent = () => {
   return (
-    <div>
-      <DayCareEmailEdit />
-      <EditProfileForChildren />
-      <div>EditProfile</div>
-      <div>EditProfile</div>
+    <div className="p-10">
+      <div className="flex flex-col items-center">
+        <div className="font-semibold text-4xl fit flex gap-2 items-center">
+          <SettingsSvg /> Тохиргоо
+        </div>
+        <div className="opacity-50 text-[14px]">
+          Та өөрийн болон хүүхдийнхээ мэдээллийг шинэчлэх боломжтой
+        </div>
+      </div>
+      Эцэг эхийн мэдээлэл:
+      <ParentInformation />
       <div>EditProfile</div>
     </div>
   );
