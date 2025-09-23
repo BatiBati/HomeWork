@@ -12,6 +12,7 @@ export const updateUserById = async (req, res) => {
       role,
       grade,
       school,
+      daycareEmail,
     } = req.body;
     const user = await userModel.findByIdAndUpdate(
       id,
@@ -24,6 +25,7 @@ export const updateUserById = async (req, res) => {
         role,
         grade,
         school,
+        daycareEmail,
       },
       { new: true }
     );
