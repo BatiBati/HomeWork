@@ -89,7 +89,7 @@ export const ParentChat = () => {
   };
 
   return (
-    <div className="rounded-xl h-full w-[400px] border p-4 flex flex-col bg-white shadow-md">
+    <div className="rounded-xl h-full w-full p-4 flex flex-col">
       <div className="flex-1 flex flex-col overflow-y-auto space-y-2 px-2 py-1">
         {messages.length === 0 ? (
           <p className="text-gray-400 text-sm text-center mt-4">
