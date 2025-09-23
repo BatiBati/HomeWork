@@ -9,26 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMessage = void 0;
+exports.getMessagesForTeacher = void 0;
 const message_models_1 = require("../../models/message.models");
-const sendMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { senderId, receiverId, content } = req.body;
-    if (!senderId || !receiverId || !content) {
-        res.status(400).json({ message: "Missing required fields" });
+const getMessagesForTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { teacherId } = req.query;
+    if (!teacherId) {
+        res.status(400).json({ message: "teacherId is required" });
         return;
     }
     try {
-        const newMessage = yield message_models_1.messageModel.create({
-            sender: senderId,
-            receiver: receiverId,
-            content,
-        });
-        res.status(201).json({ message: "Message sent", newMessage });
+        const messages = yield message_models_1.messageModel
+            .find({
+            $or: [{ sender: teacherId }, { receiver: teacherId }],
+        })
+            .sort({ createdAt: 1 });
+        res.status(200).json({ messages });
     }
-    catch (error) {
-        console.error(error);
+    catch (err) {
+        console.error(err);
         res.status(500).json({ message: "Server error" });
     }
 });
-exports.sendMessage = sendMessage;
-//# sourceMappingURL=send-message.js.map
+exports.getMessagesForTeacher = getMessagesForTeacher;
+//# sourceMappingURL=get-teacher-message.js.map

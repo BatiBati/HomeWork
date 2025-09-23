@@ -13,6 +13,7 @@ exports.createChildren = void 0;
 const children_models_1 = require("../../models/children.models");
 const user_model_1 = require("../../models/user.model");
 const createChildren = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const { firstName, lastName, profilePicture, parentId, teacherId } = req.body;
     console.log("Teacher Id", teacherId);
     console.log("Parent Id", parentId);
@@ -36,24 +37,31 @@ const createChildren = (req, res) => __awaiter(void 0, void 0, void 0, function*
             res.status(400).json({ message: "User is not a teacher" });
             return;
         }
+        // Ensure teacher has school and grade so child inherits them
+        if (!teacher.school || !teacher.grade) {
+            res.status(400).json({
+                message: "Teacher is missing school or grade",
+                details: {
+                    teacherId,
+                    school: (_a = teacher.school) !== null && _a !== void 0 ? _a : null,
+                    grade: (_b = teacher.grade) !== null && _b !== void 0 ? _b : null,
+                },
+            });
+            return;
+        }
         const newChild = yield children_models_1.childrenModel.create({
             firstName,
             lastName,
             profilePicture,
             teacher: teacher,
             parents: parent._id,
-            grade: teacher._id,
-            school: teacher._id,
+            grade: teacher.grade,
+            school: teacher.school,
         });
         console.log(newChild.teacher);
-        if (!parent.children)
-            parent.children = [];
-        parent.children.push(newChild._id);
-        yield parent.save();
-        if (!teacher.children)
-            teacher.children = [];
-        teacher.children.push(newChild._id);
-        yield teacher.save();
+        // Avoid triggering full user validation; push child IDs atomically
+        yield user_model_1.userModel.updateOne({ _id: parent._id }, { $push: { children: newChild._id } });
+        yield user_model_1.userModel.updateOne({ _id: teacher._id }, { $push: { children: newChild._id } });
         res.status(201).json({
             message: "Child created successfully",
             child: newChild,
@@ -61,7 +69,10 @@ const createChildren = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Create Student server error" });
+        res.status(500).json({
+            message: "Create Student server error",
+            error: error instanceof Error ? error.message : String(error),
+        });
     }
 });
 exports.createChildren = createChildren;

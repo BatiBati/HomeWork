@@ -9,26 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendMessage = void 0;
-const message_models_1 = require("../../models/message.models");
-const sendMessage = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { senderId, receiverId, content } = req.body;
-    if (!senderId || !receiverId || !content) {
-        res.status(400).json({ message: "Missing required fields" });
-        return;
-    }
+exports.getAssignmentsByTeacher = void 0;
+const assignment_models_1 = require("../../models/assignment.models");
+const getAssignmentsByTeacher = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const newMessage = yield message_models_1.messageModel.create({
-            sender: senderId,
-            receiver: receiverId,
-            content,
+        const { id } = req.params;
+        // Find all assignments created by this teacher
+        const assignments = yield assignment_models_1.assignmentModel
+            .find({ teacher: id })
+            .populate("teacher")
+            .populate("childrens")
+            .sort({ createdAt: -1 });
+        res.status(200).json({
+            assignments,
         });
-        res.status(201).json({ message: "Message sent", newMessage });
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Server error" });
+        res.status(500).json({ message: "Fetch assignments server error" });
     }
 });
-exports.sendMessage = sendMessage;
-//# sourceMappingURL=send-message.js.map
+exports.getAssignmentsByTeacher = getAssignmentsByTeacher;
+//# sourceMappingURL=get-assingments-by-id.js.map

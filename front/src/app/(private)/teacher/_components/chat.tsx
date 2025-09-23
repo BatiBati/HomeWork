@@ -36,13 +36,11 @@ export const TeacherChat = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  if (!user) return <div>Loading...</div>;
-
   // Fetch list of parents who have messaged the teacher
   const fetchParents = async () => {
     try {
       const res = await api.get<{ parents: ParentType[] }>("/message/parents", {
-        params: { teacherId: user._id },
+        params: { teacherId: user?._id },
       });
       setParents(res.data.parents);
     } catch (err) {
@@ -50,15 +48,11 @@ export const TeacherChat = () => {
     }
   };
 
-  useEffect(() => {
-    fetchParents();
-  }, [user._id]);
-
   // Fetch messages with selected parent
   const fetchMessages = async (parentId: string) => {
     try {
       const res = await api.get<{ messages: MessageType[] }>("/message", {
-        params: { user1Id: user._id, user2Id: parentId },
+        params: { user1Id: user?._id, user2Id: parentId },
       });
       setMessages(res.data.messages);
     } catch (err) {
@@ -77,6 +71,9 @@ export const TeacherChat = () => {
 
   // Send message
   const handleSend = async () => {
+    if (!user) {
+      return "Loading user";
+    }
     if (!newMessage.trim() || !selectedParent) return;
 
     const tempMessage: MessageType = {
@@ -108,6 +105,17 @@ export const TeacherChat = () => {
     }
   };
 
+  useEffect(() => {
+    fetchParents();
+  }, [user?._id]);
+
+  if (!user)
+    return (
+      <div className="w-full h-full flex justify-center items-center">
+        Loading...
+      </div>
+    );
+
   return (
     <div className="flex gap-4">
       {/* Parent list */}
@@ -135,7 +143,7 @@ export const TeacherChat = () => {
                 <div className="flex-1 flex flex-col overflow-y-auto space-y-2 p-2">
                   {messages.length === 0 && <p>No messages yet.</p>}
                   {messages.map((msg) => {
-                    const isTeacher = msg.sender._id === user._id;
+                    const isTeacher = msg.sender._id === user?._id;
                     return (
                       <div
                         key={msg._id}

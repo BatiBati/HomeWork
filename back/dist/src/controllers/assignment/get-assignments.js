@@ -13,7 +13,10 @@ exports.getAssignments = void 0;
 const assignment_models_1 = require("../../models/assignment.models");
 const getAssignments = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const assignment = yield assignment_models_1.assignmentModel.find({}).populate("childrens");
+        const assignment = yield assignment_models_1.assignmentModel
+            .find({})
+            .populate("childrens")
+            .populate("teacher");
         res.status(200).json({
             message: "All users fetched successfully",
             assignment,

@@ -5,6 +5,12 @@ const mongoose_1 = require("mongoose");
 const lessonSchema = new mongoose_1.Schema({
     lessonName: { type: String, required: true },
     taskDescription: { type: String, required: true },
+    images: [
+        {
+            type: String,
+            required: false,
+        },
+    ],
 }, { _id: false });
 const assignmentSchema = new mongoose_1.Schema({
     teacher: {
@@ -24,26 +30,6 @@ const assignmentSchema = new mongoose_1.Schema({
         },
     ],
     lessons: [lessonSchema],
-    images: [
-        {
-            type: String,
-            required: false,
-        },
-    ],
-    publicLinks: [
-        {
-            token: String,
-            sharedBy: {
-                type: String,
-                enum: ["Teacher", "Parent"],
-            },
-            expireAt: Date,
-            createdAt: {
-                type: Date,
-                default: Date.now,
-            },
-        },
-    ],
 }, { timestamps: true });
 exports.assignmentModel = (0, mongoose_1.model)("Assignment", assignmentSchema);
 //# sourceMappingURL=assignment.models.js.map
