@@ -303,7 +303,7 @@ export function AddAssignmentForm({
 
   return (
     <>
-      <form className="space-y-6" onSubmit={handleSubmit}>
+      <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
         <div>
           <label className="block mb-1 text-sm font-medium text-muted-foreground">
             Даалгавар дуусах хугацаа
@@ -313,15 +313,15 @@ export function AddAssignmentForm({
             value={taskEndSchedule}
             onChange={(e) => setTaskEndSchedule(e.target.value)}
             required
-            className="w-full border border-input rounded-lg p-2 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-sm sm:text-base"
           />
         </div>
 
         {/* Lesson Carousel */}
         <div className="border border-border rounded-xl bg-card overflow-hidden shadow-sm">
           {/* Carousel Header */}
-          <div className="flex justify-between items-center p-4 border-b bg-card">
-            <h3 className="text-lg font-semibold">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 p-3 sm:p-4 border-b bg-card">
+            <h3 className="text-base sm:text-lg font-semibold">
               Хичээл {currentLessonIndex + 1} / {lessons.length}
             </h3>
             <div className="flex items-center gap-2">
@@ -331,7 +331,7 @@ export function AddAssignmentForm({
                   variant="outline"
                   size="sm"
                   onClick={() => removeLesson(currentLessonIndex)}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-red-600 hover:text-red-800 text-xs sm:text-sm"
                 >
                   ✕ Устгах
                 </Button>
@@ -340,7 +340,7 @@ export function AddAssignmentForm({
           </div>
 
           {/* Carousel Content */}
-          <div className="relative p-6">
+          <div className="relative p-4 sm:p-6">
             <div className="transition-all duration-300 ease-in-out">
               {lessons.map((lesson, lessonIndex) => (
                 <div
@@ -359,7 +359,7 @@ export function AddAssignmentForm({
                         updateLesson(lessonIndex, "lessonName", e.target.value)
                       }
                       required
-                      className="w-full border border-input rounded-lg p-2 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-sm sm:text-base"
                     >
                       <option value="" className="text-gray-500">
                         -Хичээл сонгох-
@@ -386,7 +386,7 @@ export function AddAssignmentForm({
                         )
                       }
                       required
-                      className="w-full border border-input rounded-lg p-2 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring text-sm sm:text-base"
                       rows={3}
                     />
                   </div>
@@ -400,7 +400,7 @@ export function AddAssignmentForm({
                       multiple
                       accept="image/*"
                       onChange={(e) => handleImageChange(e, lessonIndex)}
-                      className="w-full border border-input rounded-lg p-2 bg-background cursor-pointer hover:bg-muted/50"
+                      className="w-full border border-input rounded-lg p-2 sm:p-3 bg-background cursor-pointer hover:bg-muted/50 text-sm sm:text-base"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
                       Олон зураг сонгож болно
@@ -418,14 +418,14 @@ export function AddAssignmentForm({
                             <img
                               src={url}
                               alt="preview"
-                              className="w-20 h-20 object-cover rounded-lg border cursor-zoom-in"
+                              className="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-lg border cursor-zoom-in"
                               onClick={() => setPreviewImageUrl(url)}
                             />
                             <Button
                               type="button"
                               variant="destructive"
                               size="sm"
-                              className="absolute -top-2 -right-2 w-6 h-6 p-0 text-xs"
+                              className="absolute -top-1 -right-1 sm:-top-2 sm:-right-2 w-5 h-5 sm:w-6 sm:h-6 p-0 text-xs"
                               onClick={() => removeImage(lessonIndex, i)}
                             >
                               ✕
@@ -446,7 +446,7 @@ export function AddAssignmentForm({
                   type="button"
                   onClick={prevLesson}
                   disabled={currentLessonIndex === 0}
-                  className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-background border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute left-1 sm:left-2 top-1/2 transform -translate-y-1/2 bg-background border rounded-full p-1.5 sm:p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   ←
                 </button>
@@ -454,7 +454,7 @@ export function AddAssignmentForm({
                   type="button"
                   onClick={nextLesson}
                   disabled={currentLessonIndex === lessons.length - 1}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-background border rounded-full p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="absolute right-1 sm:right-2 top-1/2 transform -translate-y-1/2 bg-background border rounded-full p-1.5 sm:p-2 shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
                 >
                   →
                 </button>
@@ -464,13 +464,13 @@ export function AddAssignmentForm({
 
           {/* Pagination Dots */}
           {lessons.length > 1 && (
-            <div className="flex justify-center gap-2 p-4 border-t bg-card">
+            <div className="flex justify-center gap-2 p-3 sm:p-4 border-t bg-card">
               {lessons.map((_, index) => (
                 <button
                   key={index}
                   type="button"
                   onClick={() => goToLesson(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-200 ${
+                  className={`w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
                     index === currentLessonIndex
                       ? "bg-blue-600 scale-110"
                       : "bg-muted-foreground/30 hover:bg-muted-foreground/40"
@@ -481,17 +481,21 @@ export function AddAssignmentForm({
           )}
         </div>
 
-        <div className="flex justify-between items-center">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
           <Button
             type="button"
             variant="outline"
             onClick={addLesson}
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-sm sm:text-base"
           >
             + Хичээл нэмэх
           </Button>
 
-          <Button type="submit" disabled={loading} className="shadow-sm">
+          <Button
+            type="submit"
+            disabled={loading}
+            className="shadow-sm text-sm sm:text-base"
+          >
             {loading ? "Үүсгэж байна..." : "Даалгавар үүсгэх"}
           </Button>
         </div>
@@ -500,7 +504,7 @@ export function AddAssignmentForm({
         open={!!previewImageUrl}
         onOpenChange={() => setPreviewImageUrl(null)}
       >
-        <DialogContent className="max-w-3xl">
+        <DialogContent className="w-[95vw] max-w-3xl">
           <DialogHeader>
             <DialogTitle className="sr-only">
               Зургийн урьдчилсан харагдац
