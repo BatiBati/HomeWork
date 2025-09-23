@@ -26,14 +26,14 @@ export const Sidebar = ({ setSelectedSidebar }: Props) => {
   ];
 
   return (
-    <div className="w-64 h-screen bg-gradient-to-b from-indigo-500 to-blue-600 text-white shadow-xl rounded-r-2xl p-6 flex flex-col justify-between">
+    <div className="w-64 h-screen bg-[#61b3ae] text-white rounded-r-2xl p-6 flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-3 mb-8">
           <div className="w-12 h-12 rounded-full bg-white/30 flex items-center justify-center">
             <User className="w-7 h-7 text-white" />
           </div>
           <div>
-            <h2 className="font-bold text-lg">
+            <h2 className="font-bold text-lg ">
               {authUser?.firstName} {authUser?.lastName}
             </h2>
             <p className="text-sm text-white/80">{authUser?.role}</p>
