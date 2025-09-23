@@ -83,31 +83,50 @@ export default function TeacherDashboard() {
   const students = user.children ?? [];
 
   return (
-    <div className="w-screen flex justify-center">
+    <div className="relative w-screen flex justify-center overflow-hidden">
+      {/* Animated gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 -z-10">
+        <div className="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-gradient-to-br from-blue-200/60 to-violet-200/50 blur-3xl animate-pulse"></div>
+        <div className="absolute -bottom-24 -right-24 h-72 w-72 rounded-full bg-gradient-to-br from-emerald-200/60 to-cyan-200/50 blur-3xl animate-pulse [animation-delay:400ms]"></div>
+      </div>
+
       <div className="min-h-screen lg:w-[1024px] p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            🍎 Teaching Hub
-          </h1>
-          <div className="flex items-center gap-4">
-            <p className="text-gray-600">Welcome, {user.firstName}! 🌞</p>
-            <Button variant="outline">Sign Out</Button>
+        <div className="flex justify-between items-center mb-8">
+          <div>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-emerald-600">
+              🍎 Teaching Hub
+            </h1>
+            <p className="text-muted-foreground mt-1">
+              Welcome, {user.firstName}! 🌞
+            </p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              className="backdrop-blur supports-[backdrop-filter]:bg-white/50"
+            >
+              Sign Out
+            </Button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <Card className="bg-blue-100">
-            <CardContent className="p-4 text-center">
-              <p className="text-gray-700 font-semibold">👥 Нийт сурагчид</p>
-              <p className="text-3xl font-bold">{students.length}</p>
+          <Card className="backdrop-blur supports-[backdrop-filter]:bg-white/60 border border-border/60 shadow-sm transition will-change-transform hover:shadow-md hover:-translate-y-0.5">
+            <CardContent className="p-5 text-center">
+              <p className="text-muted-foreground font-medium">
+                👥 Нийт сурагчид
+              </p>
+              <p className="text-4xl font-extrabold mt-1">{students.length}</p>
             </CardContent>
           </Card>
-          <Card className="bg-blue-100">
-            <CardContent className="p-4 text-center">
-              <p className="text-gray-700 font-semibold">
+          <Card className="backdrop-blur supports-[backdrop-filter]:bg-white/60 border border-border/60 shadow-sm transition will-change-transform hover:shadow-md hover:-translate-y-0.5">
+            <CardContent className="p-5 text-center">
+              <p className="text-muted-foreground font-medium">
                 📚 Идэвхитэй даалгаврууд
               </p>
-              <p className="text-3xl font-bold">{assignments.length}</p>
+              <p className="text-4xl font-extrabold mt-1">
+                {assignments.length}
+              </p>
             </CardContent>
           </Card>
           <Card className="bg-blue-100">
@@ -126,12 +145,17 @@ export default function TeacherDashboard() {
         </div>
 
         {/* Add Student / Add Task */}
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">📝 гэрийн даалгаврууд ✨</h2>
-          <div className="flex gap-4">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl md:text-2xl font-bold">
+            📝 гэрийн даалгаврууд ✨
+          </h2>
+          <div className="flex gap-3">
             <Dialog>
               <DialogTrigger asChild>
-                <Button className="bg-white hover:bg-gray-300 border-3">
+                <Button
+                  variant="secondary"
+                  className="shadow-sm hover:-translate-y-0.5 transition will-change-transform"
+                >
                   + Сурагч нэмэх
                 </Button>
               </DialogTrigger>
@@ -153,7 +177,7 @@ export default function TeacherDashboard() {
 
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-white hover:bg-gray-300 border-3">
+                <Button className="shadow-sm hover:-translate-y-0.5 transition will-change-transform">
                   + Даалгавар оруулах
                 </Button>
               </DialogTrigger>
