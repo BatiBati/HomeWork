@@ -53,6 +53,9 @@ export default function TeacherDashboard() {
   const [editingAssignment, setEditingAssignment] =
     useState<AssignmentType | null>(null);
   const [isAddStudentOpen, setIsAddStudentOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<
+    "assignments" | "chat" | "students"
+  >("assignments");
   const { user, token } = useAuth();
   const router = useRouter();
   console.log(user);
@@ -95,9 +98,10 @@ export default function TeacherDashboard() {
       </div>
 
       <div className="min-h-screen w-full max-w-7xl px-4 sm:px-6 lg:px-8 mt-3 sm:mt-6">
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
+        {/* Header moved into main content to align with sidebar layout */}
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-4 sm:mb-6">
           <div className="flex-1">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-fuchsia-500  to-fuchsia-600">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-fuchsia-500 to-fuchsia-600">
               🎓 Teaching Hub
             </h1>
             <p className="text-slate-600 mt-1 text-sm sm:text-base">
@@ -113,119 +117,185 @@ export default function TeacherDashboard() {
             </Button>
           </div>
         </div>
+        <div className="grid grid-cols-1 sm:grid-cols-[240px_1fr] gap-4 sm:gap-6 mb-6 sm:mb-8 items-start">
+          <aside className="rounded-2xl border border-slate-200 bg-white p-3 sm:p-4">
+            <div className="space-y-2">
+              <button
+                className={`w-full text-left rounded-lg p-3 border transition hover:bg-cyan-50 ${
+                  activeTab === "assignments"
+                    ? "border-cyan-500 bg-cyan-50"
+                    : "border-slate-200 bg-white"
+                }`}
+                onClick={() => setActiveTab("assignments")}
+              >
+                <div className="text-slate-600 text-sm">📚 Даалгаврууд</div>
+                <div className="text-2xl font-extrabold text-slate-900">
+                  {assignments.length}
+                </div>
+              </button>
+              <button
+                className={`w-full text-left rounded-lg p-3 border transition hover:bg-cyan-50 ${
+                  activeTab === "students"
+                    ? "border-cyan-500 bg-cyan-50"
+                    : "border-slate-200 bg-white"
+                }`}
+                onClick={() => setActiveTab("students")}
+              >
+                <div className="text-slate-600 text-sm">👥 Нийт сурагчид</div>
+                <div className="text-2xl font-extrabold text-slate-900">
+                  {students.length}
+                </div>
+              </button>
+              <button
+                className={`w-full text-left rounded-lg p-3 border transition hover:bg-cyan-50 ${
+                  activeTab === "chat"
+                    ? "border-cyan-500 bg-cyan-50"
+                    : "border-slate-200 bg-white"
+                }`}
+                onClick={() => setActiveTab("chat")}
+              >
+                <div className="text-xl font-extrabold text-slate-900">
+                  💬 Чат
+                </div>
+              </button>
+            </div>
+          </aside>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 sm:mb-8">
-          <Card className="rounded-2xl border border-slate-200 bg-white transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_30px_-10px_rgba(14,165,233,0.45)]">
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-slate-600 font-medium text-sm sm:text-base">
-                👥 Нийт сурагчид
-              </p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-1">
-                {students.length}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border border-slate-200 bg-white transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_30px_-10px_rgba(14,165,233,0.45)]">
-            <CardContent className="p-4 sm:p-5 text-center">
-              <p className="text-slate-600 font-medium text-sm sm:text-base">
-                📚 Идэвхитэй даалгаврууд
-              </p>
-              <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-1">
-                {assignments.length}
-              </p>
-            </CardContent>
-          </Card>
-          <Card className="rounded-2xl border border-slate-200 bg-white transition will-change-transform hover:-translate-y-0.5 hover:shadow-[0_0_30px_-10px_rgba(14,165,233,0.45)]">
-            <CardContent className="p-4 sm:p-5 text-center">
-              <Dialog>
-                <DialogTrigger>
-                  <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold mt-1">
-                    💬 Chat
+          <section id="main-content">
+            {activeTab === "assignments" && (
+              <>
+                {/* Add Student / Add Task */}
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+                  <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-sky-500 to-fuchsia-600">
+                    📝 Гэрийн даалгаврууд ✨
+                  </h2>
+                  <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+                    <Dialog
+                      open={isAddStudentOpen}
+                      onOpenChange={(open) => {
+                        setIsAddStudentOpen(open);
+                        if (!open) {
+                          setParentEmail("");
+                          setChildname("");
+                        }
+                      }}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          variant="secondary"
+                          className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
+                        >
+                          + Сурагч нэмэх
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-[95vw] max-w-md bg-white border border-slate-200 rounded-xl">
+                        <DialogHeader>
+                          <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
+                        </DialogHeader>
+                        <AddStudentForm
+                          parentEmail={parentEmail}
+                          setParentEmail={setParentEmail}
+                          childname={childname}
+                          setChildname={setChildname}
+                          teacherId={user._id}
+                          loading={loading}
+                          setLoading={setLoading}
+                          onCreated={() => {
+                            setIsAddStudentOpen(false);
+                            setParentEmail("");
+                            setChildname("");
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
+
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                      <DialogTrigger asChild>
+                        <Button className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800">
+                          + Даалгавар оруулах
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-slate-200 rounded-xl">
+                        <DialogHeader>
+                          <DialogTitle>➕ Даалгавар нэмэх</DialogTitle>
+                        </DialogHeader>
+                        <AddAssignmentForm
+                          teacherId={user._id}
+                          token={token || ""}
+                          onCreated={() => {
+                            setIsDialogOpen(false);
+                            router.refresh();
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
                   </div>
-                </DialogTrigger>
-                <DialogContent className="w-[95vw] max-w-4xl h-[80vh] bg-white border border-slate-200 rounded-xl">
-                  <DialogTitle>Messages</DialogTitle>
-                  <TeacherChat />
-                </DialogContent>
-              </Dialog>
-            </CardContent>
-          </Card>
-        </div>
+                </div>
 
-        {/* Add Student / Add Task */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-          <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-sky-500 to-fuchsia-600">
-            📝 гэрийн даалгаврууд ✨
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
-            <Dialog
-              open={isAddStudentOpen}
-              onOpenChange={(open) => {
-                setIsAddStudentOpen(open);
-                if (!open) {
-                  setParentEmail("");
-                  setChildname("");
-                }
-              }}
-            >
-              <DialogTrigger asChild>
-                <Button
-                  variant="secondary"
-                  className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800"
-                >
-                  + Сурагч нэмэх
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-[95vw] max-w-md bg-white border border-slate-200 rounded-xl">
-                <DialogHeader>
-                  <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
-                </DialogHeader>
-                <AddStudentForm
-                  parentEmail={parentEmail}
-                  setParentEmail={setParentEmail}
-                  childname={childname}
-                  setChildname={setChildname}
-                  teacherId={user._id}
-                  loading={loading}
-                  setLoading={setLoading}
-                  onCreated={() => {
-                    setIsAddStudentOpen(false);
-                    setParentEmail("");
-                    setChildname("");
+                <AssignmentsList
+                  assignments={assignments}
+                  onEdit={(a) => {
+                    setEditingAssignment(a);
+                    setIsEditDialogOpen(true);
                   }}
                 />
-              </DialogContent>
-            </Dialog>
+              </>
+            )}
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="shadow-sm hover:-translate-y-0.5 transition will-change-transform text-sm sm:text-base border border-cyan-500/40 hover:border-cyan-500/70 bg-white hover:bg-cyan-50 text-cyan-700 hover:text-cyan-800">
-                  + Даалгавар оруулах
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto bg-white border border-slate-200 rounded-xl">
-                <DialogHeader>
-                  <DialogTitle>➕ Даалгавар нэмэх</DialogTitle>
-                </DialogHeader>
-                <AddAssignmentForm
-                  teacherId={user._id}
-                  token={token || ""}
-                  onCreated={() => {
-                    setIsDialogOpen(false);
-                    router.refresh();
-                  }}
-                />
-              </DialogContent>
-            </Dialog>
-          </div>
+            {activeTab === "chat" && (
+              <Card className="rounded-2xl border border-slate-200 bg-white">
+                <CardContent className="p-0 sm:p-4">
+                  <div className="p-4 border-b">
+                    <h2 className="text-lg sm:text-xl font-bold text-cyan-600">
+                      💬 Chat
+                    </h2>
+                  </div>
+                  <div className="p-2 sm:p-4">
+                    <TeacherChat />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === "students" && (
+              <Card className="rounded-2xl border border-slate-200 bg-white">
+                <CardContent className="p-0 sm:p-4">
+                  <div className="p-4 border-b">
+                    <h2 className="text-lg sm:text-xl font-bold text-cyan-600">
+                      👥 Нийт сурагчид
+                    </h2>
+                  </div>
+                  <div className="p-2 sm:p-4">
+                    <ul className="divide-y divide-slate-200">
+                      {students.map((s) => (
+                        <li
+                          key={s._id}
+                          className="py-3 flex items-center justify-between"
+                        >
+                          <div>
+                            <p className="font-medium text-slate-900">
+                              {s.firstName} {s.lastName}
+                            </p>
+                            <p className="text-xs text-slate-500">
+                              {s.school} • {s.grade}
+                            </p>
+                          </div>
+                        </li>
+                      ))}
+                      {students.length === 0 && (
+                        <li className="py-6 text-slate-500 text-sm">
+                          Сурагч байхгүй байна.
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </section>
         </div>
-        <AssignmentsList
-          assignments={assignments}
-          onEdit={(a) => {
-            setEditingAssignment(a);
-            setIsEditDialogOpen(true);
-          }}
-        />
+
+        {/* moved above into main-content section */}
 
         {/* Edit Assignment Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
