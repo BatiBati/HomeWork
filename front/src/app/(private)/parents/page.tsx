@@ -27,17 +27,19 @@ export default function Parent() {
   }, [router]);
 
   return (
-    <div className="bg-white w-screen min-h-screen flex flex-col lg:overflow-hidden overflow-auto">
+    <div className="bg-white w-screen min-h-screen flex">
       {loading ? (
         <div className="flex justify-center items-center w-full h-full">
           <ParentSkeleton />
         </div>
       ) : (
         <>
-          <Sidebar setSelectedSidebar={setSelectedSidebar} />
-
+          {/* Sidebar */}
+          <div>
+            <Sidebar setSelectedSidebar={setSelectedSidebar} />
+          </div>
           {/* Main content */}
-          <div className="flex-1 overflow-auto p-4 md:p-6">
+          <div className="flex-1 h-screen overflow-auto p-4 md:p-6">
             <Contents selectedSidebar={selectedSidebar} />
           </div>
         </>

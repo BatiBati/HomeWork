@@ -1,3 +1,5 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import { api } from "../../../../../../axios";
 import { useAuth } from "@/provider/AuthProvider";
@@ -13,16 +15,13 @@ export const DayCareEmailEdit = () => {
   const [updatedDaycareEmail, setUpdatedDaycareEmail] = useState("");
 
   const handleChangeDayCareEmail = async () => {
-    if (!user) {
-      return;
-    }
+    if (!user) return;
     setLoading(true);
     try {
       await api.patch(`/user/${user?._id}`, {
         ...user,
         daycareEmail: updatedDaycareEmail,
       });
-
       toast.success(`Өдөр өнжүүлэхийн и-мэйл амжилттай шинэчлэгдлээ.`);
     } catch {
       toast.error("Өдөр өнжүүлэхийн и-мэйл солиход алдаа гарлаа");
@@ -32,22 +31,22 @@ export const DayCareEmailEdit = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5 shadow-2xl p-5 rounded-xl w-[50%]">
-      <div className="flex  items-center gap-2 text-[13px]">
+    <div className="flex flex-col gap-4 shadow-lg p-5 rounded-xl w-full sm:w-[300px] md:w-[48%]">
+      <div className="flex items-center gap-2 text-sm">
         <EmailSvg /> Өдөр өнжүүлэх и-мэйл
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <div>
-          <p className="text-[12px]">Одоогийн и-мэйл хаяг:</p>
+          <p className="text-xs">Одоогийн и-мэйл хаяг:</p>
           <Input
-            className="p-5"
+            className="p-3"
             disabled
             value={user?.daycareEmail || ""}
             readOnly
           />
         </div>
         <div>
-          <p className="text-[12px]">И-мэйл хаяг:</p>
+          <p className="text-xs">И-мэйл хаяг:</p>
           <Input
             placeholder="И-мэйл хаягаа оруулна уу."
             onChange={(e) => setUpdatedDaycareEmail(e.target.value)}
@@ -56,7 +55,7 @@ export const DayCareEmailEdit = () => {
         </div>
         <Button
           disabled={updatedDaycareEmail === ""}
-          className="bg-[#5da19e] text-white hover:bg-[#4d827f] hover:text-white cursor-pointer"
+          className="bg-[#5da19e] text-white hover:bg-[#4d827f]"
           onClick={handleChangeDayCareEmail}
         >
           {loading ? <LoadingSvg /> : "И-мэйл шинэчлэх"}
