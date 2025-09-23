@@ -42,6 +42,9 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedLesson, setSelectedLesson] = useState<Lesson | null>(null);
+  const [openAccordion, setOpenAccordion] = useState<string | undefined>(
+    undefined
+  );
 
   const getChildrenAssignment = async () => {
     try {
@@ -70,7 +73,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   }, [child?._id, child?.teacher]);
 
   const sortedAssignments = [...assignments].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   const groupedByDay: Record<string, Assignment[]> = {};
@@ -80,58 +83,102 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
     groupedByDay[dayKey].push(a);
   });
 
-  const dayLabels = Object.keys(groupedByDay).map((day, idx) => ({
-    label: `${idx + 1} дэх өдөр`,
-    date: day,
-    items: groupedByDay[day],
-  }));
+  const getDayLabel = (dateString: string) => {
+    const date = new Date(dateString);
+    const today = new Date();
+
+    if (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    ) {
+      return "Өнөөдөр";
+    }
+
+    const daysMn = [
+      "Ням",
+      "Даваа",
+      "Мягмар",
+      "Лхагва",
+      "Пүрэв",
+      "Баасан",
+      "Бямба",
+    ];
+
+    return daysMn[date.getDay()];
+  };
+
+  const dayLabels = Object.keys(groupedByDay)
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // newest first
+    .map((day) => ({
+      label: getDayLabel(day),
+      date: day,
+      items: groupedByDay[day],
+    }));
+
+  // Auto-open first accordion (latest date)
+  useEffect(() => {
+    if (dayLabels.length > 0) setOpenAccordion(dayLabels[0].label);
+  }, [assignments]);
 
   return (
-    <div>
+    <div className="flex-1 overflow-y-auto p-4">
       {loading && (
-        <div>
-          <div className="p-4 border rounded-xl space-y-3 bg-gray-200/30 dark:bg-gray-800/40">
-            <Skeleton className="h-6 w-ful rounded bg-gray-300 dark:bg-gray-700" />
-            <Skeleton className="h-6 w-ful rounded bg-gray-300 dark:bg-gray-700" />
-          </div>
+        <div className="p-4 border rounded-xl space-y-3 bg-gray-200/30 dark:bg-gray-800/40">
+          <Skeleton className="h-6 w-full rounded bg-gray-300 dark:bg-gray-700" />
+          <Skeleton className="h-6 w-full rounded bg-gray-300 dark:bg-gray-700" />
         </div>
       )}
       {error && <div className="text-red-500">{error}</div>}
 
       {!loading && dayLabels.length > 0 && (
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full"
+          value={openAccordion}
+          onValueChange={setOpenAccordion}
+        >
           {dayLabels.map(({ label, date, items }) => (
             <AccordionItem key={date} value={label}>
-              <AccordionTrigger>
-                {label}{" "}
-                <span className="ml-2 text-xs text-gray-500">({date})</span>
+              <AccordionTrigger className="flex justify-between items-center">
+                <span>{label}</span>
+                <span className="ml-2 text-xs text-gray-500">{date}</span>
               </AccordionTrigger>
-              <AccordionContent>
+              <AccordionContent className="space-y-2">
                 {items.map((a) => (
                   <div
                     key={a._id}
-                    className="border p-3 rounded mb-2 bg-gray-50"
+                    className="border p-3 rounded bg-gray-50 dark:bg-gray-800"
                   >
-                    <div className="text-sm text-gray-600 mb-2">
-                      Дуусах хугацаа:{" "}
-                      {new Date(a.taskEndSchedule).toLocaleString()}
-                    </div>
                     {a.lessons?.length ? (
-                      <ul className="list-disc pl-5 space-y-1">
+                      <ul className="list-disc pl-5 space-y-4">
                         {a.lessons.map((l, i) => (
-                          <button
-                            key={i + 1}
-                            type="button"
-                            onClick={() => setSelectedLesson(l)}
-                            className="font-semibold text-blue-600 hover:underline flex justify-center items-center gap-2"
-                          >
-                            <BookOpen className="w-4 h-4" />
-                            {l.lessonName}
-                          </button>
+                          <li key={i} className="space-y-2">
+                            <div className="font-semibold text-blue-600 flex items-center gap-2">
+                              <BookOpen className="w-4 h-4" />
+                              {l.lessonName}
+                            </div>
+                            <div className="text-gray-700 dark:text-gray-300">
+                              {l.taskDescription || "No description"}
+                            </div>
+                            {l.images && l.images.length > 0 && (
+                              <div className="mt-2 flex flex-wrap gap-3">
+                                {l.images.map((img, idx) => (
+                                  <img
+                                    key={idx}
+                                    src={img}
+                                    alt={`lesson-${idx}`}
+                                    className="max-w-full w-full sm:w-60 rounded-lg border object-cover"
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </li>
                         ))}
                       </ul>
                     ) : (
-                      <div className="text-gray-500">
+                      <div className="text-gray-500 dark:text-gray-400">
                         Даалгавар байхгүй байна.
                       </div>
                     )}
@@ -146,35 +193,6 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
       {!loading && dayLabels.length === 0 && (
         <div>Хүүхэд дээр даалгавар байхгүй байна.</div>
       )}
-      <Dialog
-        open={!!selectedLesson}
-        onOpenChange={() => setSelectedLesson(null)}
-      >
-        <DialogContent>
-          {selectedLesson && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{selectedLesson.lessonName}</DialogTitle>
-              </DialogHeader>
-              <div className="mt-2 text-gray-700">
-                {selectedLesson.taskDescription || "No description"}
-              </div>
-              {(selectedLesson.images?.length ?? 0) > 0 && (
-                <div className="mt-4">
-                  {selectedLesson.images?.map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img}
-                      alt={`lesson-${idx}`}
-                      className="w-full rounded-lg mb-2"
-                    />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

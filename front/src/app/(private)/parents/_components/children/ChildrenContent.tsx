@@ -27,8 +27,9 @@ export const ChildrenContent = () => {
   if (!selectedChild) return <div>Хүүхдээ сонгоно уу</div>;
 
   return (
-    <div className="flex flex-col gap-4 bg-white">
-      <div className="flex gap-2">
+    <div className="flex flex-col gap-4 bg-white p-4 flex-1 overflow-y-auto">
+      {/* Child selector */}
+      <div className="flex gap-2 flex-wrap mb-4">
         {user?.children.map((child) => (
           <button key={child._id} onClick={() => setSelectedChildId(child._id)}>
             <div
@@ -43,9 +44,9 @@ export const ChildrenContent = () => {
           </button>
         ))}
       </div>
-      <div>
-        <ChildrenDataCard child={selectedChild} />
-      </div>
+
+      {/* Assignments */}
+      <ChildrenDataCard child={selectedChild} />
     </div>
   );
 };

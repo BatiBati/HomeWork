@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { Contents } from "./_components/Contents";
 import { Sidebar } from "./_components/Sidebar";
 import { useAuth } from "@/provider/AuthProvider";
-import { LoadingSvg } from "@/components/svg/LoadingSvg";
 import { toast } from "sonner";
 import { ParentSkeleton } from "./_components/skeleton";
 
@@ -28,14 +27,20 @@ export default function Parent() {
   }, [router]);
 
   return (
-    <div className="bg-white h-screen w-screen flex justify-center items-center">
+    <div className="bg-white w-screen min-h-screen flex flex-col lg:overflow-hidden overflow-auto">
       {loading ? (
-        <ParentSkeleton />
-      ) : (
-        <div className="w-full h-full flex gap-3 rounded-xl">
-          <Sidebar setSelectedSidebar={setSelectedSidebar} />
-          <Contents selectedSidebar={selectedSidebar} />
+        <div className="flex justify-center items-center w-full h-full">
+          <ParentSkeleton />
         </div>
+      ) : (
+        <>
+          <Sidebar setSelectedSidebar={setSelectedSidebar} />
+
+          {/* Main content */}
+          <div className="flex-1 overflow-auto p-4 md:p-6">
+            <Contents selectedSidebar={selectedSidebar} />
+          </div>
+        </>
       )}
     </div>
   );
