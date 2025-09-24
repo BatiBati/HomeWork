@@ -1,7 +1,7 @@
 "use client";
 
 import { Dispatch, SetStateAction } from "react";
-import { Users } from "lucide-react"; // хүүхдийн icon оруулж байна
+import { Users } from "lucide-react";
 
 type Props = {
   setSelectedSidebar: Dispatch<SetStateAction<number>>;
