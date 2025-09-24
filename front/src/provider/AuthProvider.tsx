@@ -107,6 +107,8 @@ interface UserType {
   grade: string | null;
   role: "parents" | "teacher";
   children: ChildrenType[];
+  childName?: string;
+  childAvatar?: string;
 }
 interface AuthContextType {
   user: UserType | null;

@@ -4,6 +4,7 @@ import { AManSvg } from "@/components/svg/AManSvg";
 import { DayCareEmailEdit } from "./DayCareEmailEdit";
 import { PhoneEdit } from "./PhoneEdit";
 import { EditOwnEmail } from "./EditOwnEmail";
+import { EditProfileForChildren } from "./EditProfileForChildren";
 
 export const ParentInformation = () => {
   return (
@@ -16,6 +17,12 @@ export const ParentInformation = () => {
           <EditOwnEmail />
           <PhoneEdit />
           <DayCareEmailEdit />
+        </div>
+        <div className="flex md:flex-row flex-wrap gap-5">
+          <AManSvg /> Хүүхдийн мэдээлэл:
+        </div>
+        <div className="flex md:flex-row flex-wrap gap-5">
+          <EditProfileForChildren />
         </div>
       </div>
     </div>
