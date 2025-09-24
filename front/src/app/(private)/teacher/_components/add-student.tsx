@@ -87,10 +87,14 @@ export const AddStudentForm: React.FC<AddStudentFormProps> = ({
         return;
       }
 
-      const [first, ...restParts] = childname.trim().split(/\s+/);
+      const [first] = childname.trim().split(/\s+/);
+      const selectedParent = searchResults.find(
+        (p) => p._id === selectedParentId
+      );
+      const parentLastName = selectedParent?.lastName || "";
       const payload = {
-        firstName: first || childname,
-        lastName: restParts.join(" ") || "-",
+        firstName: parentLastName,
+        lastName: first || childname,
         profilePicture: "",
         parentId: selectedParentId,
         teacherId,

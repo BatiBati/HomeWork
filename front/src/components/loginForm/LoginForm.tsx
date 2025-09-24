@@ -107,13 +107,13 @@ export const LoginForm = () => {
       </Form>
       <div className="w-full flex flex-col gap-2 ">
         <div className="border-[2px] p-3 rounded-xl">
-          <span className="font-semibold"> Parents information</span>
-          <div className="ml-[10px]">Email: tamirbulgan621@gmail.com</div>
+          <span className="font-semibold"> Parent information</span>
+          <div className="ml-[10px]">Email: bati202009@gmail.com</div>
           <div className="ml-[10px]">Password: 12345678</div>
         </div>
         <div className="border-[2px] p-3 rounded-xl">
           <span className="font-semibold"> Teacher information</span>
-          <div className="ml-[10px]">Email: codecatalysts2025@gmail.com</div>
+          <div className="ml-[10px]">Email: tamirbulgan621@gmail.com</div>
           <div className="ml-[10px]">Password: 12345678</div>
         </div>
       </div>

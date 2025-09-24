@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import { ChildrenType, useAuth } from "@/provider/AuthProvider";
 import { AddStudentForm } from "./_components/add-student";
@@ -115,7 +116,6 @@ export default function TeacherDashboard() {
                 </Button>
               </div>
             </div>
-
             <div className="rounded-2xl border border-slate-200 bg-white p-2 sm:p-3 flex flex-wrap gap-2 mb-4">
               <button
                 className={`rounded-lg px-3 py-2 border transition hover:bg-cyan-50 ${
@@ -152,7 +152,45 @@ export default function TeacherDashboard() {
               <>
                 <div className="flex flex-col gap-4 mb-6">
                   <h2 className="text-lg sm:text-xl md:text-2xl font-bold bg-clip-text text-transparent bg-[#61b3ae]">
-                    Гэрийн даалгаврууд ✨
+                    Гэрийн даалгаврууд ✨{" "}
+                    <Dialog
+                      open={isAddStudentOpen}
+                      onOpenChange={(open) => {
+                        setIsAddStudentOpen(open);
+                        if (!open) {
+                          setParentEmail("");
+                          setChildname("");
+                        }
+                      }}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          className="bg-[#61b3ae] hover:bg-[#4a9a95] text-white"
+                          size="sm"
+                        >
+                          ➕ Сурагч нэмэх
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-[95vw] max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
+                        </DialogHeader>
+                        <AddStudentForm
+                          parentEmail={parentEmail}
+                          setParentEmail={setParentEmail}
+                          childname={childname}
+                          setChildname={setChildname}
+                          teacherId={user._id}
+                          loading={loading}
+                          setLoading={setLoading}
+                          onCreated={() => {
+                            setIsAddStudentOpen(false);
+                            setParentEmail("");
+                            setChildname("");
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
                   </h2>
                   <AssignmentsList
                     assignments={assignments}
@@ -186,10 +224,48 @@ export default function TeacherDashboard() {
             {activeTab === "students" && (
               <Card className="rounded-2xl border border-slate-200 bg-white">
                 <CardContent className="p-0 sm:p-4">
-                  <div className="p-4 border-b">
+                  <div className="p-4 border-b flex justify-between items-center">
                     <h2 className="text-lg sm:text-xl font-bold text-cyan-600">
                       👥 Нийт сурагчид
                     </h2>
+                    <Dialog
+                      open={isAddStudentOpen}
+                      onOpenChange={(open) => {
+                        setIsAddStudentOpen(open);
+                        if (!open) {
+                          setParentEmail("");
+                          setChildname("");
+                        }
+                      }}
+                    >
+                      <DialogTrigger asChild>
+                        <Button
+                          className="bg-[#61b3ae] hover:bg-[#4a9a95] text-white"
+                          size="sm"
+                        >
+                          ➕ Сурагч нэмэх
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent className="w-[95vw] max-w-md">
+                        <DialogHeader>
+                          <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
+                        </DialogHeader>
+                        <AddStudentForm
+                          parentEmail={parentEmail}
+                          setParentEmail={setParentEmail}
+                          childname={childname}
+                          setChildname={setChildname}
+                          teacherId={user._id}
+                          loading={loading}
+                          setLoading={setLoading}
+                          onCreated={() => {
+                            setIsAddStudentOpen(false);
+                            setParentEmail("");
+                            setChildname("");
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
                   </div>
                   <div className="p-2 sm:p-4">
                     <ul className="divide-y divide-slate-200">
@@ -206,14 +282,12 @@ export default function TeacherDashboard() {
                               {s.school} • {s.grade}
                             </p>
                           </div>
-                          <span className="text-xs text-slate-500">
-                            ID: {s._id.slice(-6)}
-                          </span>
                         </li>
                       ))}
                       {students.length === 0 && (
                         <li className="py-6 text-slate-500 text-sm">
-                          Сурагч байхгүй байна.
+                          Сурагч байхгүй байна. Дээрх товчийг дарж шинэ сурагч
+                          нэмэх боломжтой.
                         </li>
                       )}
                     </ul>
@@ -223,37 +297,6 @@ export default function TeacherDashboard() {
             )}
           </section>
         </div>
-
-        <Dialog
-          open={isAddStudentOpen}
-          onOpenChange={(open) => {
-            setIsAddStudentOpen(open);
-            if (!open) {
-              setParentEmail("");
-              setChildname("");
-            }
-          }}
-        >
-          <DialogContent className="w-[95vw] max-w-md bg-white border border-slate-200 rounded-xl">
-            <DialogHeader>
-              <DialogTitle>➕ Сурагч нэмэх</DialogTitle>
-            </DialogHeader>
-            <AddStudentForm
-              parentEmail={parentEmail}
-              setParentEmail={setParentEmail}
-              childname={childname}
-              setChildname={setChildname}
-              teacherId={user._id}
-              loading={loading}
-              setLoading={setLoading}
-              onCreated={() => {
-                setIsAddStudentOpen(false);
-                setParentEmail("");
-                setChildname("");
-              }}
-            />
-          </DialogContent>
-        </Dialog>
 
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="w-[95vw] max-w-4xl max-h-[90vh] overflow-y-auto">

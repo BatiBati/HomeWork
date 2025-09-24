@@ -5,13 +5,10 @@ import { sendHomeworkEditedNotification } from "../../utils/edit.mail";
 
 export const updateAssignment: RequestHandler = async (req, res) => {
   const { id } = req.params;
-  const { lessons, dayCares, images, publicLinks, taskEndSchedule } = req.body;
+  const { lessons, dayCares, images, publicLinks } = req.body;
 
   try {
     const update: any = { lessons, dayCares, images, publicLinks };
-    if (taskEndSchedule) {
-      update.taskEndSchedule = new Date(taskEndSchedule);
-    }
 
     const updatedAssignment = await assignmentModel.findByIdAndUpdate(
       id,
