@@ -12,7 +12,7 @@ export const ParentInformation = () => {
         <div className="flex gap-1 items-center">
           <AManSvg /> Эцэг эхийн мэдээлэл:
         </div>
-        <div className="flex flex-col md:flex-row flex-wrap gap-5">
+        <div className="flex md:flex-row flex-wrap gap-5">
           <EditOwnEmail />
           <PhoneEdit />
           <DayCareEmailEdit />

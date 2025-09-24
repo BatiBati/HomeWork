@@ -34,7 +34,8 @@ export const EditOwnEmail = () => {
   return (
     <div className="flex flex-col gap-4 shadow-lg p-5 rounded-xl w-full sm:w-[300px] md:w-[48%]">
       <div className="flex items-center gap-2 text-sm">
-        <EmailSvg /> Өдөр өнжүүлэх и-мэйл
+        <EmailSvg />
+        И-мэйл хаяг
       </div>
       <div className="flex flex-col gap-3">
         <div>
@@ -42,7 +43,7 @@ export const EditOwnEmail = () => {
           <Input className="p-3" disabled value={user?.email || ""} readOnly />
         </div>
         <div>
-          <p className="text-xs">И-мэйл хаяг:</p>
+          <p className="text-xs">Шинэ и-мэйл хаяг:</p>
           <Input
             placeholder="И-мэйл хаягаа оруулна уу."
             onChange={(e) => setUpdateOwnEmail(e.target.value)}

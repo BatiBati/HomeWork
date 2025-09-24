@@ -47,7 +47,7 @@ export const PhoneEdit = () => {
           />
         </div>
         <div>
-          <p className="text-xs">Утасны дугаар:</p>
+          <p className="text-xs">Шинэ утасны дугаар:</p>
           <Input
             maxLength={8}
             placeholder="Дугаар оруулна уу."

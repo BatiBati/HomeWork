@@ -46,11 +46,11 @@ export const DayCareEmailEdit = () => {
           />
         </div>
         <div>
-          <p className="text-xs">И-мэйл хаяг:</p>
+          <p className="text-xs">Шинэ и-мэйл хаяг:</p>
           <Input
             placeholder="И-мэйл хаягаа оруулна уу."
             onChange={(e) => setUpdatedDaycareEmail(e.target.value)}
-            defaultValue={user?.daycareEmail || ""}
+            defaultValue={updatedDaycareEmail || ""}
           />
         </div>
         <Button
