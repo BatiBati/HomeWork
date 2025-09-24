@@ -1,9 +1,16 @@
 "use client";
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useAuth } from "@/provider/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { api } from "../../../../../axios";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type MessageType = {
   _id: string;
@@ -29,71 +36,70 @@ export const TeacherChat = () => {
   const [loading, setLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Fetch parents
-  const fetchParents = useCallback(async () => {
+  // Fetch list of parents who have messaged the teacher
+  const fetchParents = async () => {
     try {
       const res = await api.get<{ parents: ParentType[] }>("/message/parents", {
         params: { teacherId: user?._id },
       });
-      // Remove duplicates
-      const unique = Array.from(
-        new Map(res.data.parents.map((p) => [p._id, p])).values()
-      );
-      setParents(unique);
+      setParents(res.data.parents);
     } catch (err) {
       console.error(err);
     }
-  }, [user?._id]);
+  };
 
-  // Fetch messages
-  const fetchMessages = useCallback(
-    async (parentId: string) => {
-      if (!user?._id || !parentId) return;
-      try {
-        const res = await api.get<{ messages: MessageType[] }>("/message", {
-          params: { user1Id: user._id, user2Id: parentId },
-        });
-        setMessages(res.data.messages || []);
-      } catch (err) {
-        console.error(err);
-      }
-    },
-    [user?._id]
-  );
-
-  // Polling
-  useEffect(() => {
-    if (!selectedParent) return;
-    fetchMessages(selectedParent._id);
-    const interval = setInterval(() => fetchMessages(selectedParent._id), 5000);
-    return () => clearInterval(interval);
-  }, [selectedParent, fetchMessages]);
-
-  //scroll
-  useEffect(() => {
-    const container = messagesEndRef.current;
-    if (container) {
-      container.scrollTo({
-        top: container.scrollHeight,
-        behavior: "smooth",
+  // Fetch messages with selected parent
+  const fetchMessages = async (parentId: string) => {
+    try {
+      const res = await api.get<{ messages: MessageType[] }>("/message", {
+        params: { user1Id: user?._id, user2Id: parentId },
       });
+      setMessages(res.data.messages);
+    } catch (err) {
+      console.error(err);
     }
+  };
+
+  useEffect(() => {
+    if (selectedParent) fetchMessages(selectedParent._id);
+  }, [selectedParent]);
+
+  // Scroll to bottom
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-  // Send message (no temp)
+
+  // Send message
   const handleSend = async () => {
-    if (!user || !newMessage.trim() || !selectedParent) return;
+    if (!user) {
+      return "Loading user";
+    }
+    if (!newMessage.trim() || !selectedParent) return;
+
+    const tempMessage: MessageType = {
+      _id: `temp-${Date.now()}`,
+      sender: { ...user },
+      receiver: selectedParent,
+      content: newMessage,
+      createdAt: new Date().toISOString(),
+    };
+
+    setMessages((prev) => [...prev, tempMessage]);
+    setNewMessage("");
 
     try {
       setLoading(true);
-      await api.post("/message/send", {
+      const res = await api.post("/message/send", {
         senderId: user._id,
         receiverId: selectedParent._id,
-        content: newMessage,
+        content: tempMessage.content,
       });
-      setNewMessage("");
-      fetchMessages(selectedParent._id); // ✅ just refetch after sending
+
+      setMessages((prev) =>
+        prev.map((m) => (m._id === tempMessage._id ? res.data.newMessage : m))
+      );
     } catch (err) {
-      console.error("Error sending message", err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -101,7 +107,7 @@ export const TeacherChat = () => {
 
   useEffect(() => {
     fetchParents();
-  }, [user?._id, fetchParents]);
+  }, [user?._id]);
 
   if (!user)
     return (
@@ -111,97 +117,78 @@ export const TeacherChat = () => {
     );
 
   return (
-    <div className="flex gap-4 h-150">
+    <div className="flex gap-4">
       {/* Parent list */}
-      <div className="w-[150px] border rounded p-2 overflow-y-hidden">
+      <div className="w-[200px] border rounded p-2">
         <h2 className="font-bold mb-2">Parents</h2>
         {parents.length === 0 ? (
           <p>No messages yet</p>
         ) : (
           parents.map((parent) => (
-            <button
-              key={parent._id}
-              className={`w-full text-left p-2 rounded mb-1 ${
-                selectedParent?._id === parent._id
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-gray-100"
-              }`}
-              onClick={() => setSelectedParent(parent)}
-            >
-              {parent.firstName} {parent.lastName}
-            </button>
-          ))
-        )}
-      </div>
-
-      {/* Chat window */}
-      <div className="flex-1 border rounded flex flex-col">
-        {selectedParent ? (
-          <>
-            <div className="border-b p-2 font-semibold">
-              Chat with {selectedParent.firstName} {selectedParent.lastName}
-            </div>
-            <div
-              ref={messagesEndRef}
-              className="flex-1 flex flex-col overflow-y-auto space-y-2 p-3"
-            >
-              {messages.length === 0 ? (
-                <p className="text-gray-400 text-sm text-center mt-4">
-                  No messages yet.
-                </p>
-              ) : (
-                messages.map((msg) => {
-                  const isTeacher = msg.sender._id === user._id;
-                  return (
-                    <div
-                      key={msg._id}
-                      className={`flex w-full ${
-                        isTeacher ? "justify-end" : "justify-start"
-                      }`}
-                    >
+            <Dialog key={parent._id}>
+              <DialogTrigger asChild>
+                <button
+                  className="w-full text-left p-2 hover:bg-gray-100 rounded"
+                  onClick={() => setSelectedParent(parent)}
+                >
+                  {parent.firstName} {parent.lastName}
+                </button>
+              </DialogTrigger>
+              <DialogContent className="w-[500px] h-[500px] flex flex-col">
+                <DialogHeader>
+                  <DialogTitle>
+                    Chat with {selectedParent?.firstName}
+                  </DialogTitle>
+                </DialogHeader>
+                <div className="flex-1 flex flex-col overflow-y-auto space-y-2 p-2">
+                  {messages.length === 0 && <p>No messages yet.</p>}
+                  {messages.map((msg) => {
+                    const isTeacher = msg.sender._id === user?._id;
+                    return (
                       <div
-                        className={`p-3 rounded-lg max-w-[70%] break-words ${
-                          isTeacher
-                            ? "bg-green-500 text-white"
-                            : "bg-gray-200 text-gray-800"
+                        key={msg._id}
+                        className={`flex w-full ${
+                          isTeacher ? "justify-end" : "justify-start"
                         }`}
                       >
-                        <h1 className="font-semibold text-sm mb-1">
-                          {isTeacher ? "You" : msg.sender.firstName}
-                        </h1>
-                        <p className="text-sm">{msg.content}</p>
-                        <p className="text-[10px] text-right mt-1 opacity-70">
-                          {new Date(msg.createdAt).toLocaleTimeString([], {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
+                        <div
+                          className={`p-2 rounded-lg max-w-[70%] ${
+                            isTeacher
+                              ? "bg-green-200 text-right"
+                              : "bg-gray-200 text-left"
+                          }`}
+                        >
+                          <h1 className="font-bold text-sm">
+                            {msg.sender.firstName}:
+                          </h1>
+                          <p>{msg.content}</p>
+                          <p className="text-[10px] text-gray-500">
+                            {new Date(msg.createdAt).toLocaleTimeString([], {
+                              hour: "2-digit",
+                              minute: "2-digit",
+                            })}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })
-              )}
-              <div ref={messagesEndRef} />
-            </div>
+                    );
+                  })}
+                  <div ref={messagesEndRef} />
+                </div>
 
-            {/* Input */}
-            <div className="p-2 border-t flex gap-2 items-center">
-              <Input
-                value={newMessage}
-                onChange={(e) => setNewMessage(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                placeholder="Type a message..."
-                className="flex-1"
-              />
-              <Button onClick={handleSend} disabled={loading}>
-                Send
-              </Button>
-            </div>
-          </>
-        ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-400">
-            Select a parent to start chatting
-          </div>
+                {/* Input */}
+                <div className="flex gap-2 mt-2">
+                  <Input
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    placeholder="Type a message..."
+                  />
+                  <Button onClick={handleSend} disabled={loading}>
+                    Send
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          ))
         )}
       </div>
     </div>

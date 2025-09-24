@@ -6,7 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useRouter } from "next/navigation";
+
 import { api, setAuthToken } from "../../axios";
 import { LessonType } from "@/app/(private)/teacher/page";
 
@@ -32,6 +32,7 @@ export type TaskType = {
   lessonName: string;
   image: string[];
   homeworks: HomeworkType[];
+  taskEndSchedule: Date;
   updatedAt: Date;
   createdAt: Date;
   teacherId: string;
@@ -68,23 +69,17 @@ export type ChildrenType = {
   teacher: string;
   parents: string;
   grade: string;
-  profilePicture: string;
   school: string;
-  tasks?: Array<{
-    _id: string;
-    title: string;
-    description: string;
-    subject: string;
-    createdAt: string;
-  }>;
   createdAt: Date;
   updatedAt: Date;
+  profilePicture: string;
 };
 export type AssignmentTypeee = {
   _id: string;
   teacher: TeacherType;
   childrens: ChildrenType[];
   lessons: LessonType[];
+  taskEndSchedule: Date;
   images: string[];
   publicLinks: Array<{
     token: string;
@@ -118,7 +113,6 @@ interface AuthContextType {
   setToken: React.Dispatch<React.SetStateAction<string | null>>;
   loading: boolean;
   setLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  signOut: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -128,7 +122,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
+
   const login = async (values: LoginValues): Promise<UserType> => {
     try {
       const res = await api.post<{ token: string; user: UserType }>(
@@ -157,12 +151,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(res.data.user);
     return res.data.user;
   };
-  const signOut = async () => {
-    localStorage.removeItem("token");
-    setToken(null);
-    setUser(null);
-    router.push("/");
-  };
+
   useEffect(() => {
     const fetchUser = async () => {
       const token = localStorage.getItem("token");
@@ -203,7 +192,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         getMe,
         loading,
         setLoading,
-        signOut,
       }}
     >
       {children}

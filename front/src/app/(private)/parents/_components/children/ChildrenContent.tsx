@@ -10,7 +10,6 @@ export const ChildrenContent = () => {
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [selectedChild, setSelectedChild] = useState<ChildrenType | null>(null);
 
-  
   useEffect(() => {
     if (user?.children?.length && !selectedChildId) {
       setSelectedChildId(user.children[0]._id);
@@ -36,11 +35,13 @@ export const ChildrenContent = () => {
             <div className=" w-fit flex flex-col items-center gap-2">
               <div className={` rounded cursor-pointer w-[100px] h-[100px]`}>
                 <img
-                  src={child.profilePicture || "/images/NoProfile.png"}
-                  alt={`${child.firstName} ${child.lastName}`}
+                  src={
+                    child.profilePicture ||
+                    "https://via.placeholder.com/40x40/cccccc/666666?text=?"
+                  }
                   width={50}
                   height={50}
-                  className="w-full h-full rounded-full object-cover"
+                  className="w-full h-full justify-center items-center rounded-full object-cover"
                 />
               </div>
               <div className="p-3 w-full bg-[#a0d2ca] rounded-xl cursor-pointer text-white font-semibold">
@@ -51,7 +52,6 @@ export const ChildrenContent = () => {
         ))}
       </div>
 
-      {/* Assignments */}
       <ChildrenDataCard child={selectedChild} />
     </div>
   );
