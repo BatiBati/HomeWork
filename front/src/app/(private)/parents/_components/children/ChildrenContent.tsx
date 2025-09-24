@@ -10,6 +10,7 @@ export const ChildrenContent = () => {
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null);
   const [selectedChild, setSelectedChild] = useState<ChildrenType | null>(null);
 
+  
   useEffect(() => {
     if (user?.children?.length && !selectedChildId) {
       setSelectedChildId(user.children[0]._id);
