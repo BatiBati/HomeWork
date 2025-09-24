@@ -2,7 +2,7 @@
 
 import type { ChildrenType } from "@/provider/AuthProvider";
 import { api } from "../../../../../../axios";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import Image from "next/image";
 import {
   Accordion,
@@ -10,8 +10,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { BookOpen, X, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, X, ChevronLeft, ChevronRight, Copy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 
 type ChildrenDataCardProps = {
   child: ChildrenType;
@@ -41,7 +42,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  console.log(openAccordion);
+
   const getChildrenAssignment = useCallback(async () => {
     try {
       setLoading(true);
@@ -112,9 +113,15 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
       items: groupedByDay[day],
     }));
 
-  // Auto-open first accordion (latest date)
+  // ✅ Fix: Auto-open only once (on first load)
+  const initializedRef = useRef(false);
+
   useEffect(() => {
-    if (dayLabels.length > 0) setOpenAccordion(dayLabels[0].date);
+    if (!initializedRef.current && dayLabels.length > 0) {
+      const today = dayLabels.find((d) => d.label === "Өнөөдөр");
+      setOpenAccordion(today ? today.date : dayLabels[0].date);
+      initializedRef.current = true;
+    }
   }, [dayLabels]);
 
   const openImageModal = (images: string[], index: number) => {
@@ -149,20 +156,42 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
       {error && <div className="text-red-500">{error}</div>}
 
       {!loading && dayLabels.length > 0 && (
-        <Accordion type="multiple" className="w-full">
+        <Accordion
+          type="single"
+          collapsible
+          className="w-full"
+          value={openAccordion}
+          onValueChange={setOpenAccordion}
+        >
           {dayLabels.map(({ label, date, items }) => (
             <AccordionItem key={date} value={date}>
-              <AccordionTrigger className="flex items-center">
+              <AccordionTrigger className="flex items-center justify-between">
                 <span className="font-semibold text-2xl">
-                  {label} <span className="text-[12px] opacity-50">{date}</span>
+                  {label}{" "}
+                  <span className="text-[12px] opacity-50 ml-2">{date}</span>
                 </span>
               </AccordionTrigger>
+
               <AccordionContent className="space-y-2">
                 {items.map((a) => (
                   <div
                     key={a._id}
-                    className="border p-3 rounded bg-gray-50 dark:bg-gray-800"
+                    className="border p-3 rounded bg-gray-50 dark:bg-gray-800 relative"
                   >
+                    {/* Copy button */}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={() =>
+                        navigator.clipboard.writeText(
+                          `https://home-work-n1g4.vercel.app/assignment/${a._id}`
+                        )
+                      }
+                    >
+                      <Copy className="h-4 w-4" />
+                    </Button>
+
                     {a.lessons?.length ? (
                       <ul className="list-disc pl-5 space-y-4">
                         {a.lessons.map((l, i) => (
