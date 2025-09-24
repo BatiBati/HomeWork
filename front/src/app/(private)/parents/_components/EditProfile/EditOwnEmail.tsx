@@ -47,7 +47,7 @@ export const EditOwnEmail = () => {
           <Input
             placeholder="И-мэйл хаягаа оруулна уу."
             onChange={(e) => setUpdateOwnEmail(e.target.value)}
-            defaultValue={user?.daycareEmail || ""}
+            defaultValue={updateOwnEmail || ""}
           />
         </div>
         <Button
