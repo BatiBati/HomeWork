@@ -308,12 +308,10 @@ export function AssignmentsList({
               )
             )
               .sort((a, b) => (a[0] < b[0] ? 1 : -1))
+
               .map(([ym, list]) => (
                 <div key={ym} className="space-y-2">
-                  {(list as AssignmentType[])
-                    .slice()
-                    .reverse()
-                    .map((a) => renderCard(a))}
+                  {(list as AssignmentType[]).slice().map((a) => renderCard(a))}
                 </div>
               ))}
           </div>
