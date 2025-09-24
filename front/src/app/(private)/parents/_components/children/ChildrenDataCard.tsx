@@ -27,7 +27,6 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   type Assignment = {
     _id: string;
     teacher: string;
-
     createdAt: string;
     childrens: Array<string | { _id: string }>;
     lessons?: Lesson[];
@@ -39,12 +38,10 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   const [openAccordion, setOpenAccordion] = useState<string | undefined>(
     undefined
   );
-
-  // For modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-
+  console.log(openAccordion);
   const getChildrenAssignment = useCallback(async () => {
     try {
       setLoading(true);
@@ -108,7 +105,7 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
   };
 
   const dayLabels = Object.keys(groupedByDay)
-    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime()) // newest first
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())
     .map((day) => ({
       label: getDayLabel(day),
       date: day,
@@ -117,8 +114,8 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
 
   // Auto-open first accordion (latest date)
   useEffect(() => {
-    if (dayLabels.length > 0) setOpenAccordion(dayLabels[0].label);
-  }, [assignments, dayLabels]);
+    if (dayLabels.length > 0) setOpenAccordion(dayLabels[0].date);
+  }, [dayLabels]);
 
   const openImageModal = (images: string[], index: number) => {
     setCurrentImages(images);
@@ -152,15 +149,9 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
       {error && <div className="text-red-500">{error}</div>}
 
       {!loading && dayLabels.length > 0 && (
-        <Accordion
-          type="single"
-          collapsible
-          className="w-full"
-          value={openAccordion}
-          onValueChange={setOpenAccordion}
-        >
+        <Accordion type="multiple" className="w-full">
           {dayLabels.map(({ label, date, items }) => (
-            <AccordionItem key={date} value={label}>
+            <AccordionItem key={date} value={date}>
               <AccordionTrigger className="flex items-center">
                 <span className="font-semibold text-2xl">
                   {label} <span className="text-[12px] opacity-50">{date}</span>
@@ -220,7 +211,6 @@ export const ChildrenDataCard = ({ child }: ChildrenDataCardProps) => {
         <div>Хүүхэд дээр даалгавар байхгүй байна.</div>
       )}
 
-      {/* Image Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
           <button
